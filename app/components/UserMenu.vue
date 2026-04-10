@@ -28,9 +28,9 @@ const menu = computed(() => [
 ])
 
 const user = {
-        src: '/img/avatar.png',
-        alt: 'Peter Parker',
-        loading: 'lazy',
+    src: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
+    alt: 'Peter Parker',
+    loading: 'lazy',
 } as any
 </script>
 <template>

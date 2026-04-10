@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import type { DocsSectionProps } from '~/types/docs'
 
-interface Props {
-    title: string
-    icon: string
-    id?: string
-}
-
-const props = defineProps<Props>()
+const props = defineProps<DocsSectionProps>()
 
 const sectionId = computed(() => props.id || props.title.toLowerCase().replace(/\s+/g, '-'))
 </script>

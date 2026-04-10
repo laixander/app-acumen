@@ -25,21 +25,14 @@ const fields = ref<AuthFormField[]>([
 ])
 
 function onSubmit() {
-    navigateTo('/app')
+    navigateTo('/app/dashboard')
 }
 </script>
 <template>
-    <UAuthForm 
-        title="Welcome" 
-        description="Enter your credentials to access your account." 
-        :fields="fields"
-        :state="state" 
-        :submit="{ size: 'lg' }"
-        :ui="uiAuthForm"
-        @submit="onSubmit" 
-    >
+    <UAuthForm title="Login" description="Enter your credentials to access your account." :fields="fields"
+        :state="state" :submit="{ size: 'lg' }" :ui="uiAuthForm" @submit="onSubmit">
         <template #leading>
-            <AppLogo name="i-lucide-brain-circuit" color="primary" size="lg" />
+            <AppLogo icon="i-lucide-brain-circuit" theme="primary" size="lg" />
         </template>
         <template #footer>
             <UButton label="Forgot Password?" size="lg" color="neutral" variant="link" block @click="onSubmit" />

@@ -1,12 +1,8 @@
 <script setup lang="ts">
+import type { ContentPanelProps } from '~/types/components'
+
 const slots = useSlots()
-
-interface Props {
-    title: string
-    noPadding?: boolean
-}
-
-const props = defineProps<Props>()
+const props = defineProps<ContentPanelProps>()
 </script>
 <template>
     <UDashboardPanel :ui="{ body: noPadding ? 'p-0 sm:p-0' : '' }">

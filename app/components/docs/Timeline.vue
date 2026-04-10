@@ -1,10 +1,5 @@
 <script setup lang="ts">
-interface TimelineItem {
-    title: string
-    description?: string
-    status?: string
-    [key: string]: any
-}
+import type { TimelineItem } from '~/types/docs'
 
 const props = defineProps<{
     items: TimelineItem[]

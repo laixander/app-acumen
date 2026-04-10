@@ -12,7 +12,11 @@ export default function useUiConfig() {
     }
 
     const uiDashboardSidebar = {
-        root: 'w-auto divide-y divide-neutral-200 dark:divide-neutral-800 bg-white dark:bg-neutral-900/50'
+        root: 'group/sidebar w-auto divide-y divide-neutral-200 dark:divide-neutral-800 bg-elevated/25',
+
+        // this force the navigation to be 200px wide when not collapsed
+        // and 64px when collapsed
+        body: 'after:content-[""] after:block after:w-[200px] group-data-[collapsed=true]/sidebar:after:hidden'
     }
 
     return {

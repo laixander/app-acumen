@@ -6,13 +6,12 @@ const { uiNavigation, uiDashboardSidebar } = useUiConfig()
 </script>
 <template>
     <UDashboardGroup>
-        <UDashboardSidebar resizable collapsible :ui="uiDashboardSidebar">
+        <UDashboardSidebar collapsible :ui="uiDashboardSidebar">
             <template #header="{ collapsed }">
                 <div v-if="!collapsed" class="flex items-center gap-2">
-                    <AppLogo name="i-lucide-brain-circuit" color="primary" />
-                    <span class="text-xs font-bold uppercase tracking-wider text-primary-600">Learn Fast</span>
+                    <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" theme="primary" color="primary" />
                 </div>
-                <AppLogo v-else name="i-lucide-brain-circuit" color="primary" />
+                <AppLogo v-else icon="i-lucide-brain-circuit" theme="primary" />
             </template>
             <template #default="{ collapsed }">
                 <UNavigationMenu :items="links" :collapsed="collapsed" orientation="vertical" tooltip popover

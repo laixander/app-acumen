@@ -1,22 +1,18 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
+import { MANUAL_MENU_SECTIONS } from '~/constants/navigation'
 
 export const useManualMenu = () => {
     const activeSection = useState('manual-active-section', () => 'administrator')
 
-    const sections = computed<NavigationMenuItem[]>(() => [
-        {
-            label: 'User Roles',
-            icon: 'i-lucide-users',
-            to: '/manual',
-            defaultOpen: true,
-            type: 'trigger',
-            children: [
-                { to: '#learner', label: 'Learner', exact: true, active: activeSection.value === 'learner' },
-                { to: '#ai-engine', label: 'AI Learning Engine', exact: true, active: activeSection.value === 'ai-engine' },
-                { to: '#administrator', label: 'Administrator', exact: true, active: activeSection.value === 'administrator' },
-            ]
-        },
-    ])
+    const sections = computed<NavigationMenuItem[]>(() =>
+        MANUAL_MENU_SECTIONS.map((group) => ({
+            ...group,
+            children: group.children.map(({ sectionId, ...item }) => ({
+                ...item,
+                active: activeSection.value === sectionId,
+            })),
+        }))
+    )
 
     return {
         activeSection,

@@ -1,13 +1,7 @@
 <script setup lang="ts">
-const fabOpen = ref(false)
+import type { MockRole } from '~/types/components'
 
-interface MockRole {
-    role: string
-    label: string
-    icon: string
-    color: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'secondary' | 'neutral'
-    route: string
-}
+const fabOpen = ref(false)
 
 const mockRoles: MockRole[] = [
     {
