@@ -97,6 +97,30 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 12, 2026",
+        version: "v1.0.8",
+        title: "Experimental Asset Support & Custom Font Library",
+        changes: [
+            "Expanded the theme system with a comprehensive library of custom Google Fonts",
+            "Implemented dynamic font switching in the theme configuration, including Inter, Outfit, Roboto Slab, and Space Grotesk",
+            "Updated the Documentation module with extensive API and Data Model references",
+            "Refined typography and spacing consistency across all core pages",
+            "Synchronized global versioning and changelog tracking systems",
+        ],
+    },
+    {
+        date: "April 11, 2026",
+        version: "v1.0.7",
+        title: "Theme Management & State Persistence",
+        changes: [
+            "Integrated UColorModeSelect with the centralized useTheme composable for global synchronization",
+            "Finalized the UI Playground theme editor with real-time style application",
+            "Implemented persistent storage for user theme preferences and branding configurations",
+            "Improved state management for dark/light mode across multiple layouts",
+            "Optimized component rendering during theme transitions",
+        ],
+    },
+    {
         date: "April 10, 2026",
         version: "v1.0.6",
         title: "Dashboard Implementation & Type Optimization",

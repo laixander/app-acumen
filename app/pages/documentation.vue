@@ -197,9 +197,7 @@ onMounted(() => {
                                     Typography & Spacing
                                 </h4>
                                 <p class="text-sm">
-                                    We use <span class="font-bold">Geist</span> as our primary
-                                    font, with consistent 4, 8, 12, and 16 module spacing based on
-                                    Tailwind's defaults.
+                                    Our platform supports a dynamic typography system with a curated library of fonts including <span class="font-bold">Inter, Outfit, Roboto Slab, and Space Grotesk</span>. We maintain consistent 4, 8, 12, and 16 module spacing based on Tailwind's defaults for a perfectly balanced layout.
                                 </p>
                             </div>
                         </div>
