@@ -1,3 +1,3 @@
 <template>
-    ui playground
+    <NuxtPage />
 </template>

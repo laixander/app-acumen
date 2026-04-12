@@ -141,5 +141,9 @@ export default <Partial<Config>>{
     'text-gray-500',
     'text-zinc-500',
     'text-stone-500',
-  ]
+  ],
+  theme: {
+    extend: {
+    }
+  }
 }
