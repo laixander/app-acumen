@@ -25,6 +25,20 @@ export const fontOptions = [
     { label: 'Saira', value: 'font-saira' },
     { label: 'Exo 2', value: 'font-exo2' },
     { label: 'Oxanium', value: 'font-oxanium' },
+    { label: 'Racing Sans', value: 'font-racing' },
+]
+
+export const brandFontOptions = fontOptions
+
+export const fontWeightOptions = [
+    { label: 'Thin (100)', value: 'font-thin' },
+    { label: 'Light (300)', value: 'font-light' },
+    { label: 'Normal (400)', value: 'font-normal' },
+    { label: 'Medium (500)', value: 'font-medium' },
+    { label: 'Semibold (600)', value: 'font-semibold' },
+    { label: 'Bold (700)', value: 'font-bold' },
+    { label: 'Extra Bold (800)', value: 'font-extrabold' },
+    { label: 'Black (900)', value: 'font-black' },
 ]
 
 // Theme Options
@@ -44,21 +58,30 @@ export const useTheme = () => {
 
     const theme = useState<ThemeSettings>('theme', () => ({
         font: 'font-sans',
+        brandFont: 'font-racing',
+        brandWeight: 'font-normal',
         primary: appConfig.ui.colors?.primary || 'blue',
         neutral: appConfig.ui.colors?.neutral || 'slate'
     }))
 
 
-    const applyFont = (font: ThemeFont) => {
+    const applyFont = (font: ThemeFont, type: 'body' | 'brand' = 'body') => {
         if (!import.meta.client) return
         const root = document.documentElement
 
-        // Remove all possible font classes
-        const fontClasses = fontOptions.map(opt => opt.value)
-        root.classList.remove(...fontClasses)
-
-        // Add the selected font class
-        root.classList.add(font)
+        if (type === 'body') {
+            // Remove all possible body font classes
+            const fontClasses = fontOptions.map(opt => opt.value)
+            root.classList.remove(...fontClasses)
+            // Add the selected font class
+            root.classList.add(font)
+        } else {
+            // Remove all possible brand font classes
+            const brandClasses = fontOptions.map(opt => `brand-${opt.value}`)
+            root.classList.remove(...brandClasses)
+            // Add the selected brand font class
+            root.classList.add(`brand-${font}`)
+        }
     }
 
     const applyColors = (primary: string, neutral: string) => {
@@ -66,6 +89,14 @@ export const useTheme = () => {
             appConfig.ui.colors.primary = primary
             appConfig.ui.colors.neutral = neutral
         }
+    }
+
+    const applyWeight = (weight: string) => {
+        if (!import.meta.client) return
+        const root = document.documentElement
+        const weightClasses = fontWeightOptions.map(opt => `brand-${opt.value}`)
+        root.classList.remove(...weightClasses)
+        root.classList.add(`brand-${weight}`)
     }
 
     const save = () => {
@@ -77,7 +108,19 @@ export const useTheme = () => {
 
     const setFont = (font: ThemeFont) => {
         theme.value.font = font
-        applyFont(font)
+        applyFont(font, 'body')
+        save()
+    }
+
+    const setBrandFont = (font: ThemeFont) => {
+        theme.value.brandFont = font
+        applyFont(font, 'brand')
+        save()
+    }
+
+    const setBrandWeight = (weight: string) => {
+        theme.value.brandWeight = weight
+        applyWeight(weight)
         save()
     }
 
@@ -107,12 +150,16 @@ export const useTheme = () => {
         }
 
         // Apply everything
-        applyFont(theme.value.font)
+        applyFont(theme.value.font, 'body')
+        applyFont(theme.value.brandFont, 'brand')
+        applyWeight(theme.value.brandWeight)
         applyColors(theme.value.primary, theme.value.neutral)
     }
 
     const resetTheme = () => {
         setFont('font-sans')
+        setBrandFont('font-racing')
+        setBrandWeight('font-normal')
         setPrimary('lime')
         setNeutral('stone')
         colorMode.preference = 'system'
@@ -122,6 +169,8 @@ export const useTheme = () => {
     return {
         theme,
         setFont,
+        setBrandFont,
+        setBrandWeight,
         setPrimary,
         setNeutral,
         initTheme,

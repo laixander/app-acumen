@@ -22,6 +22,7 @@ export interface AppLogoProps {
     theme: string
     color?: string
     size?: 'lg' | 'base'
+    naked?: boolean
 }
 
 export interface ContentPanelProps {

@@ -33,8 +33,7 @@ definePageMeta({
 
             <!-- Logo Header -->
             <div class="relative z-10 flex items-center gap-3">
-                <UIcon name="i-lucide-brain-circuit" class="w-10 h-10" />
-                <span class="text-2xl font-racing">LearnFast</span>
+                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
             </div>
 
             <!-- Body Text -->

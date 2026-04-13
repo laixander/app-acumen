@@ -13,6 +13,19 @@
 
                 <div class="h-4 w-[1px] bg-gray-200 dark:bg-gray-800" />
 
+                <!-- Brand Font -->
+                <div class="flex items-center gap-2">
+                    <UIcon name="i-lucide-award" class="w-4 h-4 text-primary" />
+                    <span
+                        class="text-[10px] font-bold uppercase tracking-wider text-muted whitespace-nowrap">Brand Logo</span>
+                    <USelect :model-value="theme.brandFont" @update:model-value="(val) => setBrandFont(val as any)"
+                        :items="brandFontOptions" class="w-32" size="xs" />
+                    <USelect :model-value="theme.brandWeight" @update:model-value="(val) => setBrandWeight(val as any)"
+                        :items="fontWeightOptions" class="w-28" size="xs" />
+                </div>
+
+                <div class="h-4 w-[1px] bg-gray-200 dark:bg-gray-800" />
+
                 <!-- Primary Color -->
                 <div class="flex items-center gap-2">
                     <div class="w-3 h-3 rounded-full bg-primary" />
@@ -246,10 +259,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useToast } from '#ui/composables/useToast'
-import { useTheme, fontOptions, primaryColors, neutralColors } from '~/composables/useTheme'
+import { useTheme, fontOptions, brandFontOptions, fontWeightOptions, primaryColors, neutralColors } from '~/composables/useTheme'
 
 const toast = useToast()
-const { theme, setFont, setPrimary, setNeutral, initTheme, resetTheme, colorMode } = useTheme()
+const { theme, setFont, setBrandFont, setBrandWeight, setPrimary, setNeutral, initTheme, resetTheme, colorMode } = useTheme()
 // Persistence & Initialization
 onMounted(() => {
     initTheme()
