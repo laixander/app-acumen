@@ -97,6 +97,19 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 13, 2026",
+        version: "v1.0.9",
+        title: "Architecture Refactoring & Dashboard Enhancements",
+        changes: [
+            "Refactored project file structure to fully align with Nuxt 4 best practices",
+            "Centralized types, constants, and composables for improved code maintainability",
+            "Optimized dashboard user experience with a new 'Continue Learning' hero section",
+            "Implemented a 'Pin/Favorite' system for quick access to prioritized topics",
+            "Developed a persistent data seeding system with UI controls for local development",
+            "Optimized main CSS stylesheet by reducing verbosity and redundant style overrides",
+        ],
+    },
+    {
         date: "April 12, 2026",
         version: "v1.0.8",
         title: "Experimental Asset Support & Custom Font Library",

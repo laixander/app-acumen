@@ -19,5 +19,6 @@ const { uiNavigation, uiDashboardSidebar } = useUiConfig()
             </template>
         </UDashboardSidebar>
         <slot />
+        <SeederFab />
     </UDashboardGroup>
 </template>

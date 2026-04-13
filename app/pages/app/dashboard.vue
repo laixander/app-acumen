@@ -1,23 +1,11 @@
 <script setup lang="ts">
-const topics = [
-    { title: 'Introduction to Algebra', progress: 80, tag: 'Math', lessons: '10/12', lastStudied: '2 hrs ago', icon: 'i-lucide-function-square' },
-    { title: 'World War II Overview', progress: 55, tag: 'History', lessons: '6/11', lastStudied: '1 day ago', icon: 'i-lucide-landmark' },
-    { title: "Newton's Laws of Motion", progress: 30, tag: 'Science', lessons: '3/10', lastStudied: '3 days ago', icon: 'i-lucide-microscope' },
-    { title: 'Spanish Basics', progress: 65, tag: 'Language', lessons: '8/12', lastStudied: 'Yesterday', icon: 'i-lucide-languages' },
-    { title: 'Reading Comprehension', progress: 90, tag: 'English', lessons: '9/10', lastStudied: 'Just now', icon: 'i-lucide-book-open' },
-]
+import { useTopics } from '~/composables/useTopics'
+import { DASHBOARD_STATS, RECOMMENDED_TOPICS } from '~/constants/dashboard'
 
-const stats = [
-    { label: 'Day Streak', value: '12', icon: 'i-lucide-calendar-days', color: 'amber', trend: 'up', trendValue: '+10%' },
-    { label: 'Mins Today', value: '45', icon: 'i-lucide-timer', color: 'indigo', trend: 'down', trendValue: '-5%' },
-    { label: 'Lessons Done', value: '8', icon: 'i-lucide-trophy', color: 'emerald', trend: 'up', trendValue: '+2' },
-]
+const { topics, pinnedTopics, continueLearningTopic, recentTopics } = useTopics()
 
-const recommended = [
-    { title: 'Cell Biology 101', tag: 'Science', icon: 'i-lucide-microscope' },
-    { title: 'The French Revolution', tag: 'History', icon: 'i-lucide-landmark' },
-    { title: 'Algebra: Quadratics', tag: 'Math', icon: 'i-lucide-function-square' },
-]
+const stats = DASHBOARD_STATS
+const recommended = RECOMMENDED_TOPICS
 </script>
 
 <template>
@@ -51,45 +39,59 @@ const recommended = [
             <!-- 2 Column Layout -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <!-- First Column: List of Topics -->
-                <div class="lg:col-span-2 flex flex-col gap-4">
-                    <!-- View all button -->
-                    <div class="flex items-center justify-between h-5">
-                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Your Topics</h3>
-                        <UButton label="View all" icon="i-lucide-arrow-right" color="primary" variant="ghost" size="sm"
-                            class="ml-auto uppercase" to="/app/my-topics" />
-                    </div>
-                    <div class="grid lg:grid-cols-2 gap-4">
-                        <UCard v-for="topic in topics" :key="topic.title" variant="subtle"
-                            class="transition-all duration-200 hover:-translate-y-1 hover:ring-2 hover:ring-primary-500/50 cursor-pointer"
-                            :ui="{ header: 'p-0 sm:p-0 relative', body: '' }">
-                            <template #header>
-                                <Placeholder />
-                                <div class="absolute top-4 left-4 bg-primary/10 p-2 rounded-lg">
-                                    <UIcon :name="topic.icon" class="text-lg text-primary flex shrink-0" />
-                                </div>
-                            </template>
-                            <div class="flex items-center gap-4">
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between mb-1.5">
-                                        <span class="text-sm font-medium truncate">{{ topic.title }}</span>
-                                        <UBadge :label="topic.tag" variant="soft" size="sm" class="ml-2 shrink-0" />
-                                    </div>
-                                    <UProgress :model-value="topic.progress" size="xs" color="primary" />
-                                </div>
-                                <span class="text-xs font-semibold text-primary shrink-0">{{ topic.progress }}%</span>
-                                <UButton icon="i-lucide-play" color="primary" variant="ghost" />
+                <!-- Main Content Column -->
+                <div class="lg:col-span-2 flex flex-col gap-8">
+
+                    <template v-if="topics.length > 0">
+                        <!-- Section: Continue Learning (Hero) -->
+                        <div v-if="continueLearningTopic" class="flex flex-col gap-4">
+                            <div class="flex items-center justify-between h-5">
+                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue Learning
+                                </h3>
+                                <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
                             </div>
-                            <div class="flex items-center gap-4 text-xs text-dimmed mt-4">
-                                <span class="flex items-center gap-1">
-                                    <UIcon name="i-lucide-book-open" class="size-4" /> {{ topic.lessons }} lessons
-                                </span>
-                                <span class="flex items-center gap-1">
-                                    <UIcon name="i-lucide-clock" class="size-4" /> {{ topic.lastStudied }}
-                                </span>
+                            <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
+                        </div>
+
+                        <!-- Section: Recent Topics -->
+                        <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
+                            <div class="flex items-center justify-between h-5">
+                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
+                                <UButton label="View all" icon="i-lucide-arrow-right" color="primary" variant="ghost"
+                                    size="sm" class="uppercase" to="/app/my-topics" />
                             </div>
-                        </UCard>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
+                            </div>
+                        </div>
+
+                        <!-- Section: Pinned Topics -->
+                        <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
+                            <div class="flex items-center justify-between h-5">
+                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
+                                <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Empty State -->
+                    <div v-else
+                        class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
+                        <div class="bg-primary/10 p-4 rounded-full mb-4">
+                            <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
+                        </div>
+                        <h3 class="text-lg font-bold">Your dashboard is empty</h3>
+                        <p class="text-dimmed max-w-xs mt-1 text-pretty">
+                            Get started by adding some topics, or use the seeder button below to generate test data.
+                        </p>
+                        <div class="flex items-center gap-3 mt-6">
+                            <UButton label="Create Topic" color="primary" icon="i-lucide-plus" />
+                        </div>
                     </div>
+
                 </div>
 
                 <!-- Second Column: Stats & Recommended -->
