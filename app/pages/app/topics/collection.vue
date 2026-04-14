@@ -53,8 +53,7 @@ const filteredTopics = computed(() => {
                         </template>
                     </USelect>
                     <USeparator orientation="vertical" class="mx-2 h-6" />
-                    <AppViewModeToggle v-model="viewMode" />
-                    <UButton label="New Topic" icon="i-lucide-plus" color="primary" size="sm" class="ml-2" />
+                    <UButton label="New Topic" icon="i-lucide-plus" color="primary" size="sm" />
                 </div>
             </div>
         </template>
@@ -62,23 +61,21 @@ const filteredTopics = computed(() => {
         <div class="w-full lg:max-w-6xl mx-auto flex flex-col gap-6 relative">
             <!-- Status Tabs -->
             <div class="flex items-center gap-4 border-b border-neutral-200 dark:border-neutral-800">
-                <button v-for="status in statuses" :key="status"
+                <UButton v-for="status in statuses" :key="status"
                     class="px-4 py-2 text-sm font-medium transition-colors relative"
-                    :class="currentStatus === status ? 'text-primary' : 'text-dimmed hover:text-neutral-900 dark:hover:text-white'"
-                    @click="currentStatus = status">
+                    :class="currentStatus === status ? 'text-primary pointer-events-none' : 'text-dimmed hover:text-neutral-900 dark:hover:text-white'"
+                    variant="link" @click="currentStatus = status">
                     {{ status }}
                     <div v-if="currentStatus === status"
                         class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
-                </button>
+                </UButton>
+                <!-- <AppViewModeToggle v-model="viewMode" class="ml-auto" /> -->
             </div>
 
-            <TransitionGroup v-if="filteredTopics.length > 0" tag="div"
-                :class="[viewMode === 'grid' ? 'grid lg:grid-cols-3 gap-4' : 'flex flex-col gap-3']"
-                move-class="transition-all duration-500" enter-active-class="transition-all duration-300 ease-out"
-                enter-from-class="opacity-0 translate-y-4"
-                leave-active-class="transition-all duration-200 ease-in absolute" leave-to-class="opacity-0 scale-95">
+            <div v-if="filteredTopics.length > 0"
+                :class="[viewMode === 'grid' ? 'grid lg:grid-cols-3 gap-6' : 'flex flex-col gap-4']">
                 <AppTopicCard v-for="topic in filteredTopics" :key="topic.title" :topic="topic" :view-mode="viewMode" />
-            </TransitionGroup>
+            </div>
 
             <!-- Empty State -->
             <div v-else

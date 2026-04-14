@@ -3,7 +3,7 @@ import type { ThemeSettings, ThemeFont } from '~/types/theme'
 
 // Font options
 export const fontOptions = [
-    // { label: 'Geist (Default)', value: 'font-sans' },
+    { label: 'Geist (Default)', value: 'font-sans' },
     // { label: 'Inter', value: 'font-inter' },
     // { label: 'Lexend', value: 'font-lexend' },
     // { label: 'Outfit', value: 'font-outfit' },
@@ -69,15 +69,24 @@ export const useTheme = () => {
         if (!import.meta.client) return
         const root = document.documentElement
 
+        // Comprehensive list of all font classes for cleaning up
+        const allBaseFonts = [
+            'font-sans', 'font-inter', 'font-lexend', 'font-outfit',
+            'font-jakarta', 'font-poppins', 'font-bricolage', 'font-space',
+            'font-roboto-slab', 'font-manrope', 'font-work-sans', 'font-nunito',
+            'font-open-sans', 'font-arvo', 'font-rokkitt', 'font-space-mono',
+            'font-sansation', 'font-montserrat', 'font-suse', 'font-saira',
+            'font-exo2', 'font-oxanium', 'font-racing'
+        ]
+
         if (type === 'body') {
-            // Remove all possible body font classes
-            const fontClasses = fontOptions.map(opt => opt.value)
-            root.classList.remove(...fontClasses)
+            // Remove all possible body font classes to avoid conflicts
+            root.classList.remove(...allBaseFonts)
             // Add the selected font class
             root.classList.add(font)
         } else {
             // Remove all possible brand font classes
-            const brandClasses = fontOptions.map(opt => `brand-${opt.value}`)
+            const brandClasses = allBaseFonts.map(f => `brand-${f}`)
             root.classList.remove(...brandClasses)
             // Add the selected brand font class
             root.classList.add(`brand-${font}`)

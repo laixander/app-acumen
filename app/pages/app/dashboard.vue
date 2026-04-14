@@ -42,55 +42,71 @@ const recommended = RECOMMENDED_TOPICS
                 <!-- Main Content Column -->
                 <div class="lg:col-span-2 flex flex-col gap-8">
 
-                    <template v-if="topics.length > 0">
-                        <!-- Section: Continue Learning (Hero) -->
-                        <div v-if="continueLearningTopic" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between h-5">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue Learning
-                                </h3>
-                                <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
+                    <ClientOnly>
+                        <template v-if="topics.length > 0">
+                            <!-- Section: Continue Learning (Hero) -->
+                            <div v-if="continueLearningTopic" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue
+                                        Learning
+                                    </h3>
+                                    <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
+                                </div>
+                                <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
                             </div>
-                            <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
-                        </div>
 
-                        <!-- Section: Recent Topics -->
-                        <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between h-5">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
-                                <UButton label="View all" icon="i-lucide-arrow-right" color="primary" variant="ghost"
-                                    size="sm" class="uppercase" to="/app/my-topics" />
+                            <!-- Section: Recent Topics -->
+                            <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between h-5">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
+                                    <UButton label="View all" icon="i-lucide-arrow-right" color="primary"
+                                        variant="ghost" size="sm" class="uppercase" to="/app/my-topics" />
+                                </div>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
+                                </div>
                             </div>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
-                            </div>
-                        </div>
 
-                        <!-- Section: Pinned Topics -->
-                        <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between h-5">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
-                                <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
+                            <!-- Section: Pinned Topics -->
+                            <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
+                                    <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
+                                </div>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
+                                </div>
                             </div>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
-                            </div>
-                        </div>
-                    </template>
+                        </template>
 
-                    <!-- Empty State -->
-                    <div v-else
-                        class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
-                        <div class="bg-primary/10 p-4 rounded-full mb-4">
-                            <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
-                        </div>
-                        <h3 class="text-lg font-bold">Your dashboard is empty</h3>
-                        <p class="text-dimmed max-w-xs mt-1 text-pretty">
-                            Get started by adding some topics, or use the seeder button below to generate test data.
-                        </p>
-                        <div class="flex items-center gap-3 mt-6">
-                            <UButton label="Create Topic" color="primary" icon="i-lucide-plus" />
-                        </div>
-                    </div>
+                        <!-- Empty State -->
+                        <template v-else>
+                            <div
+                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
+                                <div class="bg-primary/10 p-4 rounded-full mb-4">
+                                    <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
+                                </div>
+                                <h3 class="text-lg font-bold">Your dashboard is empty</h3>
+                                <p class="text-dimmed max-w-xs mt-1 text-pretty">
+                                    Get started by adding some topics, or use the seeder button below to generate test
+                                    data.
+                                </p>
+                                <div class="flex items-center gap-3 mt-6">
+                                    <UButton label="Create Topic" color="primary" icon="i-lucide-plus" />
+                                </div>
+                            </div>
+                        </template>
+
+                        <template #fallback>
+                            <div
+                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
+                                <div class="bg-primary/10 p-4 rounded-full mb-4">
+                                    <UIcon name="i-lucide-loader-2" class="flex text-4xl text-primary animate-spin" />
+                                </div>
+                                <h3 class="text-lg font-bold">Loading dashboard...</h3>
+                            </div>
+                        </template>
+                    </ClientOnly>
 
                 </div>
 

@@ -11,15 +11,27 @@ export const NAVIGATION_LINKS: NavigationMenuItem[][] = [
             icon: 'i-lucide-bar-chart-3',
             to: '/app/dashboard'
         },
-        {
-            label: 'New Topic',
-            icon: 'i-lucide-circle-plus',
-            to: '/app/new-topic'
-        },
+        // {
+        //     label: 'New Topic',
+        //     icon: 'i-lucide-circle-plus',
+        //     to: '/app/topics/new'
+        // },
         {
             label: 'My Topics',
             icon: 'i-lucide-book-open',
-            to: '/app/my-topics'
+            to: '/app/topics',
+            defaultOpen: false,
+            type: 'trigger',
+            children: [
+                {
+                    label: 'Collection',
+                    to: '/app/topics/collection'
+                },
+                {
+                    label: 'New Topic',
+                    to: '/app/topics/new'
+                }
+            ]
         },
         {
             label: 'Settings',

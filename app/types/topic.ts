@@ -1,4 +1,7 @@
+export type LearningGoal = 'Mastery' | 'Overview' | 'Project Based' | 'Exam Prep'
+
 export interface Topic {
+    id: string
     title: string
     progress: number
     tag: string
@@ -8,4 +11,5 @@ export interface Topic {
     lastStudiedAt: number // Timestamp for sorting
     icon: string
     isPinned: boolean
+    learningGoal?: LearningGoal
 }

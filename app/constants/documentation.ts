@@ -97,6 +97,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 14, 2026",
+        version: "v1.1.0",
+        title: "Learning Wizard Optimization & AI Transition States",
+        changes: [
+            "Implemented a high-fidelity, multi-step 'New Topic' creation wizard",
+            "Developed an immersive 'AI Analyzing' transition phase with real-time progress tracking",
+            "Integrated a sequential 'AI Path Crafting' checklist for the final generation step",
+            "Refactored wizard state management for robust property synchronization across steps",
+            "Created custom premium animations featuring scaling and radiant glows for AI states",
+            "Standardized all wizard form components to work with the latest Nuxt UI v4 patterns",
+            "Improved TypeScript safety for array iterations and UI component events",
+        ],
+    },
+    {
         date: "April 13, 2026",
         version: "v1.0.9",
         title: "Architecture Refactoring & Dashboard Enhancements",

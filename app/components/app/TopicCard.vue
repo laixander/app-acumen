@@ -1,16 +1,6 @@
 <script setup lang="ts">
 import { useTopics } from '~/composables/useTopics'
-export interface Topic {
-    title: string
-    progress: number
-    tag: string
-    status: string
-    lessons: string
-    lastStudied: string
-    lastStudiedAt: number
-    icon: string
-    isPinned: boolean
-}
+import type { Topic, LearningGoal } from '~/types/topic'
 
 const props = withDefaults(defineProps<{
     topic: Topic
@@ -24,6 +14,13 @@ const props = withDefaults(defineProps<{
 })
 
 const { togglePin, updateLastStudied } = useTopics()
+
+const goalColors: Record<LearningGoal, string> = {
+    'Mastery': 'amber',
+    'Overview': 'lime',
+    'Project Based': 'purple',
+    'Exam Prep': 'rose'
+}
 
 const actions = [
     [{
@@ -47,7 +44,7 @@ const actions = [
         :class="{ 'border-primary-500/30': topic.isPinned }" :ui="{
             header: 'p-0 sm:p-0 relative',
             body: viewMode === 'list' ? 'p-3 sm:p-4' : (isHero ? 'p-6' : '')
-        }">
+        }" @click="navigateTo(`/app/topics/${topic.id || topic.title.toLowerCase().replace(/\\s+/g, '-')}`)">
         <template #header v-if="viewMode === 'grid'">
             <div class="relative aspect-video overflow-hidden">
                 <Placeholder class="h-full" />
@@ -87,9 +84,12 @@ const actions = [
 
             <div class="flex items-center gap-4 w-full">
                 <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between w-fit">
+                    <div class="flex items-center justify-between w-fit gap-2">
                         <span class="text-sm font-medium truncate">{{ topic.title }}</span>
-                        <UBadge :label="topic.tag" variant="soft" size="sm" class="ml-2 shrink-0" />
+                        <UBadge :label="topic.tag" variant="soft" size="sm" class="shrink-0" />
+                        <UBadge v-if="viewMode === 'list' && topic.learningGoal" :label="topic.learningGoal"
+                            variant="subtle" size="sm" :color="goalColors[topic.learningGoal] as any"
+                            class="shrink-0" />
                     </div>
                     <div class="flex items-center gap-3">
                         <UProgress :model-value="topic.progress" size="xs" color="primary" class="flex-1" />
@@ -103,8 +103,8 @@ const actions = [
                     @click.stop="updateLastStudied(topic.title)" />
             </div>
             <!-- Grid View Meta -->
-            <div v-if="viewMode === 'grid'" class="flex items-center justify-between">
-                <div class="flex items-center gap-4 text-xs text-dimmed mt-4">
+            <div v-if="viewMode === 'grid'" class="flex items-center justify-between mt-4">
+                <div class="flex items-center gap-4 text-xs text-dimmed">
                     <span class="flex items-center gap-1">
                         <UIcon name="i-lucide-book-open" class="size-4" /> {{ topic.lessons }} lessons
                     </span>
@@ -112,6 +112,9 @@ const actions = [
                         <UIcon name="i-lucide-clock" class="size-4" /> {{ topic.lastStudied }}
                     </span>
                 </div>
+                <!-- Learning Goal Tag -->
+                <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle" size="sm"
+                    :color="goalColors[topic.learningGoal] as any" class="shrink-0" />
             </div>
 
             <!-- List View Meta -->
@@ -127,7 +130,8 @@ const actions = [
                 </span>
                 <div class="flex items-center gap-2 shrink-0">
                     <UButton :icon="topic.isPinned ? 'i-lucide-pin' : 'i-lucide-pin-off'"
-                        :variant="topic.isPinned ? 'soft' : 'ghost'" color="primary" size="xs" class="rounded-full"
+                        :variant="topic.isPinned ? 'soft' : 'ghost'" :color="topic.isPinned ? 'primary' : 'neutral'"
+                        size="xs" class="shadow-sm rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm"
                         @click.stop="togglePin(topic.title)" />
                     <UDropdownMenu v-if="showActions" :items="actions" :content="{
                         align: 'end',

@@ -8,7 +8,13 @@ export const useTopics = () => {
         const saved = localStorage.getItem('learnfast-topics')
         if (saved) {
             try {
-                topics.value = JSON.parse(saved)
+                const parsed = JSON.parse(saved)
+                topics.value = parsed.map((t: Topic) => {
+                    if (!t.id) {
+                        t.id = t.title.toLowerCase().replace(/\s+/g, '-')
+                    }
+                    return t
+                })
             } catch (e) {
                 console.error("Failed to load topics:", e)
             }
@@ -52,12 +58,18 @@ export const useTopics = () => {
             .slice(0, 3)
     })
 
+    const addTopic = (newTopic: Omit<Topic, 'id'>) => {
+        const id = newTopic.title.toLowerCase().replace(/\s+/g, '-')
+        topics.value.push({ ...newTopic, id } as Topic)
+    }
+
     return {
         topics,
         togglePin,
         updateLastStudied,
         pinnedTopics,
         continueLearningTopic,
-        recentTopics
+        recentTopics,
+        addTopic
     }
 }
