@@ -72,28 +72,23 @@ const confirmFinish = () => {
         isPinned: false,
         learningGoal: formData.learningGoal
     })
-    
+
     router.push('/app/dashboard')
 }
 </script>
 
 <template>
     <ContentPanel :title="`Create New Topic - ${steps[currentStep]}`">
-        <div class="max-w-4xl mx-auto py-8">
+        <div class="w-full max-w-4xl mx-auto py-8">
             <AppTopicStepper :current-step="currentStep" :steps="steps" />
 
             <UCard class="mt-12 shadow-sm border-neutral-100 dark:border-neutral-800" :ui="{ body: 'p-8 sm:p-12' }">
                 <!-- Step Content -->
                 <div class="min-h-[400px]">
-                    <Transition 
-                        mode="out-in" 
-                        enter-active-class="transition-all duration-300 ease-out"
-                        enter-from-class="opacity-0 translate-y-4"
-                        enter-to-class="opacity-100 translate-y-0"
+                    <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
+                        enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
                         leave-active-class="transition-all duration-200 ease-in"
-                        leave-from-class="opacity-100 translate-y-0"
-                        leave-to-class="opacity-0 -translate-y-4"
-                    >
+                        leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
                         <div :key="currentStep">
                             <AppTopicGenerating v-if="isGenerating" @finish="confirmFinish" />
                             <AppTopicAnalyzing v-else-if="isAnalyzing" />
@@ -113,24 +108,15 @@ const confirmFinish = () => {
                 </div>
 
                 <!-- Navigation Buttons -->
-                <div v-if="!isAnalyzing && !isGenerating" class="flex items-center justify-between mt-12 pt-8 border-t border-neutral-100 dark:border-neutral-800">
-                    <UButton 
-                        :label="currentStep === 0 ? 'Cancel' : 'Back'" 
-                        :icon="currentStep === 0 ? 'i-lucide-x' : 'i-lucide-arrow-left'" 
-                        variant="ghost" 
-                        color="neutral" 
-                        @click="prevStep" 
-                    />
-                    
-                    <UButton 
-                        :label="isLastStep ? 'Generate Plan' : 'Continue'" 
-                        :trailing-icon="isLastStep ? 'i-lucide-sparkles' : 'i-lucide-arrow-right'" 
-                        color="primary" 
-                        size="xl" 
-                        variant="solid" 
-                        :disabled="currentStep === 0 && !formData.title"
-                        @click="nextStep" 
-                    />
+                <div v-if="!isAnalyzing && !isGenerating"
+                    class="flex items-center justify-between mt-12 pt-8 border-t border-neutral-100 dark:border-neutral-800">
+                    <UButton :label="currentStep === 0 ? 'Cancel' : 'Back'"
+                        :icon="currentStep === 0 ? 'i-lucide-x' : 'i-lucide-arrow-left'" variant="ghost" color="neutral"
+                        @click="prevStep" />
+
+                    <UButton :label="isLastStep ? 'Generate Plan' : 'Continue'"
+                        :trailing-icon="isLastStep ? 'i-lucide-sparkles' : 'i-lucide-arrow-right'" color="primary"
+                        size="xl" variant="solid" :disabled="currentStep === 0 && !formData.title" @click="nextStep" />
                 </div>
             </UCard>
         </div>

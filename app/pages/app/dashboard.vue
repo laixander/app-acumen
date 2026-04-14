@@ -82,7 +82,7 @@ const recommended = RECOMMENDED_TOPICS
                         <!-- Empty State -->
                         <template v-else>
                             <div
-                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
+                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-full">
                                 <div class="bg-primary/10 p-4 rounded-full mb-4">
                                     <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
                                 </div>
