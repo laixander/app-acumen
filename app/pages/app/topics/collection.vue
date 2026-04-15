@@ -94,7 +94,7 @@ const filteredTopics = computed(() => {
                 <div class="flex items-center gap-3 mt-6">
                     <UButton v-if="topics.length > 0" label="Clear Filters" color="neutral" variant="ghost"
                         @click="searchQuery = ''; selectedTag = 'All'; currentStatus = 'All'" />
-                    <UButton v-else label="Create Topic" color="primary" />
+                    <UButton v-else label="Create Topic" color="primary" to="/app/topics/new" />
                 </div>
             </div>
         </div>
