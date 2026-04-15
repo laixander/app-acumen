@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTopics } from '~/composables/useTopics'
 import { useLessons } from '~/composables/useLessons'
+import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/utils/seeder'
 import type { LearningGoal, LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 const { addTopic } = useTopics()
@@ -64,71 +65,23 @@ const handleFinish = () => {
 const confirmFinish = () => {
     const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
     const topicId = slugify(formData.title || 'Untitled Topic')
-    const totalLessons = Math.floor(Math.random() * (15 - 8 + 1)) + 8 // 8 to 15 lessons
 
-    // Generate Lessons
-    const newLessons: LessonOverview[] = []
-    const newContents: LessonContent[] = []
-    const newAssessments: Assessment[] = []
+    // Use centralized logic to generate lessons
+    const { 
+        baseLessons, 
+        baseContents, 
+        baseAssessments 
+    } = generateBaseLessonsForTopic(topicId, formData.title)
 
-    for (let i = 1; i <= totalLessons; i++) {
-        const lessonId = `${topicId}-lesson-${i}`
-        const status = i === 1 ? 'current' : 'locked' // First lesson is current, others locked
+    // Inject assessments into the timeline (reviews/quizzes)
+    const { 
+        newTimeline, 
+        newAssessments, 
+        newContents: injectedContents 
+    } = injectAssessmentsIntoTimeline(topicId, formData.title, baseLessons, baseAssessments)
 
-        newLessons.push({
-            id: lessonId,
-            topicId: topicId,
-            title: `Lesson ${i}: Understanding ${formData.title || 'the Topic'}`,
-            duration: '15-20 min',
-            status: status as any,
-            type: i % 5 === 0 ? 'quiz' : 'reading',
-            icon: i % 5 === 0 ? 'i-lucide-clipboard-check' : 'i-lucide-book-open',
-            color: i === 1 ? 'primary' : 'neutral',
-            summary: `This AI-generated lesson focuses on essential segment ${i} of your study material for ${formData.title}.`
-        })
-
-        newContents.push({
-            id: lessonId,
-            topicId: topicId,
-            title: `Lesson ${i}: Understanding ${formData.title || 'the Topic'}`,
-            description: `A comprehensive breakdown of ${formData.title} concepts in part ${i}.`,
-            sections: [
-                {
-                    title: "Core Objectives",
-                    content: `In this section, we analyze the primary objectives extracted from your materials regarding ${formData.title}.`,
-                    aiInsight: "Focus on how this part connects to the previous foundational concepts."
-                },
-                {
-                    title: "Detailed Analysis",
-                    content: `AI analysis suggests that this part of the ${formData.title} curriculum is vital for your stated goal of ${formData.learningGoal}.`,
-                    aiInsight: null
-                }
-            ]
-        })
-
-        if (i % 5 === 0) {
-            newAssessments.push({
-                id: `assess-${lessonId}`,
-                lessonId: lessonId,
-                title: `Assessment Part ${Math.ceil(i / 5)}`,
-                questions: [
-                    {
-                        id: 1,
-                        text: `Which of the following best describes the core concept in part ${i}?`,
-                        options: [
-                            { id: 'a', label: 'Primary definition' },
-                            { id: 'b', label: 'Secondary application' },
-                            { id: 'c', label: 'Historical context' }
-                        ],
-                        correct: 'b'
-                    }
-                ]
-            })
-        }
-    }
-
-    addLessons(newLessons)
-    addLessonContents(newContents)
+    addLessons(newTimeline)
+    addLessonContents([...baseContents, ...injectedContents])
     addAssessments(newAssessments)
 
     addTopic({
@@ -136,7 +89,7 @@ const confirmFinish = () => {
         progress: 0,
         tag: 'New',
         status: 'Ongoing',
-        lessons: `0/${totalLessons}`,
+        lessons: `0/${newTimeline.length}`,
         lastStudied: 'Just now',
         lastStudiedAt: Date.now(),
         icon: 'i-lucide-sparkles',

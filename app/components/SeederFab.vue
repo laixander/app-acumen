@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { useSeeder } from '~/composables/useSeeder'
+import { onClickOutside } from '@vueuse/core'
 
+const fabRef = ref(null)
 const fabOpen = ref(false)
 const { seedTopics, clearTopics } = useSeeder()
+
+onClickOutside(fabRef, () => {
+    fabOpen.value = false
+})
 
 const actions = [
     {
@@ -28,7 +34,7 @@ const actions = [
 ]
 </script>
 <template>
-    <div class="fixed bottom-6 left-6 flex flex-col items-start gap-2 z-50">
+    <div ref="fabRef" class="fixed bottom-6 left-6 flex flex-col items-start gap-2 z-50">
         <Transition name="fab-menu">
             <div v-if="fabOpen" class="flex flex-col items-start gap-2 mb-2">
                 <UButton v-for="item in actions" :key="item.id" :icon="item.icon" :label="item.label" size="lg"

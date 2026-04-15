@@ -24,6 +24,7 @@ export interface LessonOverview {
     icon: string
     color: string
     summary: string
+    assessmentId?: string
 }
 
 export interface LessonSection {
@@ -56,6 +57,7 @@ export interface AssessmentQuestion {
 export interface Assessment {
     id: string
     lessonId: string
+    topicId: string
     title: string
     questions: AssessmentQuestion[]
 }

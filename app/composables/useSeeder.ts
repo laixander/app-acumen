@@ -1,4 +1,4 @@
-import { MOCK_TOPICS } from '~/constants/topics'
+import { MOCK_TOPICS, injectAssessmentsIntoTimeline } from '~/utils/seeder'
 import { useTopics } from '~/composables/useTopics'
 import { useLessons } from '~/composables/useLessons'
 import { useToast } from '#ui/composables/useToast'
@@ -6,13 +6,12 @@ import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 export const useSeeder = () => {
     const { topics } = useTopics()
-    const { lessons, lessonContents, assessments, addLessons, addLessonContents, addAssessments, clearAll: clearLessons } = useLessons()
+    const { getLessonsByTopic, addLessons, addLessonContents, addAssessments, clearAll: clearLessons } = useLessons()
     const toast = useToast()
 
     const seedTopics = () => {
         topics.value = [...MOCK_TOPICS]
         
-        // Clear and Seed Lessons for each topic
         const allLessons: LessonOverview[] = []
         const allContents: LessonContent[] = []
         const allAssessments: Assessment[] = []
@@ -22,57 +21,62 @@ export const useSeeder = () => {
             const completed = lessonsParts[0] ?? 0
             const total = lessonsParts[1] ?? 0
             
+            const baseLessons: LessonOverview[] = []
+            
+            // Create base reading lessons
             for (let i = 1; i <= total; i++) {
                 const lessonId = `${topic.id}-lesson-${i}`
                 const status = i <= completed ? 'completed' : (i === completed + 1 ? 'current' : 'locked')
                 
-                allLessons.push({
+                baseLessons.push({
                     id: lessonId,
                     topicId: topic.id,
-                    title: `Lesson ${i}: ${topic.title} Deep Dive`,
+                    title: `Lesson ${i}: ${topic.title} Core`,
                     duration: '15 min',
                     status: status as any,
-                    type: i % 4 === 0 ? 'quiz' : 'reading',
-                    icon: i % 4 === 0 ? 'i-lucide-clipboard-check' : 'i-lucide-book-open',
+                    type: 'reading',
+                    icon: 'i-lucide-book-open',
                     color: i <= completed ? 'green' : (i === completed + 1 ? 'primary' : 'neutral'),
-                    summary: `Automated summary for lesson ${i} of ${topic.title}. This content is generated to provide a realistic trial experience.`
+                    summary: `Standard seeded lesson content for module ${i}.`
                 })
 
                 allContents.push({
                     id: lessonId,
                     topicId: topic.id,
-                    title: `Lesson ${i}: ${topic.title} Deep Dive`,
-                    description: `Detailed exploration of ${topic.title} - Part ${i}.`,
+                    title: `Lesson ${i}: ${topic.title} Core`,
+                    description: `Topic module exploration Part ${i}.`,
                     sections: [
-                        {
-                            title: "Overview",
-                            content: `This section covers the essential concepts of ${topic.title} in the context of lesson ${i}.`,
-                            aiInsight: "Pay close attention to the relationship between these concepts and your overall learning goal."
-                        }
-                    ],
-                    assessmentId: i % 4 === 0 ? `assess-${lessonId}` : undefined
+                        { title: "Overview", content: "Details about this seeded lesson.", aiInsight: "Review this before the milestone." }
+                    ]
                 })
-
-                if (i % 4 === 0) {
-                    allAssessments.push({
-                        id: `assess-${lessonId}`,
-                        lessonId: lessonId,
-                        title: `Assessment ${i/4}`,
-                        questions: [
-                            {
-                                id: 1,
-                                text: `What is the primary takeaway from ${topic.title} Part ${i}?`,
-                                options: [
-                                    { id: 'a', label: 'The first option' },
-                                    { id: 'b', label: 'The second option' },
-                                    { id: 'c', label: 'The third option' }
-                                ],
-                                correct: 'a'
-                            }
-                        ]
-                    })
-                }
             }
+
+            // Inject Assessments using centralized logic
+            const { newTimeline, newAssessments, newContents } = injectAssessmentsIntoTimeline(topic.id, topic.title, baseLessons)
+            
+            // Correct statuses for seeded topics (since injectAssessmentsIntoTimeline assumes a fresh injection)
+            // We need to match the 'completed' state from the seeder
+            newTimeline.forEach(item => {
+                if (item.type === 'quiz') {
+                    const quizNum = parseInt(item.id.split('-').pop() || '0')
+                    const isFinal = item.id.includes('final')
+                    
+                    if (isFinal) {
+                        item.status = completed >= total ? 'completed' : (completed === total ? 'current' : 'locked')
+                        item.color = item.status === 'completed' ? 'green' : (item.status === 'current' ? 'purple' : 'neutral')
+                    } else if (quizNum <= completed) {
+                        item.status = 'completed'
+                        item.color = 'green'
+                    } else if (quizNum === completed) {
+                        item.status = 'current'
+                        item.color = 'orange'
+                    }
+                }
+            })
+
+            allLessons.push(...newTimeline)
+            allAssessments.push(...newAssessments)
+            allContents.push(...newContents)
         })
 
         clearLessons()

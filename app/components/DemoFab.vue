@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
+
+const fabRef = ref(null)
 const fabOpen = ref(false)
+
+onClickOutside(fabRef, () => {
+    fabOpen.value = false
+})
 
 const demoPages = [
     {
@@ -34,7 +41,7 @@ const demoPages = [
 </script>
 
 <template>
-    <div class="fixed bottom-6 right-6 flex flex-col items-end gap-2 z-50">
+    <div ref="fabRef" class="fixed bottom-6 right-6 flex flex-col items-end gap-2 z-50">
         <Transition name="fab-menu">
             <div v-if="fabOpen" class="flex flex-col items-end gap-2 mb-2">
                 <UButton v-for="page in demoPages" :key="page.id" :icon="page.icon" :label="page.label" size="lg"

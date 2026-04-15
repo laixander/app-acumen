@@ -77,7 +77,9 @@ export const useLessons = () => {
 
         if (next && next.status === 'locked') {
             next.status = 'current'
-            next.color = 'primary'
+            if (next.color === 'neutral') {
+                next.color = 'primary'
+            }
         }
     }
 
@@ -87,6 +89,13 @@ export const useLessons = () => {
 
     const getAssessmentByLessonId = (lessonId: string) => {
         return assessments.value.find(a => a.lessonId === lessonId)
+    }
+
+    const updateLessonsForTopic = (topicId: string, newLessons: LessonOverview[]) => {
+        // Remove old lessons for this topic
+        lessons.value = lessons.value.filter(l => l.topicId !== topicId)
+        // Add new ones
+        lessons.value.push(...newLessons)
     }
 
     const clearAll = () => {
@@ -102,6 +111,7 @@ export const useLessons = () => {
         addLessons,
         addLessonContents,
         addAssessments,
+        updateLessonsForTopic,
         getLessonsByTopic,
         getAdjacentLessons,
         completeLesson,

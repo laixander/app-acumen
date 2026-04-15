@@ -72,6 +72,12 @@ export const useTopics = () => {
             topic.lessons = `${completed}/${total}`
             topic.lastStudiedAt = Date.now()
             topic.lastStudied = 'Just now'
+            
+            if (progress >= 100) {
+                topic.status = 'Completed'
+            } else if (topic.status === 'Completed') {
+                topic.status = 'Ongoing' // Reset if somehow progress goes down (e.g. adding lessons)
+            }
         }
     }
 

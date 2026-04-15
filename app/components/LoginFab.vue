@@ -1,7 +1,13 @@
 <script setup lang="ts">
+import { onClickOutside } from '@vueuse/core'
 import type { MockRole } from '~/types/components'
 
+const fabRef = ref(null)
 const fabOpen = ref(false)
+
+onClickOutside(fabRef, () => {
+    fabOpen.value = false
+})
 
 const mockRoles: MockRole[] = [
     {
@@ -26,7 +32,7 @@ function mockLogin(item: MockRole) {
 }
 </script>
 <template>
-    <div class="fixed bottom-6 right-6 flex flex-col items-end gap-2 z-50">
+    <div ref="fabRef" class="fixed bottom-6 right-6 flex flex-col items-end gap-2 z-50">
         <Transition name="fab-menu">
             <div v-if="fabOpen" class="flex flex-col items-end gap-2 mb-2">
                 <UButton v-for="item in mockRoles" :key="item.role" :icon="item.icon" :label="item.label" size="lg"

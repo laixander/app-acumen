@@ -3,9 +3,8 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import { useTheme, fontOptions } from '~/composables/useTheme'
 import { useUser } from '~/composables/useUser'
 
-const colorMode = useColorMode()
 const appConfig = useAppConfig()
-const { theme, setFont, setBrandFont, setBrandWeight, setPrimary, setNeutral } = useTheme()
+const { theme, colorMode, setFont, setBrandFont, setBrandWeight, setPrimary, setNeutral } = useTheme()
 const { user } = useUser()
 
 const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
@@ -25,17 +24,11 @@ const items = computed<DropdownMenuItem[][]>(() => [
             icon: 'i-lucide-palette',
             children: [
                 [{
-                    label: colorMode.preference === 'system' ? 'System mode' : (isDark.value ? 'Light mode' : 'Dark mode'),
-                    icon: colorMode.preference === 'system' ? 'i-lucide-monitor' : (isDark.value ? 'i-lucide-sun' : 'i-lucide-moon'),
+                    label: isDark.value ? 'Light mode' : 'Dark mode',
+                    icon: isDark.value ? 'i-lucide-sun' : 'i-lucide-moon',
                     onSelect(e: Event) {
                         e.preventDefault()
-                        if (colorMode.preference === 'system') {
-                            colorMode.preference = 'light'
-                        } else if (colorMode.preference === 'light') {
-                            colorMode.preference = 'dark'
-                        } else {
-                            colorMode.preference = 'system'
-                        }
+                        colorMode.preference = isDark.value ? 'light' : 'dark'
                     }
                 },
                 {
