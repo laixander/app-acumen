@@ -1,12 +1,12 @@
 import type { Topic, LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 export const MOCK_TOPICS: Topic[] = [
-    { id: 'introduction-to-algebra', title: 'Introduction to Algebra', progress: 80, tag: 'Math', status: 'Ongoing', lessons: '10/12', lastStudied: '2 hrs ago', lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000, icon: 'i-lucide-function-square', isPinned: true, learningGoal: 'Mastery' },
-    { id: 'world-war-ii-overview', title: 'World War II Overview', progress: 55, tag: 'History', status: 'Ongoing', lessons: '6/11', lastStudied: '1 day ago', lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000, icon: 'i-lucide-landmark', isPinned: false, learningGoal: 'Overview' },
-    { id: 'newtons-laws-of-motion', title: "Newton's Laws of Motion", progress: 30, tag: 'Science', status: 'Ongoing', lessons: '3/10', lastStudied: '3 days ago', lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, icon: 'i-lucide-microscope', isPinned: true, learningGoal: 'Exam Prep' },
-    { id: 'spanish-basics', title: 'Spanish Basics', progress: 65, tag: 'Language', status: 'Ongoing', lessons: '8/12', lastStudied: 'Yesterday', lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000, icon: 'i-lucide-languages', isPinned: false, learningGoal: 'Mastery' },
-    { id: 'greek-mythology', title: 'Greek Mythology', progress: 100, tag: 'History', status: 'Completed', lessons: '8/8', lastStudied: '1 week ago', lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000, icon: 'i-lucide-scroll', isPinned: false, learningGoal: 'Overview' },
-    { id: 'advanced-javascript', title: 'Advanced JavaScript', progress: 15, tag: 'Science', status: 'Ongoing', lessons: '2/12', lastStudied: '5 hrs ago', lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000, icon: 'i-lucide-code', isPinned: false, learningGoal: 'Project Based' },
+    { id: 'introduction-to-algebra', slug: 'introduction-to-algebra', title: 'Introduction to Algebra', progress: 80, tag: 'Math', status: 'Ongoing', lessons: '10/12', lastStudied: '2 hrs ago', lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000, icon: 'i-lucide-function-square', isPinned: true, learningGoal: 'Mastery' },
+    { id: 'world-war-ii-overview', slug: 'world-war-ii-overview', title: 'World War II Overview', progress: 55, tag: 'History', status: 'Ongoing', lessons: '6/11', lastStudied: '1 day ago', lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000, icon: 'i-lucide-landmark', isPinned: false, learningGoal: 'Overview' },
+    { id: 'newtons-laws-of-motion', slug: 'newtons-laws-of-motion', title: "Newton's Laws of Motion", progress: 30, tag: 'Science', status: 'Ongoing', lessons: '3/10', lastStudied: '3 days ago', lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, icon: 'i-lucide-microscope', isPinned: true, learningGoal: 'Exam Prep' },
+    { id: 'spanish-basics', slug: 'spanish-basics', title: 'Spanish Basics', progress: 65, tag: 'Language', status: 'Ongoing', lessons: '8/12', lastStudied: 'Yesterday', lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000, icon: 'i-lucide-languages', isPinned: false, learningGoal: 'Mastery' },
+    { id: 'greek-mythology', slug: 'greek-mythology', title: 'Greek Mythology', progress: 100, tag: 'History', status: 'Completed', lessons: '8/8', lastStudied: '1 week ago', lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000, icon: 'i-lucide-scroll', isPinned: false, learningGoal: 'Overview' },
+    { id: 'advanced-javascript', slug: 'advanced-javascript', title: 'Advanced JavaScript', progress: 15, tag: 'Science', status: 'Ongoing', lessons: '2/12', lastStudied: '5 hrs ago', lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000, icon: 'i-lucide-code', isPinned: false, learningGoal: 'Project Based' },
 ]
 
 export const TOPIC_CONTENT_MAP: Record<string, {
@@ -243,10 +243,10 @@ export const calculateInterval = (totalLessons: number) => {
     return 5
 }
 
-export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string): { 
-    baseLessons: LessonOverview[], 
-    baseContents: LessonContent[], 
-    baseAssessments: Assessment[] 
+export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string): {
+    baseLessons: LessonOverview[],
+    baseContents: LessonContent[],
+    baseAssessments: Assessment[]
 } => {
     const custom = TOPIC_CONTENT_MAP[topicId]
     const baseLessons: LessonOverview[] = []
@@ -257,7 +257,7 @@ export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string)
         custom.lessons.forEach((l, idx) => {
             const lessonId = l.id || `${topicId}-lesson-${idx + 1}`
             const status = idx === 0 ? 'current' : 'locked'
-            
+
             baseLessons.push({
                 id: lessonId,
                 topicId,
@@ -295,7 +295,7 @@ export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string)
         for (let i = 1; i <= count; i++) {
             const lessonId = `${topicId}-lesson-${i}`
             const status = i === 1 ? 'current' : 'locked'
-            
+
             baseLessons.push({
                 id: lessonId,
                 topicId,
@@ -328,7 +328,7 @@ export const generateReviewContent = (id: string, topicId: string, topicTitle: s
         id,
         topicId,
         title: isFinal ? 'Final Topic Review' : 'Checkpoint Review',
-        description: isFinal 
+        description: isFinal
             ? `You've reached the end of ${topicTitle}! This final review session will help you synthesize everything you've learned before the final assessment.`
             : `Great job reaching this milestone in ${topicTitle}. Take a moment to review core concepts.`,
         sections: [
@@ -348,14 +348,14 @@ export const generateReviewContent = (id: string, topicId: string, topicTitle: s
 }
 
 export const injectAssessmentsIntoTimeline = (
-    topicId: string, 
-    topicTitle: string, 
+    topicId: string,
+    topicTitle: string,
     baseLessons: LessonOverview[],
     predefinedAssessments: Assessment[] = []
 ) => {
     const totalBaseLessons = baseLessons.filter(l => l.type !== 'quiz').length
     const interval = calculateInterval(totalBaseLessons)
-    
+
     const newTimeline: LessonOverview[] = []
     const newAssessments: Assessment[] = [...predefinedAssessments]
     const newContents: LessonContent[] = []
@@ -374,7 +374,7 @@ export const injectAssessmentsIntoTimeline = (
         if (baseCount % interval === 0 && index !== baseLessons.length - 1) {
             const quizId = `${topicId}-quiz-${baseCount}`
             const status = lesson.status === 'completed' ? 'current' : 'locked' // Simplified for injection
-            
+
             newTimeline.push({
                 id: quizId,
                 topicId,
@@ -399,13 +399,13 @@ export const injectAssessmentsIntoTimeline = (
                     {
                         id: 1,
                         text: `What is the primary theme of the last ${interval} lessons?`,
-                        options: [{id:'1', label:'Correct Answer'}, {id:'2', label:'Wrong'}, {id:'3', label:'Wrong'}],
+                        options: [{ id: '1', label: 'Correct Answer' }, { id: '2', label: 'Wrong' }, { id: '3', label: 'Wrong' }],
                         correct: '1'
                     },
                     {
                         id: 2,
                         text: `How does this relate to ${topicTitle}?`,
-                        options: [{id:'1', label:'Related'}, {id:'2', label:'Unrelated'}],
+                        options: [{ id: '1', label: 'Related' }, { id: '2', label: 'Unrelated' }],
                         correct: '1'
                     }
                 ]

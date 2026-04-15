@@ -6,6 +6,7 @@ const props = defineProps<{
         title: string
         description: string
         learningGoal: LearningGoal
+        slug: string
         duration: string
         availability: string
         files: any[]
@@ -50,6 +51,7 @@ const stats = [
                         <div>
                             <p class="text-xs text-muted uppercase font-bold">Topic</p>
                             <p class="font-bold">{{ formData.title || 'Untitled Topic' }}</p>
+                            <p class="text-[10px] font-mono text-muted">/app/topics/{{ formData.slug }}</p>
                         </div>
                         <UBadge :label="formData.learningGoal" variant="soft" color="primary" />
                     </div>

@@ -15,6 +15,9 @@ export const useTopics = () => {
                     if (!t.id) {
                         t.id = slugify(t.title)
                     }
+                    if (!t.slug) {
+                        t.slug = t.id
+                    }
                     return t
                 })
             } catch (e) {
@@ -60,9 +63,9 @@ export const useTopics = () => {
             .slice(0, 3)
     })
 
-    const addTopic = (newTopic: Omit<Topic, 'id'>) => {
-        const id = slugify(newTopic.title)
-        topics.value.push({ ...newTopic, id } as Topic)
+    const addTopic = (newTopic: Omit<Topic, 'id' | 'slug'> & { slug?: string }) => {
+        const id = newTopic.slug || slugify(newTopic.title)
+        topics.value.push({ ...newTopic, id, slug: id } as Topic)
     }
 
     const updateTopicProgress = (topicId: string, completed: number, total: number, progress: number) => {

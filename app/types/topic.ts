@@ -2,6 +2,7 @@ export type LearningGoal = 'Mastery' | 'Overview' | 'Project Based' | 'Exam Prep
 
 export interface Topic {
     id: string
+    slug: string
     title: string
     progress: number
     tag: string

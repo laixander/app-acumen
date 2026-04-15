@@ -18,6 +18,7 @@ const formData = reactive({
     duration: '2 weeks',
     availability: 'Standard (5-7h/week)',
     files: [] as any[],
+    slug: '',
     assessments: [
         { label: 'Core Fundamentals', value: 50 },
         { label: 'Advanced Optimization', value: 30 },
@@ -64,7 +65,7 @@ const handleFinish = () => {
 
 const confirmFinish = () => {
     const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-    const topicId = slugify(formData.title || 'Untitled Topic')
+    const topicId = formData.slug || slugify(formData.title || 'Untitled Topic')
 
     // Use centralized logic to generate lessons
     const { 
@@ -94,7 +95,8 @@ const confirmFinish = () => {
         lastStudiedAt: Date.now(),
         icon: 'i-lucide-sparkles',
         isPinned: false,
-        learningGoal: formData.learningGoal
+        learningGoal: formData.learningGoal,
+        slug: topicId
     })
 
     router.push('/app/dashboard')
@@ -153,7 +155,7 @@ const confirmFinish = () => {
 
                         <UButton :label="isLastStep ? 'Generate Plan' : 'Continue'"
                             :trailing-icon="isLastStep ? 'i-lucide-sparkles' : 'i-lucide-arrow-right'" color="primary"
-                            size="xl" variant="solid" :disabled="currentStep === 0 && !formData.title"
+                            size="xl" variant="solid" :disabled="(currentStep === 0 && (!formData.title || formData.title.toLowerCase().includes('new')))"
                             @click="nextStep" />
                     </div>
                 </UCard>

@@ -62,7 +62,7 @@ const recommended = RECOMMENDED_TOPICS
                             <div class="flex items-center justify-between h-5">
                                 <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
                                 <UButton label="View all" icon="i-lucide-arrow-right" color="primary" variant="ghost"
-                                    size="sm" class="uppercase" to="/app/my-topics" />
+                                    size="sm" class="uppercase" to="/app/topics/collection" />
                             </div>
                             <div class="grid md:grid-cols-2 gap-6">
                                 <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />

@@ -97,6 +97,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 15, 2026",
+        version: "v1.1.1",
+        title: "Topic Customization & Validation Engine",
+        changes: [
+            "Implemented custom URL slug support for the topic creation process",
+            "Added real-time slug auto-generation with support for manual overrides",
+            "Developed a title validation system to prevent the use of reserved keywords like 'New'",
+            "Enhanced Topic data model and type definitions with a dedicated 'slug' property",
+            "Fixed TypeScript type mismatches in form validation properties and mock data seeding",
+            "Updated centralized seeder utility to support the expanded topic schema and routing",
+            "Synchronized project versioning across package.json and documentation modules",
+        ],
+    },
+    {
         date: "April 14, 2026",
         version: "v1.1.0",
         title: "Learning Wizard Optimization & AI Transition States",

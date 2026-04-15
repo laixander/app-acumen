@@ -1,15 +1,31 @@
 <script setup lang="ts">
 import type { LearningGoal } from '~/types/topic'
+import { slugify } from '~/utils/format'
 
 const props = defineProps<{
     modelValue: {
         title: string
         description: string
         learningGoal: LearningGoal
+        slug: string
     }
 }>()
 
 const emit = defineEmits(['update:modelValue'])
+
+const isManualSlug = ref(false)
+
+// Auto-generate slug from title
+watch(() => props.modelValue.title, (newTitle) => {
+    if (!isManualSlug.value) {
+        updateField('slug', slugify(newTitle))
+    }
+})
+
+const updateSlugManually = (val: string) => {
+    isManualSlug.value = true
+    updateField('slug', slugify(val))
+}
 
 const goals: { label: LearningGoal; icon: string; description: string }[] = [
     { label: 'Mastery', icon: 'i-lucide-award', description: 'Deep dive into every concept.' },
@@ -21,6 +37,13 @@ const goals: { label: LearningGoal; icon: string; description: string }[] = [
 const updateField = (field: string, value: any) => {
     emit('update:modelValue', { ...props.modelValue, [field]: value })
 }
+
+const titleError = computed(() => {
+    if (props.modelValue.title.toLowerCase().includes('new')) {
+        return "The word 'New' is reserved. Please choose a more descriptive title."
+    }
+    return undefined
+})
 </script>
 
 <template>
@@ -37,11 +60,19 @@ const updateField = (field: string, value: any) => {
         </div>
 
         <div class="flex flex-col gap-6">
-            <UFormField label="Topic Title" help="e.g. Machine Learning Fundamentals">
-                <UInput :model-value="modelValue.title" @update:model-value="v => updateField('title', v)"
-                    placeholder="Enter the main topic..." size="xl" variant="subtle" class="w-full" />
-            </UFormField>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <UFormField label="Topic Title" help="e.g. Machine Learning Fundamentals" :error="titleError">
+                    <UInput :model-value="modelValue.title" @update:model-value="v => updateField('title', v)"
+                        placeholder="Enter the main topic..." size="xl" variant="subtle" class="w-full"
+                        :color="titleError ? 'error' : 'neutral'" />
+                </UFormField>
 
+                <UFormField label="Custom URL Slug" help="Personalize your topic URL">
+                    <UInput :model-value="modelValue.slug" @update:model-value="updateSlugManually"
+                        placeholder="topic-url-slug" size="xl" variant="subtle" class="w-full font-mono text-sm"
+                        icon="i-lucide-link" />
+                </UFormField>
+            </div>
             <UFormField label="Detailed Description"
                 help="What specific areas do you want to cover? Any prerequisites?">
                 <UTextarea :model-value="modelValue.description"
