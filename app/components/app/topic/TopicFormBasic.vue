@@ -27,11 +27,11 @@ const updateField = (field: string, value: any) => {
     <div class="flex flex-col gap-8">
         <div class="flex items-center gap-4">
             <div class="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-xl">
-                <UIcon name="i-lucide-book" class="text-2xl text-primary-500" />
+                <UIcon name="i-lucide-book" class="text-2xl text-primary flex shrink-0" />
             </div>
             <div>
                 <h2 class="text-xl font-bold">Tell us what you want to learn</h2>
-                <p class="text-sm text-neutral-500">The more detail you provide, the better AI can customize your path.
+                <p class="text-sm text-muted">The more detail you provide, the better AI can customize your path.
                 </p>
             </div>
         </div>
@@ -39,14 +39,14 @@ const updateField = (field: string, value: any) => {
         <div class="flex flex-col gap-6">
             <UFormField label="Topic Title" help="e.g. Machine Learning Fundamentals">
                 <UInput :model-value="modelValue.title" @update:model-value="v => updateField('title', v)"
-                    placeholder="Enter the main topic..." size="xl" class="w-full bg-neutral-50 dark:bg-neutral-900" />
+                    placeholder="Enter the main topic..." size="xl" variant="subtle" class="w-full" />
             </UFormField>
 
             <UFormField label="Detailed Description"
                 help="What specific areas do you want to cover? Any prerequisites?">
                 <UTextarea :model-value="modelValue.description"
                     @update:model-value="v => updateField('description', v)" placeholder="Add more context here..."
-                    size="xl" :rows="4" class="w-full bg-neutral-50 dark:bg-neutral-900" />
+                    size="xl" :rows="4" variant="subtle" class="w-full" />
             </UFormField>
 
             <div class="flex flex-col gap-3">
@@ -55,20 +55,20 @@ const updateField = (field: string, value: any) => {
                     <UCard v-for="goal in goals" :key="goal.label" class="cursor-pointer transition-all duration-200"
                         :class="[
                             modelValue.learningGoal === goal.label
-                                ? 'ring-2 ring-primary-500 bg-primary-50 dark:bg-primary-900/20 border-transparent'
-                                : 'hover:border-primary-300 dark:hover:border-primary-700'
+                                ? 'ring-2 ring-primary bg-primary-50 dark:bg-primary-900/20'
+                                : 'hover:ring-2 hover:ring-primary-300 dark:hover:ring-primary-700'
                         ]" :ui="{ body: 'p-4 flex items-center gap-4' }"
                         @click="updateField('learningGoal', goal.label)">
                         <div class="p-2 rounded-lg"
-                            :class="modelValue.learningGoal === goal.label ? 'bg-primary-500 text-white' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-500'">
-                            <UIcon :name="goal.icon" class="text-xl" />
+                            :class="modelValue.learningGoal === goal.label ? 'bg-primary text-white' : 'bg-elevated text-muted'">
+                            <UIcon :name="goal.icon" class="text-xl flex shrink-0" />
                         </div>
                         <div>
                             <p class="font-bold text-sm">{{ goal.label }}</p>
-                            <p class="text-xs text-neutral-500">{{ goal.description }}</p>
+                            <p class="text-xs text-muted">{{ goal.description }}</p>
                         </div>
                         <div v-if="modelValue.learningGoal === goal.label" class="ml-auto">
-                            <UIcon name="i-lucide-check-circle" class="text-primary-500 text-xl" />
+                            <UIcon name="i-lucide-check-circle" class="text-primary text-xl flex shrink-0" />
                         </div>
                     </UCard>
                 </div>

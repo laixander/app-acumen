@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useLessons } from '~/composables/useLessons'
+import { useTopics } from '~/composables/useTopics'
+import { computed, ref } from 'vue'
+import type { LessonContent } from '~/types/topic'
 
 const route = useRoute()
-const { data: lessonData } = await useFetch(`/api/lesson/${route.params.id}`)
+const router = useRouter()
+const { getLessonContentById, getAdjacentLessons, completeLesson, getLessonsByTopic } = useLessons()
+const { updateTopicProgress } = useTopics()
+
+const { data: serverLessonData } = await useFetch<LessonContent>(`/api/lesson/${route.params.id}`)
+const localLessonData = getLessonContentById(route.params.id as string)
+
+const lessonData = computed(() => {
+    return localLessonData || serverLessonData.value
+})
 
 const title = computed(() => {
     return lessonData.value?.title || 'Lesson Viewer'
@@ -10,7 +23,36 @@ const title = computed(() => {
 
 const noteContent = ref('')
 
-// lessonData is already fetched above
+const adjacent = computed(() => getAdjacentLessons(route.params.id as string))
+
+const handlePrevious = () => {
+    if (adjacent.value.prev) {
+        router.push(`/app/lesson/${adjacent.value.prev.id}`)
+    }
+}
+
+const handleContinue = () => {
+    // 1. Mark current as complete in local state
+    completeLesson(route.params.id as string)
+
+    // 2. Update topic progress in the topics store
+    const topicId = lessonData.value?.topicId
+    if (topicId) {
+        const topicLessons = getLessonsByTopic(topicId)
+        const completedCount = topicLessons.filter(l => l.status === 'completed').length
+        const totalCount = topicLessons.length
+        const progress = Math.round((completedCount / totalCount) * 100)
+        updateTopicProgress(topicId, completedCount, totalCount, progress)
+    }
+
+    // 3. Navigate to next lesson or return to topic view
+    if (adjacent.value.next) {
+        router.push(`/app/lesson/${adjacent.value.next.id}`)
+    } else {
+        // Last lesson completed!
+        router.push(topicId ? `/app/topics/${topicId}` : '/app/dashboard')
+    }
+}
 
 useHead({
     title: `${title.value} - LearnFast Lesson`
@@ -53,8 +95,10 @@ useHead({
                                 <h3 class="text-xl font-semibold mt-8 mb-3">{{ section.title }}</h3>
                                 <p>{{ section.content }}</p>
 
-                                <div v-if="section.aiInsight" class="bg-primary-500/10 border-l-4 border-primary-500 p-4 my-6 rounded-r-lg">
-                                    <strong class="text-primary-700 dark:text-primary-400 block mb-1">AI Insight</strong>
+                                <div v-if="section.aiInsight"
+                                    class="bg-primary-500/10 border-l-4 border-primary-500 p-4 my-6 rounded-r-lg">
+                                    <strong class="text-primary-700 dark:text-primary-400 block mb-1">AI
+                                        Insight</strong>
                                     <p class="m-0 text-primary-600 dark:text-primary-300 text-sm">
                                         {{ section.aiInsight }}
                                     </p>
@@ -64,14 +108,13 @@ useHead({
 
                         <div
                             class="mt-12 pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
-                            <UButton label="Previous Lesson" icon="i-lucide-arrow-left" color="neutral"
-                                variant="ghost" />
+                            <UButton label="Previous Lesson" icon="i-lucide-arrow-left" color="neutral" variant="ghost"
+                                :disabled="!adjacent.prev" @click="handlePrevious" />
                             <div class="flex items-center gap-3">
-                                <UButton label="Complete & Continue" icon="i-lucide-check-circle" color="neutral" variant="soft" />
-                                <UButton v-if="lessonData?.assessmentId" 
-                                    label="Take Assessment" 
-                                    icon="i-lucide-clipboard-check" 
-                                    color="primary" 
+                                <UButton label="Complete & Continue" icon="i-lucide-check-circle" color="neutral"
+                                    variant="soft" @click="handleContinue" />
+                                <UButton v-if="lessonData?.assessmentId" label="Take Assessment"
+                                    icon="i-lucide-clipboard-check" color="primary"
                                     :to="`/app/assessment/${lessonData.assessmentId}`" />
                             </div>
                         </div>

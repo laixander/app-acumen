@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { useLessons } from '~/composables/useLessons'
 import { ref, computed } from 'vue'
 
 const route = useRoute()
-const { data: assessmentData } = await useFetch(`/api/assessment/${route.params.id}`)
+const { getAssessmentByLessonId } = useLessons()
+
+const { data: serverAssessmentData } = await useFetch(`/api/assessment/${route.params.id}`)
+const localAssessmentData = getAssessmentByLessonId(route.params.id as string)
+
+const assessmentData = computed(() => {
+    return localAssessmentData || serverAssessmentData.value
+})
 
 const title = computed(() => {
     return assessmentData.value?.title || 'Assessment'

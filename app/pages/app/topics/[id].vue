@@ -1,15 +1,22 @@
 <script setup lang="ts">
 import { useTopics } from '~/composables/useTopics'
+import { useLessons } from '~/composables/useLessons'
 import { computed } from 'vue'
 
 const route = useRoute()
 const { topics } = useTopics()
+const { getLessonsByTopic } = useLessons()
 
 const topic = computed(() => {
     return topics.value.find(t => t.id === route.params.id)
 })
 
-const { data: lessons } = await useFetch(`/api/lessons?topicId=${route.params.id}`)
+const { data: serverLessons } = await useFetch(`/api/lessons?topicId=${route.params.id}`)
+
+const lessons = computed(() => {
+    const local = getLessonsByTopic(route.params.id as string)
+    return local.length > 0 ? local : (serverLessons.value || [])
+})
 
 useHead({
     title: topic.value ? `${topic.value.title} - LearnFast` : 'Topic Not Found'

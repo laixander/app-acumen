@@ -70,7 +70,8 @@ const actions = [
                         sideOffset: 8
                     }">
                         <UButton icon="i-lucide-more-horizontal" color="neutral" variant="ghost" size="xs"
-                            class="shadow-sm rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm" />
+                            class="shadow-sm rounded-full bg-white/90 dark:bg-neutral-800/90 backdrop-blur-sm"
+                            @click.stop />
                     </UDropdownMenu>
                 </div>
             </div>
@@ -138,7 +139,7 @@ const actions = [
                         side: 'bottom',
                         sideOffset: 8
                     }">
-                        <UButton icon="i-lucide-more-vertical" color="neutral" variant="ghost" size="xs" />
+                        <UButton icon="i-lucide-more-vertical" color="neutral" variant="ghost" size="xs" @click.stop />
                     </UDropdownMenu>
                 </div>
             </div>

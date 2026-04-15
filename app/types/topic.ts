@@ -13,3 +13,49 @@ export interface Topic {
     isPinned: boolean
     learningGoal?: LearningGoal
 }
+
+export interface LessonOverview {
+    id: string
+    topicId: string
+    title: string
+    duration: string
+    status: 'completed' | 'current' | 'locked'
+    type: string
+    icon: string
+    color: string
+    summary: string
+}
+
+export interface LessonSection {
+    title: string
+    content: string
+    aiInsight: string | null
+}
+
+export interface LessonContent {
+    id: string
+    topicId: string
+    title: string
+    description: string
+    sections: LessonSection[]
+    assessmentId?: string
+}
+
+export interface AssessmentOption {
+    id: string
+    label: string
+}
+
+export interface AssessmentQuestion {
+    id: string | number
+    text: string
+    options: AssessmentOption[]
+    correct: string
+}
+
+export interface Assessment {
+    id: string
+    lessonId: string
+    title: string
+    questions: AssessmentQuestion[]
+}

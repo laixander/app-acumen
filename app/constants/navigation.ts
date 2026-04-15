@@ -1,147 +1,153 @@
 import type { NavigationMenuItem } from '@nuxt/ui'
 
-export const NAVIGATION_LINKS: NavigationMenuItem[][] = [
-    [
-        {
-            label: 'App',
-            type: 'label'
-        },
-        {
-            label: 'Dashboard',
-            icon: 'i-lucide-bar-chart-3',
-            to: '/app/dashboard'
-        },
-        // {
-        //     label: 'New Topic',
-        //     icon: 'i-lucide-circle-plus',
-        //     to: '/app/topics/new'
-        // },
-        {
-            label: 'My Topics',
-            icon: 'i-lucide-book-open',
-            to: '/app/topics',
-            defaultOpen: false,
-            type: 'trigger',
-            children: [
-                {
-                    label: 'Collection',
-                    to: '/app/topics/collection'
-                },
-                {
-                    label: 'New Topic',
-                    to: '/app/topics/new'
-                }
-            ]
-        },
-        {
-            label: 'Settings',
-            icon: 'i-lucide-settings',
-            to: '/app/settings'
-        }
-    ],
-    // [
-    //     {
-    //         label: 'Identity & Access',
-    //         type: 'label'
-    //     },
-    //     {
-    //         label: 'Users',
-    //         icon: 'i-lucide-users',
-    //         to: '/users'
-    //     },
-    //     {
-    //         label: 'Roles & Permissions',
-    //         icon: 'i-lucide-folder-lock',
-    //         to: '/roles'
-    //     },
-    //     {
-    //         label: 'Auth Settings',
-    //         icon: 'i-lucide-user-check',
-    //         to: '/authentication',
-    //     },
-    //     {
-    //         label: 'SSO Integration',
-    //         icon: 'i-lucide-shield-check',
-    //         to: '/sso'
-    //     }
-    // ],
-    // [
-    //     {
-    //         label: 'System Administration',
-    //         type: 'label'
-    //     },
-    //     {
-    //         label: 'Configuration',
-    //         icon: 'i-lucide-settings',
-    //         to: '/configuration',
-    //         defaultOpen: false,
-    //         type: 'trigger',
-    //         children: [
-    //             {
-    //                 label: 'Notification Settings',
-    //                 to: '/configuration/notification',
-    //                 exact: true
-    //             },
-    //             {
-    //                 label: 'Branding',
-    //                 to: '/configuration/branding',
-    //                 exact: true
-    //             },
-    //         ]
-    //     },
-    //     {
-    //         label: 'Audit Logs',
-    //         icon: 'i-lucide-scroll-text',
-    //         to: '/audit'
-    //     },
-    //     {
-    //         label: 'Purge Center',
-    //         icon: 'i-lucide-trash-2',
-    //         to: '/admin/purge'
-    //     },
-    //     {
-    //         label: 'System Health',
-    //         icon: 'i-lucide-monitor-check',
-    //         to: '/system'
-    //     }
-    // ],
-    [
-        {
-            label: 'Demo Pages',
-            type: 'label'
-        },
-        {
-            label: 'Documentation',
-            icon: 'i-lucide-book-open',
-            to: '/documentation'
-        },
-        {
-            label: 'User Manual',
-            icon: 'i-lucide-book',
-            to: '/user-manual'
-        },
-        {
-            label: 'Landing Page',
-            icon: 'i-lucide-globe',
-            to: '/'
-        },
-        {
-            label: 'Login Page',
-            icon: 'i-lucide-log-in',
-            to: '/login'
-        },
-        {
-            label: 'Sign Up Page',
-            icon: 'i-lucide-user-plus',
-            to: '/signup'
-        },
-        {
-            label: 'UI Playground',
-            icon: 'i-lucide-palette',
-            to: '/ui'
-        }
-    ]
+export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
+    {
+        label: 'Dashboard',
+        icon: 'i-lucide-bar-chart-3',
+        to: '/app/dashboard'
+    },
+    // {
+    //     label: 'New Topic',
+    //     icon: 'i-lucide-circle-plus',
+    //     to: '/app/topics/new'
+    // },
+    {
+        label: 'My Topics',
+        icon: 'i-lucide-book-open',
+        children: [
+            {
+                label: 'Collection',
+                description: 'View and manage all your topics',
+                icon: 'i-lucide-grid-2x2',
+                to: '/app/topics/collection'
+            },
+            {
+                label: 'New Topic',
+                description: 'Create a new topic and modules',
+                icon: 'i-lucide-circle-plus',
+                to: '/app/topics/new'
+            }
+        ]
+    },
+    {
+        label: 'Settings',
+        icon: 'i-lucide-settings',
+        to: '/app/settings'
+    }
 ]
+
+// export const IDENTITY_ACCESS_NAVIGATION_ITEMS: NavigationMenuItem[] = [
+//     {
+//         label: 'Identity & Access',
+//         type: 'label'
+//     },
+//     {
+//         label: 'Users',
+//         icon: 'i-lucide-users',
+//         to: '/users'
+//     },
+//     {
+//         label: 'Roles & Permissions',
+//         icon: 'i-lucide-folder-lock',
+//         to: '/roles'
+//     },
+//     {
+//         label: 'Auth Settings',
+//         icon: 'i-lucide-user-check',
+//         to: '/authentication',
+//     },
+//     {
+//         label: 'SSO Integration',
+//         icon: 'i-lucide-shield-check',
+//         to: '/sso'
+//     }
+// ]
+
+// export const SYSTEM_ADMIN_NAVIGATION_ITEMS: NavigationMenuItem[] = [
+//     {
+//         label: 'System Administration',
+//         type: 'label'
+//     },
+//     {
+//         label: 'Configuration',
+//         icon: 'i-lucide-settings',
+//         to: '/configuration',
+//         defaultOpen: false,
+//         type: 'trigger',
+//         children: [
+//             {
+//                 label: 'Notification Settings',
+//                 to: '/configuration/notification',
+//                 exact: true
+//             },
+//             {
+//                 label: 'Branding',
+//                 to: '/configuration/branding',
+//                 exact: true
+//             },
+//         ]
+//     },
+//     {
+//         label: 'Audit Logs',
+//         icon: 'i-lucide-scroll-text',
+//         to: '/audit'
+//     },
+//     {
+//         label: 'Purge Center',
+//         icon: 'i-lucide-trash-2',
+//         to: '/admin/purge'
+//     },
+//     {
+//         label: 'System Health',
+//         icon: 'i-lucide-monitor-check',
+//         to: '/system'
+//     }
+// ]
+
+export const DEMO_NAVIGATION_ITEMS: NavigationMenuItem[] = [
+    {
+        label: 'Demo Pages',
+        type: 'label'
+    },
+    {
+        label: 'Documentation',
+        icon: 'i-lucide-book-open',
+        to: '/documentation'
+    },
+    {
+        label: 'User Manual',
+        icon: 'i-lucide-book',
+        to: '/user-manual'
+    },
+    {
+        label: 'Landing Page',
+        icon: 'i-lucide-globe',
+        to: '/'
+    },
+    {
+        label: 'Login Page',
+        icon: 'i-lucide-log-in',
+        to: '/login'
+    },
+    {
+        label: 'Sign Up Page',
+        icon: 'i-lucide-user-plus',
+        to: '/signup'
+    },
+    {
+        label: 'UI Playground',
+        icon: 'i-lucide-palette',
+        to: '/ui'
+    }
+]
+
+export const NAVIGATION_LINKS: NavigationMenuItem[][] = [
+    APP_NAVIGATION_ITEMS,
+    // IDENTITY_ACCESS_NAVIGATION_ITEMS,
+    // SYSTEM_ADMIN_NAVIGATION_ITEMS,
+    DEMO_NAVIGATION_ITEMS
+]
+
 
 export const DOCS_MENU_SECTIONS = [
     {

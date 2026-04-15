@@ -4,6 +4,8 @@ import type { Topic } from '~/types/topic'
 export const useTopics = () => {
     const topics = useState<Topic[]>('topics', () => [])
 
+    const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+
     if (import.meta.client) {
         const saved = localStorage.getItem('learnfast-topics')
         if (saved) {
@@ -11,7 +13,7 @@ export const useTopics = () => {
                 const parsed = JSON.parse(saved)
                 topics.value = parsed.map((t: Topic) => {
                     if (!t.id) {
-                        t.id = t.title.toLowerCase().replace(/\s+/g, '-')
+                        t.id = slugify(t.title)
                     }
                     return t
                 })
@@ -59,14 +61,25 @@ export const useTopics = () => {
     })
 
     const addTopic = (newTopic: Omit<Topic, 'id'>) => {
-        const id = newTopic.title.toLowerCase().replace(/\s+/g, '-')
+        const id = slugify(newTopic.title)
         topics.value.push({ ...newTopic, id } as Topic)
+    }
+
+    const updateTopicProgress = (topicId: string, completed: number, total: number, progress: number) => {
+        const topic = topics.value.find(t => t.id === topicId)
+        if (topic) {
+            topic.progress = progress
+            topic.lessons = `${completed}/${total}`
+            topic.lastStudiedAt = Date.now()
+            topic.lastStudied = 'Just now'
+        }
     }
 
     return {
         topics,
         togglePin,
         updateLastStudied,
+        updateTopicProgress,
         pinnedTopics,
         continueLearningTopic,
         recentTopics,

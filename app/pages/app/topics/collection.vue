@@ -33,32 +33,30 @@ const filteredTopics = computed(() => {
 </script>
 
 <template>
-    <ContentPanel title="My Topics">
-        <template #toolbar>
-            <div class="flex items-center justify-between w-full gap-4 overflow-x-auto pb-2 sm:pb-0">
-                <div class="flex items-center gap-2">
-                    <UInput v-model="searchQuery" icon="i-lucide-search" placeholder="Search topics..." size="sm"
-                        class="w-64" />
-                    <USeparator orientation="vertical" class="mx-2 h-6" />
-                    <div class="flex items-center gap-1">
-                        <UButton v-for="tag in tags" :key="tag" :label="tag"
-                            :variant="selectedTag === tag ? 'solid' : 'ghost'" color="neutral" size="xs"
-                            @click="selectedTag = tag" />
-                    </div>
-                </div>
-                <div class="flex items-center gap-2 shrink-0">
-                    <USelect v-model="sortBy" :items="sortOptions" size="sm" class="w-32">
-                        <template #leading>
-                            <UIcon name="i-lucide-list-filter" class="size-4" />
-                        </template>
-                    </USelect>
-                    <USeparator orientation="vertical" class="mx-2 h-6" />
-                    <UButton label="New Topic" icon="i-lucide-plus" color="primary" size="sm" />
+    <UContainer class="flex flex-col gap-6 py-6">
+        <div class="flex items-center justify-between w-full gap-4 overflow-x-auto pb-2 sm:pb-0">
+            <div class="flex items-center gap-2">
+                <UInput v-model="searchQuery" icon="i-lucide-search" placeholder="Search topics..." size="sm"
+                    class="w-64" />
+                <USeparator orientation="vertical" class="mx-2 h-6" />
+                <div class="flex items-center gap-1">
+                    <UButton v-for="tag in tags" :key="tag" :label="tag"
+                        :variant="selectedTag === tag ? 'solid' : 'ghost'" color="neutral" size="xs"
+                        @click="selectedTag = tag" />
                 </div>
             </div>
-        </template>
+            <div class="flex items-center gap-2 shrink-0">
+                <USelect v-model="sortBy" :items="sortOptions" size="sm" class="w-32">
+                    <template #leading>
+                        <UIcon name="i-lucide-list-filter" class="size-4" />
+                    </template>
+                </USelect>
+                <USeparator orientation="vertical" class="mx-2 h-6" />
+                <UButton label="New Topic" icon="i-lucide-plus" color="primary" size="sm" to="/app/topics/new" />
+            </div>
+        </div>
 
-        <div class="w-full lg:max-w-6xl mx-auto flex flex-col gap-6 relative">
+        <div class="flex flex-col gap-6 relative">
             <!-- Status Tabs -->
             <div class="flex items-center gap-4 border-b border-neutral-200 dark:border-neutral-800">
                 <UButton v-for="status in statuses" :key="status"
@@ -100,5 +98,5 @@ const filteredTopics = computed(() => {
                 </div>
             </div>
         </div>
-    </ContentPanel>
+    </UContainer>
 </template>
