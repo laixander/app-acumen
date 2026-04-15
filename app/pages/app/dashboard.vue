@@ -16,7 +16,7 @@ const recommended = RECOMMENDED_TOPICS
 
         <!-- Welcome Card -->
         <UCard class="shadow-sm"
-            :ui="{ root: 'relative overflow-hidden', body: 'flex items-center justify-between gap-8 relative z-10' }">
+            :ui="{ root: 'relative overflow-hidden', body: 'flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10' }">
             <!-- Mesh Background -->
             <div class="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent pointer-events-none" />
 
@@ -118,7 +118,7 @@ const recommended = RECOMMENDED_TOPICS
 
                 <!-- Stat Cards -->
                 <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Stats</h3>
-                <div class="grid grid-cols-3 lg:grid-cols-1 gap-3">
+                <div class="grid grid-cols-1 gap-3">
                     <UCard v-for="stat in stats" :key="stat.label" variant="soft" :class="`bg-${stat.color}-500/10`"
                         :ui="{ body: 'flex items-center gap-3 py-3 px-4' }">
                         <div :class="['p-3 rounded-xl', `bg-${stat.color}-500/10`]">

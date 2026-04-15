@@ -28,11 +28,9 @@ const { sections } = useDocsMenu()
         <slot />
     </UMain>
 
-    <!-- <USeparator icon="i-simple-icons-nuxtdotjs" /> -->
+    <USeparator v-if="$route.meta.showDocsMenu" />
 
-    <USeparator />
-
-    <UFooter>
+    <UFooter v-if="$route.meta.showDocsMenu">
         <template #left>
             <p class="text-sm text-muted">
                 Built by Laix • © {{ new Date().getFullYear() }}

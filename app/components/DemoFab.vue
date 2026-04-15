@@ -10,18 +10,18 @@ onClickOutside(fabRef, () => {
 
 const demoPages = [
     {
-        id: 'ui-playground',
-        label: 'UI Playground',
-        icon: 'i-lucide-layout-panel-left',
-        to: '/ui',
-        color: 'sky' as const
+        id: 'landing',
+        label: 'Landing Page',
+        icon: 'i-lucide-app-window-mac',
+        to: '/',
+        color: 'indigo' as const
     },
     {
-        id: 'ui-cards',
-        label: 'UI Cards',
-        icon: 'i-lucide-layout-grid',
-        to: '/ui/cards',
-        color: 'indigo' as const
+        id: 'docs',
+        label: 'Documentation',
+        icon: 'i-lucide-file-text',
+        to: '/documentation',
+        color: 'emerald' as const
     },
     {
         id: 'user-manual',
@@ -31,11 +31,11 @@ const demoPages = [
         color: 'amber' as const
     },
     {
-        id: 'docs',
-        label: 'Documentation',
-        icon: 'i-lucide-file-text',
-        to: '/documentation',
-        color: 'emerald' as const
+        id: 'ui-playground',
+        label: 'UI Playground',
+        icon: 'i-lucide-grid-2x2-check',
+        to: '/ui',
+        color: 'sky' as const
     }
 ]
 </script>

@@ -131,25 +131,18 @@ onMounted(() => {
                     over exams.
                 </template>
                 <!-- Background Shapes -->
-                <div class="absolute inset-0 z-0 pointer-events-none opacity-60">
-                    <!-- Top Left Circle -->
+                <!-- <div class="absolute inset-0 z-0 pointer-events-none opacity-60">
                     <div class="absolute -top-20 -left-20 w-100 h-100 rounded-full bg-white/5 mix-blend-overlay">
                     </div>
-
-                    <!-- Bottom Right Circle -->
                     <div class="absolute top-40 -right-40 w-100 h-100 rounded-full bg-white/5 mix-blend-overlay">
                     </div>
-
-                    <!-- Center Hollow Circle -->
                     <div
                         class="absolute top-20 left-20 w-100 h-100 rounded-full border-40 border-white/5 mix-blend-overlay">
                     </div>
-
-                    <!-- Center Hollow Circle -->
                     <div
                         class="absolute top-20 right-20 w-60 h-60 rounded-full border-30 border-white/5 mix-blend-overlay">
                     </div>
-                </div>
+                </div> -->
             </UPageCTA>
         </UPageSection>
 

@@ -29,13 +29,16 @@ const links = computed(() =>
             <UColorModeButton /> -->
             <UserMenu />
         </template>
+
+        <template #body>
+            <UNavigationMenu :items="links" orientation="vertical" />
+        </template>
+
     </UHeader>
 
     <UMain>
         <slot />
     </UMain>
-
-    <!-- <USeparator icon="i-simple-icons-nuxtdotjs" /> -->
 
     <USeparator />
 
