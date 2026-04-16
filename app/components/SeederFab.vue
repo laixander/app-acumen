@@ -13,7 +13,7 @@ onClickOutside(fabRef, () => {
 const actions = [
     {
         id: 'seed',
-        label: 'Seed Topics',
+        label: 'Seed Data',
         icon: 'i-lucide-database',
         color: 'primary' as const,
         action: () => {
@@ -34,16 +34,16 @@ const actions = [
 ]
 </script>
 <template>
-    <div ref="fabRef" class="fixed bottom-6 left-6 flex flex-col items-start gap-2 z-50">
+    <div ref="fabRef" class="fixed bottom-6 right-20 flex flex-col items-end gap-2 z-50">
         <Transition name="fab-menu">
-            <div v-if="fabOpen" class="flex flex-col items-start gap-2 mb-2">
+            <div v-if="fabOpen" class="flex flex-col items-end gap-2 mb-2">
                 <UButton v-for="item in actions" :key="item.id" :icon="item.icon" :label="item.label" size="lg"
                     :color="item.color" variant="soft" class="shadow-lg" @click="item.action" />
             </div>
         </Transition>
         <UButton icon="i-lucide-flask-conical" size="xl" variant="solid"
             class="rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95 ring-4 ring-primary-500/20"
-            :class="{ 'rotate-45': fabOpen }" @click="fabOpen = !fabOpen" />
+            :class="{ '-rotate-45 opacity-20': fabOpen }" @click="fabOpen = !fabOpen" />
     </div>
 </template>
 <style scoped>

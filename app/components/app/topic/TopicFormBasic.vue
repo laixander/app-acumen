@@ -39,8 +39,10 @@ const updateField = (field: string, value: any) => {
 }
 
 const titleError = computed(() => {
-    if (props.modelValue.title.toLowerCase().includes('new')) {
-        return "The word 'New' is reserved. Please choose a more descriptive title."
+    // Only restrict if the title contains the exact word 'new'
+    const words = props.modelValue.title.toLowerCase().split(/\s+/)
+    if (words.includes('new')) {
+        return "The word 'New' is reserved as a standalone word. Please choose a more descriptive title."
     }
     return undefined
 })

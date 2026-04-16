@@ -18,7 +18,7 @@ export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
             {
                 label: 'Collection',
                 description: 'View and manage all your topics',
-                icon: 'i-lucide-grid-2x2',
+                icon: 'i-lucide-folder-open',
                 to: '/app/topics/collection'
             },
             {
@@ -28,6 +28,11 @@ export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
                 to: '/app/topics/new'
             }
         ]
+    },
+    {
+        label: 'Activity Logs',
+        icon: 'i-lucide-clipboard-list',
+        to: '/app/activity'
     },
     {
         label: 'Settings',

@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col items-center justify-center min-h-[400px] text-center gap-8 py-12">
+    <div class="flex flex-col items-center justify-center text-center gap-8 py-12">
         <!-- Brain Icon Soft Card -->
         <div class="relative">
             <div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150 animate-pulse" />

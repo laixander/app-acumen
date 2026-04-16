@@ -54,12 +54,15 @@ const sections = computed(() => [
     <UContainer class="max-w-4xl py-12">
         <div class="flex flex-col gap-10">
             <!-- Header -->
-            <div class="flex items-center gap-3 px-2">
-                <div class="p-2 bg-primary/10 rounded-lg">
-                    <UIcon name="i-lucide-settings" class="text-2xl text-primary flex shrink-0" />
+            <header class="flex items-start gap-4">
+                <!-- <div class="p-2 bg-primary/10 rounded-lg">
+                    <UIcon name="i-lucide-settings" class="text-3xl text-primary flex shrink-0" />
+                </div> -->
+                <div class="flex flex-col gap-2">
+                    <h1 class="text-3xl font-bold tracking-tight">User Settings</h1>
+                    <p class="text-muted">Manage your profile and preferences.</p>
                 </div>
-                <h1 class="text-3xl font-bold tracking-tight">User Settings</h1>
-            </div>
+            </header>
 
             <!-- Sections -->
             <div v-for="section in sections" :key="section.title" class="flex flex-col gap-4">

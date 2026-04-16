@@ -48,9 +48,9 @@ const demoPages = [
                     :color="page.color" variant="soft" class="shadow-lg" :to="page.to" @click="fabOpen = false" />
             </div>
         </Transition>
-        <UButton icon="i-lucide-layers" size="xl" variant="solid"
+        <UButton icon="i-lucide-orbit" size="xl" variant="solid"
             class="rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95 ring-4 ring-primary-500/20"
-            :class="{ 'rotate-12': fabOpen }" @click="fabOpen = !fabOpen" />
+            :class="{ '-rotate-180 opacity-20': fabOpen }" @click="fabOpen = !fabOpen" />
     </div>
 </template>
 

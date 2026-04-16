@@ -36,7 +36,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col items-center justify-center min-h-[500px] text-center gap-10 py-8">
+    <div class="flex flex-col items-center justify-center min-h-full text-center gap-10 py-8">
         <!-- Top Spinner -->
         <div class="relative">
             <div class="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-150 animate-pulse" />
@@ -49,13 +49,13 @@ onMounted(() => {
         <h2 class="text-3xl font-black tracking-tight">AI is crafting your personal path...</h2>
 
         <!-- Checklist -->
-        <div class="w-full max-w-sm flex flex-col gap-3">
+        <div class="w-full max-w-lg flex flex-col gap-3">
             <TransitionGroup name="list">
                 <UCard v-for="(step, index) in steps" :key="step.id"
                     class="border-none shadow-sm transition-all duration-300" :class="[
                         step.status === 'pending' ? 'opacity-40 grayscale pointer-events-none' : '',
                         step.status === 'in-progress' ? 'ring-1 ring-primary-500 bg-primary-50/50 dark:bg-primary-900/10' : ''
-                    ]" :ui="{ body: 'p-4 flex items-center gap-4' }">
+                    ]" :ui="{ body: 'p-4 flex items-center justify-between gap-4' }">
                     <!-- Status Icon -->
                     <div class="w-8 h-8 rounded-full flex items-center justify-center transition-colors duration-300"
                         :class="[

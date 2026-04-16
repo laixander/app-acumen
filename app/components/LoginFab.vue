@@ -39,9 +39,9 @@ function mockLogin(item: MockRole) {
                     :color="item.color" variant="soft" class="shadow-lg" @click="mockLogin(item)" />
             </div>
         </Transition>
-        <UButton icon="i-lucide-flask-conical" size="xl" color="primary"
+        <UButton icon="i-lucide-laugh" size="xl" color="primary"
             class="rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95 ring-4 ring-primary-500/20"
-            :class="{ 'rotate-45': fabOpen }" @click="fabOpen = !fabOpen" />
+            :class="{ '-rotate-45 opacity-20': fabOpen }" @click="fabOpen = !fabOpen" />
     </div>
 </template>
 <style scoped>

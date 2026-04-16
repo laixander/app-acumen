@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { useTopics } from '~/composables/useTopics'
-import { DASHBOARD_STATS, RECOMMENDED_TOPICS } from '~/constants/dashboard'
+import { useDashboard } from '~/composables/useDashboard'
 
 const { topics, pinnedTopics, continueLearningTopic, recentTopics } = useTopics()
+const { stats, recommendedTopics: recommended } = useDashboard()
 const { user } = useUser()
 
 const firstName = computed(() => user.value.profile.fullName.split(' ')[0])
-
-const stats = DASHBOARD_STATS
-const recommended = RECOMMENDED_TOPICS
+const recommendedMessage = computed(() => {
+    return recommended.value.length > 0
+        ? "Based on your interests in AI & Data Science."
+        : "No recommendations right now."
+})
 </script>
 
 <template>
-    <UContainer class="flex flex-col gap-6 py-6">
+    <UContainer class="flex flex-col gap-8 py-10">
 
         <!-- Welcome Card -->
         <UCard class="shadow-sm"
@@ -26,14 +29,15 @@ const recommended = RECOMMENDED_TOPICS
                 <div class="flex items-center gap-4 mt-6">
                     <UButton label="New Topic" icon="i-lucide-plus-circle" color="primary" size="lg"
                         to="/app/topics/new" />
-                    <UAvatarGroup size="sm">
+                    <!-- <UAvatarGroup size="sm">
                         <UAvatar v-for="i in 4" :key="i" :src="`https://i.pravatar.cc/128?u=${i}`"
                             icon="i-lucide-user" />
                     </UAvatarGroup>
-                    <span class="text-xs text-dimmed">Learning alongside others</span>
+                    <span class="text-xs text-dimmed">Learning alongside others</span> -->
                 </div>
             </div>
-            <div class="flex-1">
+            <div class="flex flex-col gap-2 flex-1">
+                <p class="text-xs font-semibold text-muted uppercase tracking-wide">Weekly Activity</p>
                 <AppWeeklyActivityChart />
             </div>
         </UCard>
@@ -127,13 +131,15 @@ const recommended = RECOMMENDED_TOPICS
                         <div>
                             <div class="flex items-center gap-2">
                                 <p class="text-lg font-bold leading-none">{{ stat.value }}</p>
-                                <UIcon :name="stat.trend === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+                                <UIcon v-if="stat.showTrend"
+                                    :name="stat.trend === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
                                     :class="['text-base', stat.trend === 'up' ? 'text-green-500' : 'text-red-500']" />
                             </div>
                             <p class="text-xs text-muted mt-0.5">{{ stat.label }}</p>
                         </div>
-                        <UBadge :label="stat.trendValue" :color="stat.trend === 'up' ? 'success' : 'error'"
-                            variant="soft" size="sm" class="ml-auto" />
+                        <UBadge v-if="stat.showTrend" :label="stat.trendValue"
+                            :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
+                            class="ml-auto" />
                     </UCard>
                 </div>
 
@@ -144,9 +150,10 @@ const recommended = RECOMMENDED_TOPICS
                         class="bg-neutral-800 dark:bg-neutral-950/50">
                         <p class="text-sm text-dimmed dark:text-muted flex items-center gap-2">
                             <UIcon name="i-lucide-sparkles" class="text-lg text-primary shrink-0" />
-                            Based on your interests in AI & Data Science.
+                            {{ recommendedMessage }}
                         </p>
-                        <div class="flex flex-col gap-2">
+
+                        <div v-if="recommended.length > 0" class="flex flex-col gap-2">
                             <UCard v-for="rec in recommended" :key="rec.title" variant="soft"
                                 :ui="{ body: 'flex items-center gap-3 sm:p-4' }"
                                 class="bg-neutral-500/10 hover:bg-neutral-500/20 dark:bg-neutral-900/40 hover:dark:bg-neutral-900/90 transition-colors duration-200 cursor-pointer">
@@ -157,6 +164,14 @@ const recommended = RECOMMENDED_TOPICS
                                 </div>
                                 <UButton icon="i-lucide-plus" size="xs" variant="ghost" color="primary" />
                             </UCard>
+                        </div>
+
+                        <!-- Recommendations Empty State -->
+                        <div v-else
+                            class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-neutral-700/50 rounded-xl">
+                            <p class="text-xs text-muted max-w-[180px]">
+                                Seed data or start learning to get personalized suggestions.
+                            </p>
                         </div>
                     </UCard>
                 </div>

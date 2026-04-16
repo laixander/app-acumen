@@ -1,5 +1,7 @@
-import { MOCK_TOPICS, injectAssessmentsIntoTimeline } from '~/utils/seeder'
+import { MOCK_TOPICS, injectAssessmentsIntoTimeline, MOCK_ACTIVITY_LOGS, MOCK_SESSION_LOGS } from '~/utils/seeder'
+import { MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
 import { useTopics } from '~/composables/useTopics'
+import { useDashboard } from '~/composables/useDashboard'
 import { useLessons } from '~/composables/useLessons'
 import { useToast } from '#ui/composables/useToast'
 import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
@@ -7,10 +9,15 @@ import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
 export const useSeeder = () => {
     const { topics } = useTopics()
     const { getLessonsByTopic, addLessons, addLessonContents, addAssessments, clearAll: clearLessons } = useLessons()
+    const { logs, sessions } = useActivityLogs()
+    const { recommendedTopics } = useDashboard()
     const toast = useToast()
 
     const seedTopics = () => {
         topics.value = [...MOCK_TOPICS]
+        logs.value = [...MOCK_ACTIVITY_LOGS]
+        sessions.value = [...MOCK_SESSION_LOGS]
+        recommendedTopics.value = [...MOCK_RECOMMENDED_TOPICS]
         
         const allLessons: LessonOverview[] = []
         const allContents: LessonContent[] = []
@@ -89,6 +96,9 @@ export const useSeeder = () => {
 
     const clearTopics = () => {
         topics.value = []
+        logs.value = []
+        sessions.value = []
+        recommendedTopics.value = []
         clearLessons()
         toast.add({ title: 'Test data cleared!', color: 'info' })
     }

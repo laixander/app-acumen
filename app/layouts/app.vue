@@ -13,47 +13,45 @@ const links = computed(() =>
 </script>
 
 <template>
-    <UHeader :toggle="{
-        class: $route.name === 'index' ? 'hidden' : ''
-    }">
-        <template #title>
-            <NuxtLink to="/" class="flex items-center gap-3">
-                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
-            </NuxtLink>
-        </template>
+    <div class="min-h-screen flex flex-col">
+        <UHeader :toggle="{
+            class: $route.name === 'index' ? 'hidden' : ''
+        }">
+            <template #title>
+                <NuxtLink to="/" class="flex items-center gap-3">
+                    <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
+                </NuxtLink>
+            </template>
 
-        <UNavigationMenu :items="links" content-orientation="vertical" />
+            <UNavigationMenu :items="links" content-orientation="vertical" />
 
-        <template #right>
-            <!-- <UButton to="/login" label="Login" color="primary" variant="ghost" />
-            <UColorModeButton /> -->
-            <UserMenu />
-        </template>
+            <template #right>
+                <UserMenu />
+            </template>
 
-        <template #body>
-            <UNavigationMenu :items="links" orientation="vertical" />
-        </template>
+            <template #body>
+                <UNavigationMenu :items="links" orientation="vertical" />
+            </template>
 
-    </UHeader>
+        </UHeader>
 
-    <UMain>
-        <slot />
-    </UMain>
+        <UMain :ui="{ base: 'flex flex-col min-h-auto grow' }">
+            <slot />
+        </UMain>
 
-    <USeparator />
+        <UFooter :ui="{ root: 'border-t border-default' }">
+            <template #left>
+                <p class="text-sm text-muted">
+                    Built by Laix • © {{ new Date().getFullYear() }}
+                </p>
+            </template>
 
-    <UFooter>
-        <template #left>
-            <p class="text-sm text-muted">
-                Built by Laix • © {{ new Date().getFullYear() }}
-            </p>
-        </template>
-
-        <template #right>
-            <UButton to="https://github.com/laixander/app-sanitarium" target="_blank" icon="i-simple-icons-github"
-                aria-label="GitHub" color="neutral" variant="ghost" />
-        </template>
-    </UFooter>
-    <SeederFab />
-    <DemoFab />
+            <template #right>
+                <UButton to="https://github.com/laixander/app-sanitarium" target="_blank" icon="i-simple-icons-github"
+                    aria-label="GitHub" color="neutral" variant="ghost" />
+            </template>
+        </UFooter>
+        <SeederFab />
+        <DemoFab />
+    </div>
 </template>

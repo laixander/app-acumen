@@ -62,3 +62,23 @@ export interface Assessment {
     title: string
     questions: AssessmentQuestion[]
 }
+
+export interface ActivityLog {
+    id: string
+    topicId: string
+    topicTitle: string
+    lessonId: string
+    lessonTitle: string
+    type: 'Lesson' | 'Assessment' | 'Review'
+    durationMinutes: number
+    completedAt: number
+}
+
+export interface SessionLog {
+    id: string
+    action: string
+    device: string
+    location?: string
+    status: 'Success' | 'Failed' | 'Warning'
+    timestamp: number
+}

@@ -8,7 +8,8 @@ import type { LessonContent } from '~/types/topic'
 const route = useRoute()
 const router = useRouter()
 const { getLessonContentById, getAdjacentLessons, completeLesson, getLessonsByTopic } = useLessons()
-const { updateTopicProgress } = useTopics()
+const { updateTopicProgress, topics } = useTopics()
+const { addLog } = useActivityLogs()
 
 const { data: serverLessonData } = await useFetch<LessonContent>(`/api/lesson/${route.params.id}`)
 const localLessonData = getLessonContentById(route.params.id as string)
@@ -38,7 +39,14 @@ const handleContinue = () => {
     // 2. Update topic progress in the topics store
     const topicId = lessonData.value?.topicId
     if (topicId) {
+        const topic = topics.value.find(t => t.id === topicId)
         const topicLessons = getLessonsByTopic(topicId)
+        const lessonOverview = topicLessons.find(l => l.id === route.params.id)
+        
+        if (topic && lessonOverview) {
+            addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
+        }
+
         const completedCount = topicLessons.filter(l => l.status === 'completed').length
         const totalCount = topicLessons.length
         const progress = Math.round((completedCount / totalCount) * 100)

@@ -7,7 +7,8 @@ import type { Assessment } from '~/types/topic'
 
 const route = useRoute()
 const { getAssessmentByLessonId, completeLesson, getLessonsByTopic } = useLessons()
-const { updateTopicProgress } = useTopics()
+const { updateTopicProgress, topics } = useTopics()
+const { addLog } = useActivityLogs()
 
 const { data: serverAssessmentData } = await useFetch<Assessment>(`/api/assessment/${route.params.id}`)
 const localAssessmentData = getAssessmentByLessonId(route.params.id as string)
@@ -181,7 +182,14 @@ const resultMessage = computed(() => {
                                 // Trigger Progress Update
                                 const topicId = assessmentData?.topicId;
                                 if (topicId) {
+                                    const topic = topics.find(t => t.id === topicId)
                                     const topicLessons = getLessonsByTopic(topicId);
+                                    const lessonOverview = topicLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData?.lessonId)
+                                    
+                                    if (topic && lessonOverview) {
+                                        addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
+                                    }
+
                                     const completedCount = topicLessons.filter(l => l.status === 'completed').length;
                                     const totalCount = topicLessons.length;
                                     const progress = Math.round((completedCount / totalCount) * 100);
