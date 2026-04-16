@@ -8,6 +8,15 @@ import {
     techStack,
 } from "~/constants/documentation";
 
+const displayedCount = ref(5);
+const visibleChangelogs = computed(() =>
+    changelogItems.slice(0, displayedCount.value),
+);
+
+const showMore = () => {
+    displayedCount.value += 5;
+};
+
 const { activeSection, sections } = useDocsMenu();
 
 const appConfig = useAppConfig()
@@ -197,7 +206,10 @@ onMounted(() => {
                                     Typography & Spacing
                                 </h4>
                                 <p class="text-sm">
-                                    Our platform supports a dynamic typography system with a curated library of fonts including <span class="font-bold">Inter, Outfit, Roboto Slab, and Space Grotesk</span>. We maintain consistent 4, 8, 12, and 16 module spacing based on Tailwind's defaults for a perfectly balanced layout.
+                                    Our platform supports a dynamic typography system with a curated library of fonts
+                                    including <span class="font-bold">Inter, Outfit, Roboto Slab, and Space
+                                        Grotesk</span>. We maintain consistent 4, 8, 12, and 16 module spacing based on
+                                    Tailwind's defaults for a perfectly balanced layout.
                                 </p>
                             </div>
                         </div>
@@ -207,23 +219,39 @@ onMounted(() => {
 
                     <!-- Changelog -->
                     <DocsSection id="changelog" title="Changelog" icon="i-lucide-history">
-                        <DocsTimeline :items="changelogItems">
-                            <template #item="{ item, index }">
-                                <div :class="index > 0 ? 'opacity-60' : ''">
-                                    <span class="text-xs font-mono text-neutral-500">{{
-                                        item.date
-                                    }}</span>
-                                    <h5 class="font-bold mt-1">
-                                        {{ item.version }} - {{ item.title }}
-                                    </h5>
-                                    <ul class="mt-2 space-y-1 list-disc list-inside text-sm text-neutral-500">
-                                        <li v-for="change in item.changes" :key="change">
-                                            {{ change }}
-                                        </li>
-                                    </ul>
-                                </div>
-                            </template>
-                        </DocsTimeline>
+                        <div class="space-y-8">
+                            <DocsTimeline :items="visibleChangelogs">
+                                <template #item="{ item, index }">
+                                    <div :class="index > 0 ? 'opacity-60' : ''">
+                                        <span class="text-xs font-mono text-neutral-500">{{
+                                            item.date
+                                        }}</span>
+                                        <h5 class="font-bold mt-1">
+                                            {{ item.version }} - {{ item.title }}
+                                        </h5>
+                                        <ul class="mt-2 space-y-1 list-disc list-inside text-sm text-neutral-500">
+                                            <li v-for="change in item.changes" :key="change">
+                                                {{ change }}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </template>
+                            </DocsTimeline>
+
+                            <div v-if="displayedCount < changelogItems.length" class="flex justify-start pt-4">
+                                <UButton variant="soft" color="neutral" size="sm" icon="i-lucide-plus" @click="showMore"
+                                    class="rounded-lg p-2">
+                                    Show More
+                                    <UBadge :label="'+' + (
+                                        Math.min(5, changelogItems.length - displayedCount)
+                                    )" variant="soft" size="sm" class="bg-primary/20" />
+                                </UButton>
+                            </div>
+                            <div v-else-if="changelogItems.length > 5" class="flex justify-start pt-4">
+                                <UButton label="Show Less" variant="soft" color="neutral" size="sm"
+                                    icon="i-lucide-chevron-up" @click="displayedCount = 5" class="rounded-lg p-2" />
+                            </div>
+                        </div>
                     </DocsSection>
                 </div>
             </div>

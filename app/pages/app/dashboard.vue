@@ -77,10 +77,10 @@ onUnmounted(() => {
                     <span class="text-xs text-dimmed">Learning alongside others</span> -->
                 </div>
             </div>
-            <div class="flex flex-col gap-2 flex-1 overflow-hidden min-h-[140px] justify-center text-left">
-                <div v-if="currentInsight" 
-                    class="bg-primary-500/10 border-l-4 border-primary-500 p-4 my-6 rounded-r-lg transition-all hover:bg-primary-500/15 cursor-default relative overflow-hidden">
-                    
+            <div class="flex flex-col gap-2 overflow-hidden max-w-100 min-h-[140px] justify-center text-left">
+                <div v-if="currentInsight"
+                    class="bg-primary-500/10 border-l-4 border-primary-500 p-4 pl-6 rounded-r-lg transition-all hover:bg-primary-500/15 cursor-default relative overflow-hidden">
+
                     <Transition name="fade-header" mode="out-in">
                         <div :key="currentIndex" class="flex items-center gap-2 mb-1">
                             <UIcon :name="currentInsight.icon" class="text-primary-500" />
@@ -91,7 +91,8 @@ onUnmounted(() => {
                     </Transition>
 
                     <Transition name="fade-content" mode="out-in">
-                        <p :key="currentIndex" class="m-0 text-primary-600 dark:text-primary-300 text-sm leading-relaxed">
+                        <p :key="currentIndex"
+                            class="m-0 text-primary-600 dark:text-primary-300/50 text-sm leading-relaxed">
                             {{ currentInsight.text }}
                         </p>
                     </Transition>
@@ -254,6 +255,7 @@ onUnmounted(() => {
     transition: all 0.4s ease;
     transition-delay: 0.1s;
 }
+
 .fade-header-leave-active {
     transition: all 0.3s ease;
     transition-delay: 0.2s;
@@ -264,6 +266,7 @@ onUnmounted(() => {
     transition: all 0.4s ease;
     transition-delay: 0.3s;
 }
+
 .fade-content-leave-active {
     transition: all 0.3s ease;
     transition-delay: 0s;

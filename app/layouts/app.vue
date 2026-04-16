@@ -23,7 +23,7 @@ const links = computed(() =>
                 </NuxtLink>
             </template>
 
-            <UNavigationMenu :items="links" content-orientation="vertical" />
+            <UNavigationMenu :items="links" content-orientation="vertical" :ui="{ list: 'gap-4' }" />
 
             <template #right>
                 <UserMenu />

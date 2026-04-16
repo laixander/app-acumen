@@ -38,7 +38,7 @@ export const dataModels = [
     },
     {
         name: "Topic",
-        fields: "id, user_id, title, description, duration, availability, status",
+        fields: "id, slug, user_id, title, description, duration, availability, status, icon",
     },
     {
         name: "Material",
@@ -96,6 +96,20 @@ export const workflowSteps = [
 ];
 
 export const changelogItems = [
+    {
+        date: "April 16, 2026",
+        version: "v1.2.0",
+        title: "Assessment Mastery & Architecture Consolidation",
+        changes: [
+            "Implemented the Assessment Mastery System with automatic checkpoint quizzes and final assessments",
+            "Injected AI-generated diagnostic tests and milestones into the learning timeline",
+            "Completed migration to a pure client-side LocalStorage architecture for all learning data",
+            "Developed a premium brand presentation layer with horizontal scrolling and cinematic effects",
+            "Enhanced the 'Topic' data model with dedicated 'slug' and 'icon' support",
+            "Centralized all mock data seeding logic into the persistent useSeeder utility",
+            "Refactored API reference to reflect the transition to a simulated backend environment",
+        ],
+    },
     {
         date: "April 15, 2026",
         version: "v1.1.1",
