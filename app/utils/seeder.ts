@@ -351,6 +351,9 @@ export const injectAssessmentsIntoTimeline = (
     topicId: string,
     topicTitle: string,
     baseLessons: LessonOverview[],
+    completedCount: number = 0,
+    totalCount: number = 0,
+    isTopicComplete: boolean = false,
     predefinedAssessments: Assessment[] = []
 ) => {
     const totalBaseLessons = baseLessons.filter(l => l.type !== 'quiz').length
@@ -373,17 +376,28 @@ export const injectAssessmentsIntoTimeline = (
 
         if (baseCount % interval === 0 && index !== baseLessons.length - 1) {
             const quizId = `${topicId}-quiz-${baseCount}`
-            const status = lesson.status === 'completed' ? 'current' : 'locked' // Simplified for injection
+            
+            // Calculate precise status
+            let status: 'completed' | 'current' | 'locked' = 'locked'
+            let color: string = 'neutral'
+            
+            if (baseCount < completedCount) {
+                status = 'completed'
+                color = 'green'
+            } else if (baseCount === completedCount) {
+                status = 'current'
+                color = 'orange'
+            }
 
             newTimeline.push({
                 id: quizId,
                 topicId,
                 title: `Checkpoint Quiz ${Math.ceil(baseCount / interval)}`,
                 duration: '10 min',
-                status: status as any,
-                type: 'quiz',
+                status,
+                type: 'Assessment',
                 icon: 'i-lucide-award',
-                color: status === 'current' ? 'orange' : (lesson.status === 'completed' ? 'green' : 'neutral'),
+                color,
                 summary: `Review milestone for the last ${interval} lessons.`
             })
 
@@ -415,18 +429,26 @@ export const injectAssessmentsIntoTimeline = (
 
     // Add Final Assessment
     const finalId = `${topicId}-final`
-    const lastLesson = baseLessons[baseLessons.length - 1]
-    const finalStatus = lastLesson?.status === 'completed' ? 'current' : 'locked'
+    let finalStatus: 'completed' | 'current' | 'locked' = 'locked'
+    let finalColor: string = 'neutral'
+
+    if (isTopicComplete) {
+        finalStatus = 'completed'
+        finalColor = 'green'
+    } else if (completedCount === totalCount) {
+        finalStatus = 'current'
+        finalColor = 'purple'
+    }
 
     newTimeline.push({
         id: finalId,
         topicId,
         title: 'Final Assessment',
         duration: '25 min',
-        status: finalStatus as any,
-        type: 'quiz',
+        status: finalStatus,
+        type: 'Assessment',
         icon: 'i-lucide-graduation-cap',
-        color: finalStatus === 'current' ? 'purple' : (lastLesson?.status === 'completed' ? 'green' : 'neutral'),
+        color: finalColor,
         summary: 'Comprehensive evaluation of the entire topic.'
     })
 

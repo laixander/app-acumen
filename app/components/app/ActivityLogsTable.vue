@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { ActivityLog } from '~/types/topic'
+import { getPaginationRowModel } from '@tanstack/vue-table'
+
+const table = useTemplateRef('table')
+
 const { logs } = useActivityLogs()
 
 // Helper to fix and satisfy TypeScript inference in UTable slots
@@ -32,6 +36,11 @@ const getActivityColor = (type: string) => {
 }
 
 const formatTime = (timestamp: number) => formatDate(timestamp)
+
+const pagination = ref({
+    pageIndex: 0,
+    pageSize: 8
+})
 </script>
 
 <template>
@@ -43,8 +52,9 @@ const formatTime = (timestamp: number) => formatDate(timestamp)
         </div> -->
 
 
-    <UTable :data="logs" :columns="columns"
-        :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
+    <UTable :data="logs" :columns="columns" ref="table" v-model:pagination="pagination" :pagination-options="{
+        getPaginationRowModel: getPaginationRowModel()
+    }" :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
         <template #topicTitle-cell="{ row }">
             <div class="flex flex-col">
                 <span class="font-medium">{{ row.original.topicTitle }}</span>
@@ -54,10 +64,11 @@ const formatTime = (timestamp: number) => formatDate(timestamp)
         <template #lessonTitle-cell="{ row }">
             <span class="text-dimmed">{{ row.original.lessonTitle }}</span>
         </template>
-        
+
         <template #type-cell="{ row }">
             <div class="flex items-center gap-2">
-                <UIcon :name="getActivityIcon(row.original.type)" :class="getActivityColor(row.original.type)" class="text-lg" />
+                <UIcon :name="getActivityIcon(row.original.type)" :class="getActivityColor(row.original.type)"
+                    class="text-lg" />
                 <span class="text-sm">{{ row.original.type }}</span>
             </div>
         </template>
@@ -79,4 +90,13 @@ const formatTime = (timestamp: number) => formatDate(timestamp)
             </div>
         </template>
     </UTable>
+
+    <div v-if="(table?.tableApi?.getFilteredRowModel().rows.length || 0) > pagination.pageSize"
+        class="flex justify-end border-t border-default py-4 px-4 sm:px-6">
+        <UPagination :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+            :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+            :total="table?.tableApi?.getFilteredRowModel().rows.length"
+            @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)" :show-controls="false" show-edges size="sm"
+            variant="soft" />
+    </div>
 </template>

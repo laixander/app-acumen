@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTopics } from '~/composables/useTopics'
 import type { Topic, LearningGoal } from '~/types/topic'
+import { GOAL_COLORS } from '~/constants/topics'
 
 const props = withDefaults(defineProps<{
     topic: Topic
@@ -15,12 +16,6 @@ const props = withDefaults(defineProps<{
 
 const { togglePin, updateLastStudied } = useTopics()
 
-const goalColors: Record<LearningGoal, string> = {
-    'Mastery': 'amber',
-    'Overview': 'lime',
-    'Project Based': 'purple',
-    'Exam Prep': 'rose'
-}
 
 const actions = [
     [{
@@ -89,8 +84,7 @@ const actions = [
                         <span class="text-sm font-medium truncate">{{ topic.title }}</span>
                         <UBadge :label="topic.tag" variant="soft" size="sm" class="shrink-0" />
                         <UBadge v-if="viewMode === 'list' && topic.learningGoal" :label="topic.learningGoal"
-                            variant="subtle" size="sm" :color="goalColors[topic.learningGoal] as any"
-                            class="shrink-0" />
+                            variant="subtle" size="sm" :color="GOAL_COLORS[topic.learningGoal]" class="shrink-0" />
                     </div>
                     <div class="flex items-center gap-3">
                         <UProgress :model-value="topic.progress" size="xs" color="primary" class="flex-1" />
@@ -115,7 +109,7 @@ const actions = [
                 </div>
                 <!-- Learning Goal Tag -->
                 <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle" size="sm"
-                    :color="goalColors[topic.learningGoal] as any" class="shrink-0" />
+                    :color="GOAL_COLORS[topic.learningGoal]" class="shrink-0" />
             </div>
 
             <!-- List View Meta -->

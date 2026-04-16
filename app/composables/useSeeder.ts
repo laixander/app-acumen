@@ -1,4 +1,4 @@
-import { MOCK_TOPICS, injectAssessmentsIntoTimeline, MOCK_ACTIVITY_LOGS, MOCK_SESSION_LOGS } from '~/utils/seeder'
+import { MOCK_TOPICS, injectAssessmentsIntoTimeline, MOCK_ACTIVITY_LOGS, MOCK_SESSION_LOGS, calculateInterval } from '~/utils/seeder'
 import { MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
 import { useTopics } from '~/composables/useTopics'
 import { useDashboard } from '~/composables/useDashboard'
@@ -33,7 +33,12 @@ export const useSeeder = () => {
             // Create base reading lessons
             for (let i = 1; i <= total; i++) {
                 const lessonId = `${topic.id}-lesson-${i}`
-                const status = i <= completed ? 'completed' : (i === completed + 1 ? 'current' : 'locked')
+                const interval = calculateInterval(total)
+                const hasQuizAtCurrent = completed > 0 && completed % interval === 0 && completed < total
+                
+                const status = i <= completed 
+                    ? 'completed' 
+                    : (i === completed + 1 && !hasQuizAtCurrent ? 'current' : 'locked')
                 
                 baseLessons.push({
                     id: lessonId,
@@ -43,7 +48,7 @@ export const useSeeder = () => {
                     status: status as any,
                     type: 'reading',
                     icon: 'i-lucide-book-open',
-                    color: i <= completed ? 'green' : (i === completed + 1 ? 'primary' : 'neutral'),
+                    color: status === 'completed' ? 'green' : (status === 'current' ? 'primary' : 'neutral'),
                     summary: `Standard seeded lesson content for module ${i}.`
                 })
 
@@ -59,27 +64,16 @@ export const useSeeder = () => {
             }
 
             // Inject Assessments using centralized logic
-            const { newTimeline, newAssessments, newContents } = injectAssessmentsIntoTimeline(topic.id, topic.title, baseLessons)
+            const { newTimeline, newAssessments, newContents } = injectAssessmentsIntoTimeline(
+                topic.id, 
+                topic.title, 
+                baseLessons, 
+                completed, 
+                total, 
+                topic.status === 'Completed'
+            )
             
-            // Correct statuses for seeded topics (since injectAssessmentsIntoTimeline assumes a fresh injection)
-            // We need to match the 'completed' state from the seeder
-            newTimeline.forEach(item => {
-                if (item.type === 'quiz') {
-                    const quizNum = parseInt(item.id.split('-').pop() || '0')
-                    const isFinal = item.id.includes('final')
-                    
-                    if (isFinal) {
-                        item.status = completed >= total ? 'completed' : (completed === total ? 'current' : 'locked')
-                        item.color = item.status === 'completed' ? 'green' : (item.status === 'current' ? 'purple' : 'neutral')
-                    } else if (quizNum <= completed) {
-                        item.status = 'completed'
-                        item.color = 'green'
-                    } else if (quizNum === completed) {
-                        item.status = 'current'
-                        item.color = 'orange'
-                    }
-                }
-            })
+            // The statuses are now correctly calculated inside injectAssessmentsIntoTimeline based on 'completed' and 'total'
 
             allLessons.push(...newTimeline)
             allAssessments.push(...newAssessments)

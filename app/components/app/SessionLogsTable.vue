@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import type { SessionLog } from '~/types/topic'
+import { getPaginationRowModel } from '@tanstack/vue-table'
+
+const table = useTemplateRef('table')
+
 const { sessions } = useActivityLogs()
 
 const columns = [
@@ -28,11 +32,17 @@ const getStatusColor = (status: SessionLog['status']) => {
         default: return 'neutral'
     }
 }
+
+const pagination = ref({
+    pageIndex: 0,
+    pageSize: 8
+})
 </script>
 
 <template>
-    <UTable :data="sessions" :columns="columns"
-        :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
+    <UTable :data="sessions" :columns="columns" ref="table" v-model:pagination="pagination" :pagination-options="{
+        getPaginationRowModel: getPaginationRowModel()
+    }" :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
 
         <template #action-cell="{ row }">
             <div class="flex items-center gap-3">
@@ -73,4 +83,12 @@ const getStatusColor = (status: SessionLog['status']) => {
             </div>
         </template>
     </UTable>
+    <div v-if="(table?.tableApi?.getFilteredRowModel().rows.length || 0) > pagination.pageSize"
+        class="flex justify-end border-t border-default py-4 px-4 sm:px-6">
+        <UPagination :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+            :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+            :total="table?.tableApi?.getFilteredRowModel().rows.length"
+            @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)" :show-controls="false" show-edges size="sm"
+            variant="soft" />
+    </div>
 </template>

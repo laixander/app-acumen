@@ -65,13 +65,13 @@ const titleError = computed(() => {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <UFormField label="Topic Title" help="e.g. Machine Learning Fundamentals" :error="titleError">
                     <UInput :model-value="modelValue.title" @update:model-value="v => updateField('title', v)"
-                        placeholder="Enter the main topic..." size="xl" variant="subtle" class="w-full"
+                        placeholder="Enter the main topic..." size="xl" variant="soft" class="w-full"
                         :color="titleError ? 'error' : 'neutral'" />
                 </UFormField>
 
                 <UFormField label="Custom URL Slug" help="Personalize your topic URL">
                     <UInput :model-value="modelValue.slug" @update:model-value="updateSlugManually"
-                        placeholder="topic-url-slug" size="xl" variant="subtle" class="w-full font-mono text-sm"
+                        placeholder="topic-url-slug" size="xl" variant="soft" class="w-full font-mono text-sm"
                         icon="i-lucide-link" />
                 </UFormField>
             </div>
@@ -79,7 +79,7 @@ const titleError = computed(() => {
                 help="What specific areas do you want to cover? Any prerequisites?">
                 <UTextarea :model-value="modelValue.description"
                     @update:model-value="v => updateField('description', v)" placeholder="Add more context here..."
-                    size="xl" :rows="4" variant="subtle" class="w-full" />
+                    size="xl" :rows="4" variant="soft" class="w-full" />
             </UFormField>
 
             <div class="flex flex-col gap-3">
