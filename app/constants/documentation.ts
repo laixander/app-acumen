@@ -97,6 +97,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 17, 2026",
+        version: "v1.3.0",
+        title: "Admin Panel, Learner Management & Analytics",
+        changes: [
+            "Developed a dedicated Admin Panel navigation with structured administrative layout",
+            "Restructured Learner Dashboard layout for enhanced hierarchy and improved widget grouping",
+            "Implemented Learner Management page with subscription tiers and technical support actions",
+            "Expanded AI Configuration with model pipeline, system prompt, safety filters, and vector database settings",
+            "Built Analytics Review dashboard with Chart.js-powered learner trend and topic category visualizations",
+            "Added Manage Subscription modal with plan selector, billing summary, and current plan display",
+            "Added Technical Support modal with ticket stats, category selector, priority toggles, and admin notes",
+        ],
+    },
+    {
         date: "April 16, 2026",
         version: "v1.2.0",
         title: "Assessment Mastery & Architecture Consolidation",

@@ -1,5 +1,5 @@
 export default defineAppConfig({
-  version: '1.2.0',
+  version: '1.3.0',
   ui: {
     colors: {
       primary: 'lime',

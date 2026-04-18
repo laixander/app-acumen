@@ -146,10 +146,33 @@ export const DEMO_NAVIGATION_ITEMS: NavigationMenuItem[] = [
     }
 ]
 
+export const ADMIN_NAVIGATION_ITEMS: NavigationMenuItem[] = [
+    {
+        label: 'Administration',
+        type: 'label'
+    },
+    {
+        label: 'Accounts',
+        icon: 'i-lucide-shield-check',
+        to: '/admin/users'
+    },
+    {
+        label: 'AI Configuration',
+        icon: 'i-lucide-settings-2',
+        to: '/admin/ai-configuration'
+    },
+    {
+        label: 'Analytics Review',
+        icon: 'i-lucide-line-chart',
+        to: '/admin/analytics-review'
+    }
+]
+
 export const NAVIGATION_LINKS: NavigationMenuItem[][] = [
     APP_NAVIGATION_ITEMS,
     // IDENTITY_ACCESS_NAVIGATION_ITEMS,
     // SYSTEM_ADMIN_NAVIGATION_ITEMS,
+    ADMIN_NAVIGATION_ITEMS,
     DEMO_NAVIGATION_ITEMS
 ]
 

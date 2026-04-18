@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { NAVIGATION_LINKS } from '~/constants/navigation'
+import { ADMIN_NAVIGATION_ITEMS } from '~/constants/navigation'
 
-const links = ref(NAVIGATION_LINKS)
+const links = ref(ADMIN_NAVIGATION_ITEMS)
 const { uiNavigation, uiDashboardSidebar } = useUiConfig()
 </script>
 <template>

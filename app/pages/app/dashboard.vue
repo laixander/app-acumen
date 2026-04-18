@@ -100,87 +100,63 @@ onUnmounted(() => {
             </div>
         </UCard>
 
-        <!-- 2 Column Layout -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Sections Layout -->
+        <div class="flex flex-col gap-10">
 
-            <!-- Main Content Column -->
-            <div class="lg:col-span-2 flex flex-col gap-8">
+            <!-- First Section: 2 Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                <ClientOnly>
-                    <template v-if="topics.length > 0">
-                        <!-- Section: Continue Learning (Hero) -->
-                        <div v-if="continueLearningTopic" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue
-                                    Learning
-                                </h3>
-                                <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
+                <!-- 1st Column: Continue Learning & Empty State -->
+                <div class="lg:col-span-2 flex flex-col gap-8">
+                    <ClientOnly>
+                        <template v-if="topics.length > 0">
+                            <!-- Section: Continue Learning (Hero) -->
+                            <div v-if="continueLearningTopic" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue
+                                        Learning</h3>
+                                    <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
+                                </div>
+                                <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
                             </div>
-                            <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
-                        </div>
+                        </template>
 
-                        <!-- Section: Recent Topics -->
-                        <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between h-5">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
-                                <UButton label="View all" icon="i-lucide-arrow-right" color="primary" variant="ghost"
-                                    size="sm" class="uppercase" to="/app/topics/collection" />
+                        <!-- Empty State -->
+                        <template v-else>
+                            <div
+                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-full">
+                                <div class="bg-primary/10 p-4 rounded-full mb-4">
+                                    <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
+                                </div>
+                                <h3 class="text-lg font-bold">Your dashboard is empty</h3>
+                                <p class="text-dimmed max-w-xs mt-1 text-pretty">
+                                    Get started by adding some topics, or use the seeder button below to generate test
+                                    data.
+                                </p>
+                                <div class="flex items-center gap-3 mt-6">
+                                    <UButton label="Create Topic" color="primary" icon="i-lucide-plus"
+                                        to="/app/topics/new" />
+                                </div>
                             </div>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
-                            </div>
-                        </div>
+                        </template>
 
-                        <!-- Section: Pinned Topics -->
-                        <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
-                                <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
+                        <template #fallback>
+                            <div
+                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
+                                <div class="bg-primary/10 p-4 rounded-full mb-4">
+                                    <UIcon name="i-lucide-loader-2" class="flex text-4xl text-primary animate-spin" />
+                                </div>
+                                <h3 class="text-lg font-bold">Loading dashboard...</h3>
                             </div>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
-                            </div>
-                        </div>
-                    </template>
+                        </template>
+                    </ClientOnly>
+                </div>
 
-                    <!-- Empty State -->
-                    <template v-else>
-                        <div
-                            class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-full">
-                            <div class="bg-primary/10 p-4 rounded-full mb-4">
-                                <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
-                            </div>
-                            <h3 class="text-lg font-bold">Your dashboard is empty</h3>
-                            <p class="text-dimmed max-w-xs mt-1 text-pretty">
-                                Get started by adding some topics, or use the seeder button below to generate test
-                                data.
-                            </p>
-                            <div class="flex items-center gap-3 mt-6">
-                                <UButton label="Create Topic" color="primary" icon="i-lucide-plus"
-                                    to="/app/topics/new" />
-                            </div>
-                        </div>
-                    </template>
+                <!-- 2nd Column: Stats & Weekly Activity -->
+                <div class="flex flex-col gap-4">
+                    <!-- Stat Cards -->
+                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Stats</h3>
 
-                    <template #fallback>
-                        <div
-                            class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
-                            <div class="bg-primary/10 p-4 rounded-full mb-4">
-                                <UIcon name="i-lucide-loader-2" class="flex text-4xl text-primary animate-spin" />
-                            </div>
-                            <h3 class="text-lg font-bold">Loading dashboard...</h3>
-                        </div>
-                    </template>
-                </ClientOnly>
-
-            </div>
-
-            <!-- Second Column: Stats & Recommended -->
-            <div class="flex flex-col gap-4">
-
-                <!-- Stat Cards -->
-                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Stats</h3>
-                <div class="grid grid-cols-1 gap-3">
                     <UCard v-for="stat in stats" :key="stat.label" variant="soft" :class="`bg-${stat.color}-500/10`"
                         :ui="{ body: 'flex items-center gap-3 py-3 px-4' }">
                         <div :class="['p-3 rounded-xl', `bg-${stat.color}-500/10`]">
@@ -199,47 +175,84 @@ onUnmounted(() => {
                             :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
                             class="ml-auto" />
                     </UCard>
+
+                    <!-- Chart Bar -->
+                    <UCard variant="subtle" class="grow">
+                        <template #header>
+                            <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Weekly Activity</h3>
+                        </template>
+                        <AppWeeklyActivityChart />
+                    </UCard>
                 </div>
 
-                <!-- Chart Bar -->
-                <UCard variant="subtle">
-                    <template #header>
-                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Weekly Activity</h3>
-                    </template>
-                    <AppWeeklyActivityChart />
-                </UCard>
+            </div>
 
-                <!-- Recommended For You -->
-                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide mt-2">Recommended for You</h3>
-                <div class="flex flex-col gap-2">
-                    <UCard variant="soft" :ui="{ body: 'flex flex-col gap-4 relative z-10' }"
-                        class="bg-neutral-800 dark:bg-neutral-950/50">
-                        <p class="text-sm text-dimmed dark:text-muted flex items-center gap-2">
-                            <UIcon name="i-lucide-sparkles" class="text-lg text-primary shrink-0" />
-                            {{ recommendedMessage }}
-                        </p>
+            <!-- Second Section: 2 Column Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                        <div v-if="recommended.length > 0" class="flex flex-col gap-2">
-                            <UCard v-for="rec in recommended" :key="rec.title" variant="soft"
-                                :ui="{ body: 'flex items-center gap-3 sm:p-4' }"
-                                class="bg-neutral-500/10 hover:bg-neutral-500/20 dark:bg-neutral-900/40 hover:dark:bg-neutral-900/90 transition-colors duration-200 cursor-pointer">
-                                <UIcon :name="rec.icon" class="text-lg text-primary shrink-0" />
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm text-white font-medium truncate">{{ rec.title }}</p>
-                                    <p class="text-xs text-dimmed dark:text-muted">{{ rec.tag }}</p>
+                <!-- 1st Column: Recent Topics & Pinned Topics -->
+                <div class="lg:col-span-2 flex flex-col gap-8">
+                    <ClientOnly>
+                        <template v-if="topics.length > 0">
+                            <!-- Section: Recent Topics -->
+                            <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between h-5">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
+                                    <UButton label="View all" icon="i-lucide-arrow-right" color="primary"
+                                        variant="ghost" size="sm" class="uppercase" to="/app/topics/collection" />
                                 </div>
-                                <UButton icon="i-lucide-plus" size="xs" variant="ghost" color="primary" />
-                            </UCard>
-                        </div>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
+                                </div>
+                            </div>
 
-                        <!-- Recommendations Empty State -->
-                        <div v-else
-                            class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-neutral-700/50 rounded-xl">
-                            <p class="text-xs text-muted max-w-[180px]">
-                                Seed data or start learning to get personalized suggestions.
+                            <!-- Section: Pinned Topics -->
+                            <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
+                                    <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
+                                </div>
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
+                                </div>
+                            </div>
+                        </template>
+                    </ClientOnly>
+                </div>
+
+                <!-- 2nd Column: Recommended For You -->
+                <div class="flex flex-col gap-4">
+                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recommended for You</h3>
+                    <div class="flex flex-col gap-2">
+                        <UCard variant="soft" :ui="{ body: 'flex flex-col gap-4 relative z-10' }"
+                            class="bg-neutral-800 dark:bg-neutral-950/50">
+                            <p class="text-sm text-dimmed dark:text-muted flex items-center gap-2">
+                                <UIcon name="i-lucide-sparkles" class="text-lg text-primary shrink-0" />
+                                {{ recommendedMessage }}
                             </p>
-                        </div>
-                    </UCard>
+
+                            <div v-if="recommended.length > 0" class="flex flex-col gap-2">
+                                <UCard v-for="rec in recommended" :key="rec.title" variant="soft"
+                                    :ui="{ body: 'flex items-center gap-3 sm:p-4' }"
+                                    class="bg-neutral-500/10 hover:bg-neutral-500/20 dark:bg-neutral-900/40 hover:dark:bg-neutral-900/90 transition-colors duration-200 cursor-pointer">
+                                    <UIcon :name="rec.icon" class="text-lg text-primary shrink-0" />
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm text-white font-medium truncate">{{ rec.title }}</p>
+                                        <p class="text-xs text-dimmed dark:text-muted">{{ rec.tag }}</p>
+                                    </div>
+                                    <UButton icon="i-lucide-plus" size="xs" variant="ghost" color="primary" />
+                                </UCard>
+                            </div>
+
+                            <!-- Recommendations Empty State -->
+                            <div v-else
+                                class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-neutral-700/50 rounded-xl">
+                                <p class="text-xs text-muted max-w-[180px]">
+                                    Seed data or start learning to get personalized suggestions.
+                                </p>
+                            </div>
+                        </UCard>
+                    </div>
                 </div>
 
             </div>
