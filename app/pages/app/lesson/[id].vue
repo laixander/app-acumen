@@ -42,7 +42,7 @@ const handleContinue = () => {
         const topic = topics.value.find(t => t.id === topicId)
         const topicLessons = getLessonsByTopic(topicId)
         const lessonOverview = topicLessons.find(l => l.id === route.params.id)
-        
+
         if (topic && lessonOverview) {
             addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
         }
@@ -69,7 +69,10 @@ useHead({
 
 <template>
     <UContainer class="flex flex-col gap-6 py-6">
-        <UBadge label="Reading & Video" variant="subtle" color="primary" class="w-fit" />
+        <!-- <div v-if="lessonData?.lessonTypes" class="flex items-center gap-2">
+            <UBadge v-for="type in lessonData.lessonTypes" :key="type" :label="type" variant="subtle" color="primary" />
+        </div> -->
+        <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" />
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <!-- Main Content Area -->
             <div class="lg:col-span-2 flex flex-col gap-6">
@@ -89,13 +92,13 @@ useHead({
                 <!-- Lesson Transcript / Reading -->
                 <UCard>
                     <article class="prose dark:prose-invert max-w-none prose-primary" v-if="lessonData">
-                        <h2 class="text-2xl font-bold tracking-tight mb-4">{{ lessonData.title }}</h2>
+                        <!-- <h2 class="text-2xl font-bold tracking-tight mb-4">{{ lessonData.title }}</h2>
                         <p class="lead text-dimmed text-lg mb-6">
                             {{ lessonData.description }}
-                        </p>
+                        </p> -->
 
                         <template v-for="(section, idx) in lessonData.sections" :key="idx">
-                            <h3 class="text-xl font-semibold mt-8 mb-3">{{ section.title }}</h3>
+                            <h3 class="text-2xl font-bold mb-3">{{ section.title }}</h3>
                             <p>{{ section.content }}</p>
 
                             <div v-if="section.aiInsight"
@@ -143,6 +146,18 @@ useHead({
                         lesson.</p>
                     <UInput placeholder="e.g. Can you explain locality again?" icon="i-lucide-message-square" />
                     <UButton label="Ask Question" block color="primary" />
+                </UCard>
+
+                <!-- Lesson Types -->
+                <UCard v-if="lessonData" :ui="{ body: 'flex flex-col gap-3' }">
+                    <div class="flex items-center gap-2 mb-2">
+                        <UIcon name="i-lucide-tag" class="text-neutral-500" />
+                        <h3 class="font-bold text-sm uppercase tracking-wider text-muted">Lesson Types</h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <UBadge v-for="lessonType in lessonData.lessonTypes" :key="lessonType" :label="lessonType"
+                            variant="soft" color="neutral" />
+                    </div>
                 </UCard>
 
                 <!-- Notes -->

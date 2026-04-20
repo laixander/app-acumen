@@ -1,32 +1,32 @@
 import { computed, watch } from 'vue'
+import { slugify } from '~/utils/format'
 import type { Topic } from '~/types/topic'
 
 export const useTopics = () => {
     const topics = useState<Topic[]>('topics', () => [])
 
-    const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
 
-    if (import.meta.client) {
-        const saved = localStorage.getItem('learnfast-topics')
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved)
-                topics.value = parsed.map((t: Topic) => {
-                    if (!t.id) {
-                        t.id = slugify(t.title)
-                    }
-                    if (!t.slug) {
-                        t.slug = t.id
-                    }
-                    return t
-                })
-            } catch (e) {
-                console.error("Failed to load topics:", e)
+
+    const initTopics = () => {
+        if (import.meta.client) {
+            const saved = localStorage.getItem('learnfast-topics')
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved)
+                    topics.value = parsed.map((t: Topic) => {
+                        if (!t.id) {
+                            t.id = slugify(t.title)
+                        }
+                        return t
+                    })
+                } catch (e) {
+                    console.error("Failed to load topics:", e)
+                }
             }
+            watch(topics, (newVal) => {
+                localStorage.setItem('learnfast-topics', JSON.stringify(newVal))
+            }, { deep: true })
         }
-        watch(topics, (newVal) => {
-            localStorage.setItem('learnfast-topics', JSON.stringify(newVal))
-        }, { deep: true })
     }
 
 
@@ -63,9 +63,9 @@ export const useTopics = () => {
             .slice(0, 3)
     })
 
-    const addTopic = (newTopic: Omit<Topic, 'id' | 'slug'> & { slug?: string }) => {
-        const id = newTopic.slug || slugify(newTopic.title)
-        topics.value.push({ ...newTopic, id, slug: id } as Topic)
+    const addTopic = (newTopic: Omit<Topic, 'id'>) => {
+        const id = slugify(newTopic.title)
+        topics.value.push({ ...newTopic, id } as Topic)
     }
 
     const updateTopicProgress = (topicId: string, completed: number, total: number, progress: number) => {
@@ -86,6 +86,7 @@ export const useTopics = () => {
 
     return {
         topics,
+        initTopics,
         togglePin,
         updateLastStudied,
         updateTopicProgress,

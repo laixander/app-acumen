@@ -1,73 +1,3 @@
-<template>
-    <ContentPanel title="Analytics Review">
-        <div>
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Analytics Review</h2>
-            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Analyze aggregated learning
-                data to identify platform-wide trends and improve material ingestion benchmarks.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
-            <UCard class="border dark:border-gray-800" :ui="{ body: 'px-4 py-5 sm:p-6' }">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Total Learners</div>
-                    <UIcon name="i-lucide-users" class="text-primary w-5 h-5 opacity-50" />
-                </div>
-                <div class="text-3xl font-bold mt-2">1,248</div>
-                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
-                    <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                    <span>12% from last month</span>
-                </div>
-            </UCard>
-
-            <UCard class="border dark:border-gray-800" :ui="{ body: 'px-4 py-5 sm:p-6' }">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Topics Mastered</div>
-                    <UIcon name="i-lucide-book-open-check" class="text-primary w-5 h-5 opacity-50" />
-                </div>
-                <div class="text-3xl font-bold mt-2">84</div>
-                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
-                    <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                    <span>5% from last week</span>
-                </div>
-            </UCard>
-
-            <UCard class="border dark:border-gray-800" :ui="{ body: 'px-4 py-5 sm:p-6' }">
-                <div class="flex items-center justify-between">
-                    <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Avg. Generation Time</div>
-                    <UIcon name="i-lucide-clock" class="text-primary w-5 h-5 opacity-50" />
-                </div>
-                <div class="text-3xl font-bold mt-2">2.4s</div>
-                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
-                    <UIcon name="i-lucide-arrow-down-right" class="w-3 h-3" />
-                    <span>0.3s from last month</span>
-                </div>
-            </UCard>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <UCard>
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Active Learners Trend</h3>
-                    <UBadge variant="soft" color="primary">Weekly</UBadge>
-                </div>
-                <div class="h-[280px] w-full">
-                    <Line :data="activityData" :options="chartOptions" />
-                </div>
-            </UCard>
-
-            <UCard>
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Topics by Category</h3>
-                    <UBadge variant="soft" color="primary">All Time</UBadge>
-                </div>
-                <div class="h-[280px] w-full">
-                    <Bar :data="completionData" :options="chartOptions" />
-                </div>
-            </UCard>
-        </div>
-    </ContentPanel>
-</template>
-
 <script setup lang="ts">
 import {
     Chart as ChartJS,
@@ -172,3 +102,69 @@ const completionData = {
     ]
 }
 </script>
+<template>
+    <ContentPanel title="Analytics Review">
+        <ContentHeading title="Analytics Review"
+            description="Analyze aggregated learning data to identify platform-wide trends and improve material ingestion benchmarks." />
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+            <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm font-medium">Total Learners</div>
+                    <UIcon name="i-lucide-users" class="text-primary w-5 h-5 opacity-50" />
+                </div>
+                <div class="text-3xl font-bold mt-2">1,248</div>
+                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
+                    <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
+                    <span>12% from last month</span>
+                </div>
+            </UCard>
+
+            <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm font-medium">Topics Mastered</div>
+                    <UIcon name="i-lucide-book-open-check" class="text-primary w-5 h-5 opacity-50" />
+                </div>
+                <div class="text-3xl font-bold mt-2">84</div>
+                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
+                    <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
+                    <span>5% from last week</span>
+                </div>
+            </UCard>
+
+            <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm font-medium">Avg. Generation Time</div>
+                    <UIcon name="i-lucide-clock" class="text-primary w-5 h-5 opacity-50" />
+                </div>
+                <div class="text-3xl font-bold mt-2">2.4s</div>
+                <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
+                    <UIcon name="i-lucide-arrow-down-right" class="w-3 h-3" />
+                    <span>0.3s from last month</span>
+                </div>
+            </UCard>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <UCard>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-semibold">Active Learners Trend</h3>
+                    <UBadge variant="soft" color="primary">Weekly</UBadge>
+                </div>
+                <div class="h-[280px] w-full">
+                    <Line :data="activityData" :options="chartOptions" />
+                </div>
+            </UCard>
+
+            <UCard>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-semibold">Topics by Category</h3>
+                    <UBadge variant="soft" color="primary">All Time</UBadge>
+                </div>
+                <div class="h-[280px] w-full">
+                    <Bar :data="completionData" :options="chartOptions" />
+                </div>
+            </UCard>
+        </div>
+    </ContentPanel>
+</template>

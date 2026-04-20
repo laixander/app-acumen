@@ -2,6 +2,7 @@
 import { useTopics } from '~/composables/useTopics'
 import { useLessons } from '~/composables/useLessons'
 import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/utils/seeder'
+import { slugify } from '~/utils/format'
 import type { LearningGoal, LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 const { addTopic } = useTopics()
@@ -18,7 +19,6 @@ const formData = reactive({
     duration: '2 weeks',
     availability: 'Standard (5-7h/week)',
     files: [] as any[],
-    slug: '',
     assessments: [
         { label: 'Core Fundamentals', value: 50 },
         { label: 'Advanced Optimization', value: 30 },
@@ -64,8 +64,7 @@ const handleFinish = () => {
 }
 
 const confirmFinish = () => {
-    const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
-    const topicId = formData.slug || slugify(formData.title || 'Untitled Topic')
+    const topicId = slugify(formData.title || 'Untitled Topic')
 
     // Use centralized logic to generate lessons
     const {
@@ -79,7 +78,7 @@ const confirmFinish = () => {
         newTimeline,
         newAssessments,
         newContents: injectedContents
-    } = injectAssessmentsIntoTimeline(topicId, formData.title, baseLessons, baseAssessments)
+    } = injectAssessmentsIntoTimeline(topicId, formData.title, baseLessons, 0, baseLessons.length, false, baseAssessments)
 
     addLessons(newTimeline)
     addLessonContents([...baseContents, ...injectedContents])
@@ -95,8 +94,7 @@ const confirmFinish = () => {
         lastStudiedAt: Date.now(),
         icon: 'i-lucide-sparkles',
         isPinned: false,
-        learningGoal: formData.learningGoal,
-        slug: topicId
+        learningGoal: formData.learningGoal
     })
 
     router.push('/app/dashboard')
@@ -120,8 +118,7 @@ const confirmFinish = () => {
 
             <div v-else class="flex flex-col gap-4">
                 <div class="flex flex-col gap-8" v-if="!isGenerating && !isAnalyzing">
-                    <h1 class="text-3xl text-center font-bold tracking-tight">Create New Topic - {{ steps[currentStep]
-                        }}</h1>
+                    <ContentHeading :title="`Create New Topic - ${steps[currentStep]}`" centered />
                     <AppTopicStepper :current-step="currentStep" :steps="steps" />
                 </div>
 

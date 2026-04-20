@@ -6,33 +6,35 @@ export const useLessons = () => {
     const lessonContents = useState<LessonContent[]>('lessonContents', () => [])
     const assessments = useState<Assessment[]>('assessments', () => [])
 
-    if (import.meta.client) {
-        // Load lessons
-        const savedLessons = localStorage.getItem('learnfast-lessons')
-        if (savedLessons) {
-            try { lessons.value = JSON.parse(savedLessons) } catch (e) { console.error(e) }
-        }
-        watch(lessons, (val) => {
-            localStorage.setItem('learnfast-lessons', JSON.stringify(val))
-        }, { deep: true })
+    const initLessons = () => {
+        if (import.meta.client) {
+            // Load lessons
+            const savedLessons = localStorage.getItem('learnfast-lessons')
+            if (savedLessons) {
+                try { lessons.value = JSON.parse(savedLessons) } catch (e) { console.error(e) }
+            }
+            watch(lessons, (val) => {
+                localStorage.setItem('learnfast-lessons', JSON.stringify(val))
+            }, { deep: true })
 
-        // Load contents
-        const savedContents = localStorage.getItem('learnfast-lesson-contents')
-        if (savedContents) {
-            try { lessonContents.value = JSON.parse(savedContents) } catch (e) { console.error(e) }
-        }
-        watch(lessonContents, (val) => {
-            localStorage.setItem('learnfast-lesson-contents', JSON.stringify(val))
-        }, { deep: true })
+            // Load contents
+            const savedContents = localStorage.getItem('learnfast-lesson-contents')
+            if (savedContents) {
+                try { lessonContents.value = JSON.parse(savedContents) } catch (e) { console.error(e) }
+            }
+            watch(lessonContents, (val) => {
+                localStorage.setItem('learnfast-lesson-contents', JSON.stringify(val))
+            }, { deep: true })
 
-        // Load assessments
-        const savedAssessments = localStorage.getItem('learnfast-assessments')
-        if (savedAssessments) {
-            try { assessments.value = JSON.parse(savedAssessments) } catch (e) { console.error(e) }
+            // Load assessments
+            const savedAssessments = localStorage.getItem('learnfast-assessments')
+            if (savedAssessments) {
+                try { assessments.value = JSON.parse(savedAssessments) } catch (e) { console.error(e) }
+            }
+            watch(assessments, (val) => {
+                localStorage.setItem('learnfast-assessments', JSON.stringify(val))
+            }, { deep: true })
         }
-        watch(assessments, (val) => {
-            localStorage.setItem('learnfast-assessments', JSON.stringify(val))
-        }, { deep: true })
     }
 
     const addLessons = (newLessons: LessonOverview[]) => {
@@ -106,6 +108,7 @@ export const useLessons = () => {
 
     return {
         lessons,
+        initLessons,
         lessonContents,
         assessments,
         addLessons,

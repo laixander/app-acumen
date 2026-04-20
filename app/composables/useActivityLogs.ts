@@ -58,36 +58,38 @@ export const useActivityLogs = () => {
     const logs = useState<ActivityLog[]>('activity-logs', () => [])
     const sessions = useState<SessionLog[]>('session-logs', () => [])
 
-    if (import.meta.client) {
-        // Load Activity Logs
-        const savedLogs = localStorage.getItem('learnfast-activity-logs')
-        if (savedLogs) {
-            try {
-                const parsed = JSON.parse(savedLogs)
-                if (Array.isArray(parsed)) logs.value = parsed
-            } catch (e) {
-                console.error("Failed to load activity logs:", e)
+    const initActivityLogs = () => {
+        if (import.meta.client) {
+            // Load Activity Logs
+            const savedLogs = localStorage.getItem('learnfast-activity-logs')
+            if (savedLogs) {
+                try {
+                    const parsed = JSON.parse(savedLogs)
+                    if (Array.isArray(parsed)) logs.value = parsed
+                } catch (e) {
+                    console.error("Failed to load activity logs:", e)
+                }
             }
-        }
 
-        // Load Session Logs
-        const savedSessions = localStorage.getItem('learnfast-session-logs')
-        if (savedSessions) {
-            try {
-                const parsed = JSON.parse(savedSessions)
-                if (Array.isArray(parsed)) sessions.value = parsed
-            } catch (e) {
-                console.error("Failed to load session logs:", e)
+            // Load Session Logs
+            const savedSessions = localStorage.getItem('learnfast-session-logs')
+            if (savedSessions) {
+                try {
+                    const parsed = JSON.parse(savedSessions)
+                    if (Array.isArray(parsed)) sessions.value = parsed
+                } catch (e) {
+                    console.error("Failed to load session logs:", e)
+                }
             }
+
+            watch(logs, (newVal) => {
+                localStorage.setItem('learnfast-activity-logs', JSON.stringify(newVal))
+            }, { deep: true })
+
+            watch(sessions, (newVal) => {
+                localStorage.setItem('learnfast-session-logs', JSON.stringify(newVal))
+            }, { deep: true })
         }
-
-        watch(logs, (newVal) => {
-            localStorage.setItem('learnfast-activity-logs', JSON.stringify(newVal))
-        }, { deep: true })
-
-        watch(sessions, (newVal) => {
-            localStorage.setItem('learnfast-session-logs', JSON.stringify(newVal))
-        }, { deep: true })
     }
 
     const parseDuration = (durationStr: string): number => {
@@ -205,6 +207,7 @@ export const useActivityLogs = () => {
 
     return {
         logs,
+        initActivityLogs,
         sessions,
         addLog,
         addSessionLog,

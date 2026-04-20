@@ -2,7 +2,6 @@ export type LearningGoal = 'Mastery' | 'Overview' | 'Project Based' | 'Exam Prep
 
 export interface Topic {
     id: string
-    slug: string
     title: string
     progress: number
     tag: string
@@ -41,6 +40,7 @@ export interface LessonContent {
     description: string
     sections: LessonSection[]
     assessmentId?: string
+    lessonTypes: string[]
 }
 
 export interface AssessmentOption {

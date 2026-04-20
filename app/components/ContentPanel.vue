@@ -22,7 +22,10 @@ const props = defineProps<ContentPanelProps>()
         </template>
 
         <template #body>
-            <slot />
+            <UContainer v-if="container" :class="container ? `max-w-${container} mx-auto` : ''">
+                <slot />
+            </UContainer>
+            <slot v-else />
         </template>
     </UDashboardPanel>
 </template>

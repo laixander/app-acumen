@@ -17,15 +17,16 @@ export const useUser = () => {
         }
     }))
 
-    // Load from local storage on client side
-    if (import.meta.client) {
-        const saved = localStorage.getItem('user-settings')
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved)
-                Object.assign(user.value, parsed)
-            } catch (e) {
-                console.error('Failed to parse user settings', e)
+    const initUser = () => {
+        if (import.meta.client) {
+            const saved = localStorage.getItem('user-settings')
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved)
+                    Object.assign(user.value, parsed)
+                } catch (e) {
+                    console.error('Failed to parse user settings', e)
+                }
             }
         }
     }
@@ -53,6 +54,7 @@ export const useUser = () => {
 
     return {
         user,
+        initUser,
         updateProfile,
         updatePreferences,
         updateBilling

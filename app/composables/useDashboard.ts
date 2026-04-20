@@ -14,19 +14,21 @@ export const useDashboard = () => {
     // Recommended Topics State (initial empty, seedable)
     const recommendedTopics = useState<RecommendedTopic[]>('recommended-topics', () => [])
 
-    if (import.meta.client) {
-        const saved = localStorage.getItem('learnfast-recommended-topics')
-        if (saved) {
-            try {
-                recommendedTopics.value = JSON.parse(saved)
-            } catch (e) {
-                console.error("Failed to load recommended topics:", e)
+    const initDashboard = () => {
+        if (import.meta.client) {
+            const saved = localStorage.getItem('learnfast-recommended-topics')
+            if (saved) {
+                try {
+                    recommendedTopics.value = JSON.parse(saved)
+                } catch (e) {
+                    console.error("Failed to load recommended topics:", e)
+                }
             }
+            
+            watch(recommendedTopics, (newVal) => {
+                localStorage.setItem('learnfast-recommended-topics', JSON.stringify(newVal))
+            }, { deep: true })
         }
-        
-        watch(recommendedTopics, (newVal) => {
-            localStorage.setItem('learnfast-recommended-topics', JSON.stringify(newVal))
-        }, { deep: true })
     }
 
     // Dynamic Stats Calculation
@@ -58,6 +60,7 @@ export const useDashboard = () => {
 
     return {
         stats,
+        initDashboard,
         recommendedTopics
     }
 }

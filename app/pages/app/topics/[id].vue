@@ -59,18 +59,14 @@ useHead({
                     class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent pointer-events-none" />
 
                 <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div class="flex items-start gap-4 w-full">
-                        <div class="bg-primary/10 p-4 rounded-2xl shrink-0">
-                            <UIcon :name="topic.icon" class="text-4xl text-primary flex shrink-0" />
-                        </div>
-                        <div class="flex-1">
-                            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">{{ topic.title }}</h1>
-                            <p class="text-dimmed mt-1 max-w-lg">
+                    <ContentHeading :title="topic.title" :icon="topic.icon">
+                        <template #description>
+                            <p class="text-dimmed max-w-lg">
                                 Master this topic with an AI-curated learning path tailored to your specific materials
                                 and objectives.
                             </p>
-                        </div>
-                    </div>
+                        </template>
+                    </ContentHeading>
                 </div>
             </UCard>
 

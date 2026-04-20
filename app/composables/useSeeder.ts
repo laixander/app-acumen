@@ -57,6 +57,7 @@ export const useSeeder = () => {
                     topicId: topic.id,
                     title: `Lesson ${i}: ${topic.title} Core`,
                     description: `Topic module exploration Part ${i}.`,
+                    lessonTypes: ['Reading', 'Video'],
                     sections: [
                         { title: "Overview", content: "Details about this seeded lesson.", aiInsight: "Review this before the milestone." }
                     ]

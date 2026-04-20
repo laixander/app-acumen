@@ -35,13 +35,7 @@ const filteredTopics = computed(() => {
 <template>
     <UContainer class="flex flex-col gap-8 py-12">
         <header class="flex items-start gap-4">
-            <!-- <div class="p-2 bg-primary/10 rounded-lg">
-                <UIcon name="i-lucide-folder-open" class="text-3xl text-primary flex shrink-0" />
-            </div> -->
-            <div class="flex flex-col gap-2">
-                <h1 class="text-3xl font-bold tracking-tight">Topics Collection</h1>
-                <p class="text-muted">Manage and organize your learning topics.</p>
-            </div>
+            <ContentHeading title="Topics Collection" description="Manage and organize your learning topics." />
         </header>
         <div class="flex items-center justify-between w-full gap-4 overflow-x-auto pb-2 sm:pb-0">
             <div class="flex items-center gap-2">

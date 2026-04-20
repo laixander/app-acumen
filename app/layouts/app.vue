@@ -18,9 +18,7 @@ const links = computed(() =>
             class: $route.name === 'index' ? 'hidden' : ''
         }">
             <template #title>
-                <NuxtLink to="/" class="flex items-center gap-3">
-                    <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
-                </NuxtLink>
+                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
             </template>
 
             <UNavigationMenu :items="links" content-orientation="vertical" :ui="{ list: 'gap-4' }" />
@@ -42,7 +40,7 @@ const links = computed(() =>
         <UFooter :ui="{ root: 'border-t border-default' }">
             <template #left>
                 <p class="text-sm text-muted">
-                    Built by Laix • © {{ new Date().getFullYear() }}
+                    Built by Laix • <ClientOnly fallback="© 2026">© {{ new Date().getFullYear() }}</ClientOnly>
                 </p>
             </template>
 

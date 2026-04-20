@@ -38,7 +38,7 @@ export const dataModels = [
     },
     {
         name: "Topic",
-        fields: "id, slug, user_id, title, description, duration, availability, status, icon",
+        fields: "id, user_id, title, description, duration, availability, status, icon",
     },
     {
         name: "Material",
@@ -96,6 +96,21 @@ export const workflowSteps = [
 ];
 
 export const changelogItems = [
+    {
+        date: "April 20, 2026",
+        version: "v1.4.0",
+        title: "Platform Restructuring & Admin Core",
+        changes: [
+            "Restructured Learner Dashboard with a multi-section layout and side-by-side activity analytics",
+            "Reorganized application navigation by grouping topic-related actions under a 'My Topics' dropdown",
+            "Implemented core Administration modules including AI Configuration, Analytics Review, and User Management",
+            "Added configurable container size support to the ContentPanel component",
+            "Fixed Admin Manage Subscription and Technical Support modal prop binding and emit handling",
+            "Streamlined topic creation flow by removing the redundant slug field and associated artifacts",
+            "Simplified ContentHeading component by removing unnecessary size, tag, and vibrant variant props",
+            "Added 'View All' quick access to topic collections from the dashboard overview",
+        ],
+    },
     {
         date: "April 17, 2026",
         version: "v1.3.0",

@@ -33,7 +33,7 @@ const { sections } = useDocsMenu()
     <UFooter v-if="$route.meta.showDocsMenu">
         <template #left>
             <p class="text-sm text-muted">
-                Built by Laix • © {{ new Date().getFullYear() }}
+                Built by Laix • <ClientOnly fallback="© 2026">© {{ new Date().getFullYear() }}</ClientOnly>
             </p>
         </template>
 

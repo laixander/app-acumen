@@ -28,4 +28,5 @@ export interface AppLogoProps {
 export interface ContentPanelProps {
     title: string
     noPadding?: boolean
+    container?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl'
 }

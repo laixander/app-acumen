@@ -60,13 +60,13 @@ onUnmounted(() => {
 
         <!-- Welcome Card -->
         <UCard class="shadow-sm"
-            :ui="{ root: 'relative overflow-hidden', body: 'flex flex-col lg:flex-row lg:items-center justify-between gap-8 relative z-10' }">
+            :ui="{ root: 'relative overflow-hidden', body: 'flex flex-col lg:flex-row justify-between gap-8 relative z-10' }">
             <!-- Mesh Background -->
             <div class="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent pointer-events-none" />
 
-            <div class="flex-1">
-                <h2 class="text-3xl font-bold tracking-tight">Welcome back, {{ firstName }}!</h2>
-                <p class="text-muted mt-1">You're making great progress! Ready to learn something new today?</p>
+            <div class="flex-1 flex flex-col justify-center">
+                <ContentHeading :title="`Welcome back, ${firstName}!`"
+                    description="You're making great progress! Ready to learn something new today?" />
                 <div class="flex items-center gap-4 mt-6">
                     <UButton label="New Topic" icon="i-lucide-plus-circle" color="primary" size="lg"
                         to="/app/topics/new" />
@@ -77,26 +77,24 @@ onUnmounted(() => {
                     <span class="text-xs text-dimmed">Learning alongside others</span> -->
                 </div>
             </div>
-            <div class="flex flex-col gap-2 overflow-hidden max-w-100 min-h-[140px] justify-center text-left">
-                <div v-if="currentInsight"
-                    class="bg-primary-500/10 border-l-4 border-primary-500 p-4 pl-6 rounded-r-lg transition-all hover:bg-primary-500/15 cursor-default relative overflow-hidden">
+            <div v-if="currentInsight"
+                class="bg-primary-500/10 border-l-4 border-primary-500 p-4 pl-6 rounded-r-lg transition-all hover:bg-primary-500/15 cursor-default relative overflow-hidden flex flex-col justify-center max-w-100 text-left">
 
-                    <Transition name="fade-header" mode="out-in">
-                        <div :key="currentIndex" class="flex items-center gap-2 mb-1">
-                            <UIcon :name="currentInsight.icon" class="text-primary-500" />
-                            <strong class="text-primary-700 dark:text-primary-400 block pb-0.5">
-                                {{ currentInsight.title }}
-                            </strong>
-                        </div>
-                    </Transition>
+                <Transition name="fade-header" mode="out-in">
+                    <div :key="currentIndex" class="flex items-center gap-2 mb-1">
+                        <UIcon :name="currentInsight.icon" class="text-primary-500" />
+                        <strong class="text-primary-700 dark:text-primary-400 block pb-0.5">
+                            {{ currentInsight.title }}
+                        </strong>
+                    </div>
+                </Transition>
 
-                    <Transition name="fade-content" mode="out-in">
-                        <p :key="currentIndex"
-                            class="m-0 text-primary-600 dark:text-primary-300/50 text-sm leading-relaxed">
-                            {{ currentInsight.text }}
-                        </p>
-                    </Transition>
-                </div>
+                <Transition name="fade-content" mode="out-in">
+                    <p :key="currentIndex"
+                        class="m-0 text-primary-600 dark:text-primary-300/50 text-sm leading-relaxed">
+                        {{ currentInsight.text }}
+                    </p>
+                </Transition>
             </div>
         </UCard>
 
