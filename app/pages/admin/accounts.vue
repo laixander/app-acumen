@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import { upperFirst } from 'scule'
+
+const table = useTemplateRef('table')
+
+const columnVisibility = ref({
+    id: false
+})
+
 const userColumns = [{
     accessorKey: 'id',
     header: 'ID'
@@ -16,7 +24,12 @@ const userColumns = [{
     header: 'Subscription'
 }, {
     accessorKey: 'actions',
-    header: ''
+    header: '',
+    meta: {
+        class: {
+            td: 'text-right'
+        }
+    },
 }]
 
 const staticUsers = [
@@ -74,9 +87,26 @@ const getRowActions = (user: any) => {
             <div class="flex items-center justify-between">
                 <UInput icon="i-lucide-search" placeholder="Search learners..." class="w-64" />
                 <!-- <UButton color="neutral" icon="i-lucide-user-plus">Add Learner</UButton> -->
+                <UDropdownMenu :items="table?.tableApi
+                    ?.getAllColumns()
+                    .filter((column) => column.getCanHide())
+                    .map((column) => ({
+                        label: upperFirst(column.id),
+                        type: 'checkbox' as const,
+                        checked: column.getIsVisible(),
+                        onUpdateChecked(checked: boolean) {
+                            table?.tableApi?.getColumn(column.id)?.toggleVisibility(!!checked)
+                        },
+                        onSelect(e: Event) {
+                            e.preventDefault()
+                        }
+                    }))
+                    " :content="{ align: 'end' }">
+                    <UButton label="Display" color="neutral" variant="outline" trailing-icon="i-lucide-settings-2" />
+                </UDropdownMenu>
             </div>
 
-            <UTable :data="staticUsers" :columns="userColumns">
+            <UTable :data="staticUsers" :columns="userColumns" ref="table" v-model:column-visibility="columnVisibility">
                 <template #status-cell="{ row }">
                     <UBadge :color="row.original.status === 'Active' ? 'success' : 'neutral'" variant="soft">
                         {{ row.original.status }}

@@ -8,7 +8,7 @@ const { sections } = useDocsMenu()
     }">
         <template #left>
             <NuxtLink to="/" class="flex items-center gap-3">
-                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
+                <AppLogo name="Acumen" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
             </NuxtLink>
         </template>
 

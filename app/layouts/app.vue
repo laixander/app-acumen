@@ -18,7 +18,7 @@ const links = computed(() =>
             class: $route.name === 'index' ? 'hidden' : ''
         }">
             <template #title>
-                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
+                <AppLogo name="Acumen" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
             </template>
 
             <UNavigationMenu :items="links" content-orientation="vertical" :ui="{ list: 'gap-4' }" />

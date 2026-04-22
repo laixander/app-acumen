@@ -97,6 +97,17 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 22, 2026",
+        version: "v1.4.1",
+        title: "AI Interface Refinement & UX Polish",
+        changes: [
+            "Optimized AI Configuration layout with aligned form fields and improved visual hierarchy",
+            "Refined Dashboard AI Prompt with enhanced glassmorphism effects and interactive hover states",
+            "Enhanced layout for dashboard hero section with centered content and better spacing",
+            "Standardized alignment for switches and select inputs across administrative interfaces",
+        ],
+    },
+    {
         date: "April 20, 2026",
         version: "v1.4.0",
         title: "Platform Restructuring & Admin Core",

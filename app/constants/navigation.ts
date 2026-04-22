@@ -152,20 +152,20 @@ export const ADMIN_NAVIGATION_ITEMS: NavigationMenuItem[] = [
         type: 'label'
     },
     {
+        label: 'Dashboard',
+        icon: 'i-lucide-line-chart',
+        to: '/admin/dashboard'
+    },
+    {
         label: 'Accounts',
         icon: 'i-lucide-shield-check',
-        to: '/admin/users'
+        to: '/admin/accounts'
     },
     {
         label: 'AI Configuration',
         icon: 'i-lucide-settings-2',
         to: '/admin/ai-configuration'
     },
-    {
-        label: 'Analytics Review',
-        icon: 'i-lucide-line-chart',
-        to: '/admin/analytics-review'
-    }
 ]
 
 export const NAVIGATION_LINKS: NavigationMenuItem[][] = [

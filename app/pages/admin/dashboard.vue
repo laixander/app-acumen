@@ -103,8 +103,8 @@ const completionData = {
 }
 </script>
 <template>
-    <ContentPanel title="Analytics Review">
-        <ContentHeading title="Analytics Review"
+    <ContentPanel title="Dashboard">
+        <ContentHeading title="Dashboard"
             description="Analyze aggregated learning data to identify platform-wide trends and improve material ingestion benchmarks." />
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">

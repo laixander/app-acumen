@@ -20,7 +20,7 @@ const demoPages = [
         id: 'admin',
         label: 'Admin',
         icon: 'i-lucide-user-round-cog',
-        to: '/admin/users',
+        to: '/admin/dashboard',
         color: 'sky' as const
     },
     {

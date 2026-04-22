@@ -9,7 +9,7 @@ const { uiNavigation, uiDashboardSidebar } = useUiConfig()
         <UDashboardSidebar collapsible :ui="uiDashboardSidebar">
             <template #header="{ collapsed }">
                 <div v-if="!collapsed" class="flex items-center gap-2">
-                    <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" theme="primary" color="primary" />
+                    <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="primary" color="primary" />
                 </div>
                 <AppLogo v-else icon="i-lucide-brain-circuit" theme="primary" />
             </template>

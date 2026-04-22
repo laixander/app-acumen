@@ -1,7 +1,7 @@
 export const learnerSteps = [
     {
         title: "Topic Definition",
-        description: "Create a new topic by providing a title, description, and uploading study materials (PDFs, text files). Set your expected learning duration and availability.",
+        description: "Define your goals via the AI Learning Engine. Upload study materials (PDFs, text) or provide a topic title to start the automated path-crafting process.",
         status: "Step 1",
     },
     {
@@ -11,12 +11,12 @@ export const learnerSteps = [
     },
     {
         title: "Follow Lesson Plan",
-        description: "Navigate through your personalized, timeline-style lesson plan. Focus on the core concepts identified for improvement.",
+        description: "Access your restructured dashboard to view your learning timeline side-by-side with real-time activity analytics and progress tracking.",
         status: "Step 3",
     },
     {
         title: "Interactive Learning",
-        description: "Utilize the AI Tutor for real-time clarifications. Complete exercises and lessons at your own pace.",
+        description: "Utilize the AI Tutor for real-time clarifications. Complete exercises and lessons at your own pace with context-aware assistance.",
         status: "Step 4",
     },
     {
@@ -39,7 +39,7 @@ export const aiEnginePhases = [
     },
     {
         title: "Path Adaptation",
-        description: "After you complete the diagnostic, the AI analyzes your score and confidence levels to build a non-linear, adaptive lesson path.",
+        description: "After diagnostic completion, the AI analyzes scores and confidence levels to build a personalized, non-linear lesson path focusing on identified gaps.",
         status: "Phase 3",
     },
     {
@@ -52,17 +52,17 @@ export const aiEnginePhases = [
 export const administratorTasks = [
     {
         title: "User Management",
-        description: "Oversee user accounts, manage subscriptions, and provide technical support to learners.",
+        description: "Oversee user accounts, manage subscriptions, and provide technical support via dedicated admin modules.",
         status: "Task 1",
     },
     {
         title: "AI Configuration",
-        description: "Fine-tune the AI Engine models and response parameters to ensure high-quality learning outcomes.",
+        description: "Configure the model pipeline (Primary/Fallback), adjust creativity levels, set content safety filters, and enable reasoning engines.",
         status: "Task 2",
     },
     {
         title: "Analytics Review",
-        description: "Analyze aggregated learning data to identify platform-wide trends and improve material ingestion benchmarks.",
+        description: "Monitor system-wide performance via interactive charts and trend visualizations to optimize learning benchmarks.",
         status: "Task 3",
     },
 ];
