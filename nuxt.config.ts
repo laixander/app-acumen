@@ -68,6 +68,7 @@ export default defineNuxtConfig({
         '@vue/devtools-core',
         '@vue/devtools-kit',
         '@vueuse/core',
+        '@tanstack/vue-table',
       ]
     }
   }
