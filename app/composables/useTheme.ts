@@ -57,10 +57,10 @@ export const useTheme = () => {
     const colorMode = useColorMode()
 
     const theme = useState<ThemeSettings>('theme', () => ({
-        font: 'font-sans',
+        font: 'font-saira',
         brandFont: 'font-racing',
         brandWeight: 'font-normal',
-        primary: appConfig.ui.colors?.primary || 'blue',
+        primary: appConfig.ui.colors?.primary || 'sky',
         neutral: appConfig.ui.colors?.neutral || 'slate'
     }))
 

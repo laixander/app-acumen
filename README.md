@@ -12,6 +12,15 @@ Acumen is an intelligent platform designed specifically for learners and educato
 - **Topic Customization**: Personalize your learning path with custom themes and icons.
 - **Progress Analytics**: Visualizations for tracking learning speed and mastery levels.
 
+## Tech Stack
+
+- **Framework**: Nuxt 4 (Composition API)
+- **UI Library**: Nuxt UI (@nuxt/ui)
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide Icons (i-lucide-*)
+- **Typography**: Saira, Racing Sans (Google Fonts)
+- **Colors**: Sky, Slate (Tailwind Color Palette)
+
 ## Quick Start
 
 Ensure you have [Bun](https://bun.sh/) installed, then install dependencies:
