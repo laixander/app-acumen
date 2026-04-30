@@ -204,18 +204,18 @@ export const footerLinkGroups = [
     {
         title: 'Company',
         links: [
-            { label: 'About Us', to: '/about' },
-            { label: 'Blog', to: '/blog' },
-            { label: 'Careers', to: '/careers' },
-            { label: 'Contact', to: '/contact' }
+            { label: 'About Us', to: '/comingsoon' },
+            { label: 'Blog', to: '/comingsoon' },
+            { label: 'Careers', to: '/comingsoon' },
+            { label: 'Contact', to: '/comingsoon' }
         ]
     },
     {
         title: 'Legal',
         links: [
-            { label: 'Privacy Policy', to: '/privacy' },
-            { label: 'Terms of Service', to: '/terms' },
-            { label: 'Cookie Policy', to: '/cookies' }
+            { label: 'Privacy Policy', to: '/legal/privacy' },
+            { label: 'Terms of Service', to: '/legal/terms' },
+            { label: 'Cookie Policy', to: '/legal/cookies' }
         ]
     }
 ]

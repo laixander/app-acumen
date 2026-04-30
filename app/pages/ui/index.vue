@@ -7,7 +7,7 @@
             <section class="mb-12 max-w-4xl">
                 <h2 class="text-xs font-mono text-primary mb-4 uppercase tracking-widest">Typography Sample</h2>
                 <div
-                    class="grid grid-cols gap-8 p-6 rounded-2xl border border-dashed border-gray-200 dark:border-gray-800">
+                    class="grid grid-cols gap-8 p-6 rounded-2xl border border-dashed border-neutral-200 dark:border-neutral-800">
                     <div class="space-y-4">
                         <h1 class="text-4xl font-bold tracking-tight">The quick brown fox jumps over the lazy dog.</h1>
                         <p class="text-lg text-toned leading-relaxed">

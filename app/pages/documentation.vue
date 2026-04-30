@@ -70,7 +70,7 @@ onMounted(() => {
                             "Accelerate Learning. Master Anything."
                         </p>
                         <p class="mt-4 leading-relaxed">
-                            The Learn Fast AI-Assisted Learning Platform (app-learnfast) is an
+                            The Acumen AI-Assisted Learning Platform (app-acumen) is an
                             intelligent platform designed specifically for learners and
                             educators. It eliminates traditional learning barriers through
                             personalized tracking, adaptive pathfinding, and actionable analytics.

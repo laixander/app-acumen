@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { useTopics } from '~/composables/useTopics'
+import { useLessons } from '~/composables/useLessons'
+import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/utils/seeder'
+import { slugify } from '~/utils/format'
+
 interface Props {
     isHero?: boolean
 }
@@ -7,28 +12,73 @@ const props = withDefaults(defineProps<Props>(), {
     isHero: false
 })
 const { user } = useUser()
+const router = useRouter()
+const { addTopic } = useTopics()
+const { addLessons, addLessonContents, addAssessments } = useLessons()
 
 const firstName = computed(() => user.value.profile.fullName.split(' ')[0])
 
 const prompt = ref('')
-const fileInput = ref<HTMLInputElement | null>(null)
+const isGenerating = ref(false)
+
+const files = ref<Array<{ name: string; size: string; type: string }>>([])
 
 const handleUpload = () => {
-    fileInput.value?.click()
+    const newFile = {
+        name: `Study_Materials_${files.value.length + 1}.pdf`,
+        size: '2.4 MB',
+        type: 'pdf'
+    }
+    files.value.push(newFile)
 }
 
-const onFileChange = (e: Event) => {
-    const target = e.target as HTMLInputElement
-    if (target.files?.length) {
-        // Handle file logic
-        console.log('Files selected:', target.files)
-    }
+const removeFile = (index: number) => {
+    files.value.splice(index, 1)
 }
 
 const generate = () => {
     if (!prompt.value) return
-    console.log('Generating path for:', prompt.value)
-    // Navigate to generation flow or emit event
+    isGenerating.value = true
+}
+
+const confirmFinish = () => {
+    let title = prompt.value
+    if (title.length > 50) {
+        title = title.substring(0, 50) + '...'
+    }
+
+    const topicId = slugify(title || 'Untitled Topic')
+
+    const {
+        baseLessons,
+        baseContents,
+        baseAssessments
+    } = generateBaseLessonsForTopic(topicId, title)
+
+    const {
+        newTimeline,
+        newAssessments,
+        newContents: injectedContents
+    } = injectAssessmentsIntoTimeline(topicId, title, baseLessons, 0, baseLessons.length, false, baseAssessments)
+
+    addLessons(newTimeline)
+    addLessonContents([...baseContents, ...injectedContents])
+    addAssessments(newAssessments)
+
+    addTopic({
+        title: title,
+        progress: 0,
+        tag: 'New',
+        status: 'Ongoing',
+        lessons: `0/${newTimeline.length}`,
+        lastStudied: 'Just now',
+        lastStudiedAt: Date.now(),
+        icon: 'i-lucide-sparkles',
+        isPinned: false,
+        learningGoal: 'Mastery'
+    })
+
+    router.push(`/app/topics/${topicId}`)
 }
 
 const advancedActions = [
@@ -49,8 +99,10 @@ const advancedActions = [
         <div :class="['w-full transition-all duration-500', isHero ? 'max-w-3xl' : '']">
             <!-- Title & Description (Hero Only) -->
             <Transition appear enter-active-class="transition-all duration-700 delay-100"
-                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
-                <div v-if="isHero" class="mb-10 flex flex-col items-center">
+                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-500 ease-in" leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-4">
+                <div v-if="isHero && !isGenerating" class="mb-10 flex flex-col items-center">
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider mb-4">
                         <UIcon name="i-lucide-sparkles" class="animate-pulse" />
@@ -64,7 +116,7 @@ const advancedActions = [
                         path in seconds.
                     </p>
                 </div>
-                <div v-else class="flex flex-col items-center gap-2 mb-10">
+                <div v-else-if="!isGenerating" class="flex flex-col items-center gap-2 mb-10">
                     <!-- welcome back centered -->
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider mb-4">
@@ -77,18 +129,31 @@ const advancedActions = [
             </Transition>
 
             <!-- Prompt Input Area -->
-            <Transition appear enter-active-class="transition-all duration-700 delay-300"
-                enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100">
-                <div class="">
+            <Transition appear mode="out-in" enter-active-class="transition-all duration-700 delay-300"
+                enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100"
+                leave-active-class="transition-all duration-300 ease-in" leave-from-class="opacity-100 scale-100"
+                leave-to-class="opacity-0 scale-95">
+                <div v-if="!isGenerating" class="">
                     <!-- Glass Container -->
                     <UCard
-                        :ui="{ root: `relative group border-0 ${isHero ? 'rounded-2xl' : 'rounded-xl'} shadow-2xl  hover:shadow-primary/50 hover:ring-4 hover:ring-primary-500/40 transition-all duration-300`, body: 'p-0 sm:p-0' }">
+                        :ui="{ root: `relative group border-0 ${isHero ? 'rounded-2xl' : 'rounded-xl'} shadow-2xl  hover:shadow-primary/50 hover:ring-4 hover:ring-primary-500/40 transition-all duration-300`, body: 'p-0 sm:p-0 flex flex-col' }">
 
                         <UTextarea v-model="prompt"
                             placeholder="e.g., I want to learn advanced Quantum Computing with a focus on Cryptography..."
                             :ui="{ root: 'w-full transition-all duration-300', base: `ring-0 ${isHero ? 'rounded-t-2xl' : 'rounded-t-xl'} rounded-b-none p-6` }"
                             autoresize :rows="isHero ? 8 : 5" @keydown.meta.enter="generate"
                             @keydown.ctrl.enter="generate" />
+
+                        <!-- File upload simulation -->
+                        <div v-if="files.length > 0" class="flex flex-wrap gap-2 px-6 py-4">
+                            <div v-for="(file, index) in files" :key="index"
+                                class="flex items-center gap-2 bg-neutral-100 dark:bg-neutral-800 rounded-lg px-3 py-1.5 border border-neutral-200 dark:border-neutral-700">
+                                <UIcon name="i-lucide-file-text" class="text-red-500 text-sm shrink-0" />
+                                <span class="text-xs font-medium truncate max-w-[150px]">{{ file.name }}</span>
+                                <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs" :padded="false"
+                                    class="ml-1 shrink-0" @click="removeFile(index)" />
+                            </div>
+                        </div>
 
                         <!-- Action Bar -->
                         <div
@@ -98,12 +163,11 @@ const advancedActions = [
                                     @click="handleUpload">
                                     <span class="hidden sm:inline">Attach</span>
                                 </UButton>
-                                <input ref="fileInput" type="file" class="hidden" multiple @change="onFileChange" />
 
                                 <div class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
 
                                 <UButton label="Advanced Options" variant="link" class="rounded-full"
-                                    icon="i-lucide-wand" />
+                                    icon="i-lucide-wand" to="/app/topics/new" />
                                 <!-- <div class="hidden sm:flex items-center gap-1">
                                     <UButton v-for="action in advancedActions" :key="action.label"
                                         :icon="action.icon" variant="ghost" color="neutral" size="xs"
@@ -116,7 +180,7 @@ const advancedActions = [
                             </div>
 
                             <UButton label="Generate Topic" color="primary" size="lg"
-                                class="rounded-full px-4 font-bold shadow-lg shadow-primary-500/20" :disabled="!prompt"
+                                class="rounded-full px-4 shadow-lg shadow-primary-500/20" :disabled="!prompt"
                                 @click="generate">
                                 <template #leading>
                                     <UIcon name="i-lucide-sparkles" class="animate-pulse" />
@@ -129,12 +193,17 @@ const advancedActions = [
                             class="absolute -inset-8 bg-gradient-to-tr from-transparent via-transparent to-primary-300/40 dark:to-primary-500/20 blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                     </UCard>
                 </div>
+                <div v-else class="py-12">
+                    <AppTopicGenerating @finish="confirmFinish" />
+                </div>
             </Transition>
 
             <!-- Secondary Actions (Hero Only) -->
             <Transition appear enter-active-class="transition-all duration-700 delay-500"
-                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
-                <div v-if="isHero" class="mt-12 flex flex-wrap justify-center gap-6">
+                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-300 ease-in" leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 translate-y-4">
+                <div v-if="isHero && !isGenerating" class="mt-12 flex flex-wrap justify-center gap-6">
                     <div v-for="(stat, index) in [
                         { label: 'Learning Paths Generated', value: '12.4k+', icon: 'i-lucide-git-branch' },
                         { label: 'Active Learners', value: '5k+', icon: 'i-lucide-users' },
@@ -144,8 +213,12 @@ const advancedActions = [
                             <UIcon :name="stat.icon" class="text-lg flex" />
                         </div>
                         <div class="text-left">
-                            <div class="text-sm font-bold">{{ stat.value }}</div>
-                            <div class="text-xs text-dimmed uppercase tracking-tighter">{{ stat.label }}</div>
+                            <div class="text-sm font-bold">
+                                {{ stat.value }}
+                            </div>
+                            <div class="text-xs text-dimmed uppercase tracking-tighter">
+                                {{ stat.label }}
+                            </div>
                         </div>
                     </div>
                 </div>

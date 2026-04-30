@@ -95,7 +95,7 @@ const actions = [
                 </div>
 
                 <UButton icon="i-lucide-play" color="primary" variant="ghost" size="sm"
-                    @click.stop="updateLastStudied(topic.title)" />
+                    @click="updateLastStudied(topic.title)" />
             </div>
             <!-- Grid View Meta -->
             <div v-if="viewMode === 'grid'" class="flex items-center justify-between mt-4">

@@ -97,6 +97,22 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "April 30, 2026",
+        version: "v1.5.0",
+        title: "AIPrompt Integration, Legal Pages, Coming Soon Launchpad & SEO",
+        changes: [
+            "Developed a highly engaging, glassmorphic 'Coming Soon' page featuring premium animations and a mock subscription flow",
+            "Implemented core Legal Pages including Terms of Service, Privacy Policy, and Cookie Policy tailored for the Acumen platform",
+            "Updated application footer and navigation links to route users correctly to the new legal resources and coming soon endpoints",
+            "Refined legal page layouts by integrating the DocsFooter component and ambient background glow effects",
+            "Finalized DashboardAIPrompt component with integrated AI topic generation flow and mock file attachment UX",
+            "Renamed the application from 'Learn Fast' to 'Acumen Platform' across documentation and meta tags",
+            "Added global SEO meta tags in app.vue to improve search indexing and social sharing previews",
+            "Overhauled the README.md documentation to accurately reflect Acumen's key features and setup instructions",
+            "Synchronized project version tracking to v1.5.0",
+        ],
+    },
+    {
         date: "April 22, 2026",
         version: "v1.4.1",
         title: "AI Interface Refinement & UX Polish",
@@ -287,7 +303,7 @@ export const changelogItems = [
     {
         date: "April 08, 2026",
         version: "v1.0.0",
-        title: "Official Launch - Learn Fast Platform",
+        title: "Official Launch - Acumen Platform",
         changes: [
             "Complete rewrite of the core engine for better performance and scalability",
             "Introduced new modern UI design system based on Nuxt UI Pro patterns",

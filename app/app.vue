@@ -13,6 +13,14 @@ const { initLessons } = useLessons()
 const { initActivityLogs } = useActivityLogs()
 const { initDashboard } = useDashboard()
 
+useSeoMeta({
+  title: 'Acumen - AI-Assisted Learning Platform',
+  description: 'Accelerate Learning. Master Anything. Acumen is an intelligent AI-assisted platform designed for personalized tracking and adaptive pathfinding.',
+  ogTitle: 'Acumen - AI-Assisted Learning Platform',
+  ogDescription: 'Accelerate Learning. Master Anything. Acumen is an intelligent AI-assisted platform designed for personalized tracking and adaptive pathfinding.',
+  twitterCard: 'summary_large_image',
+})
+
 onMounted(() => {
     initTheme()
     initUser()
