@@ -1,6 +1,6 @@
 # Acumen - AI-Assisted Learning Platform
 
-[![NuxtUI](https://img.shields.io/badge/NuxtUI-4.x-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)  [![Nuxt](https://img.shields.io/badge/Nuxt-4.x-00DC82?logo=nuxt&labelColor=020420)](https://nuxt.com)  [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.x-06B6D4?logo=tailwind-css&labelColor=020420)](https://tailwindcss.com)
+[![Nuxt](https://img.shields.io/badge/Nuxt-4.x-00DC82?logo=nuxt&labelColor=020420)](https://nuxt.com)  [![NuxtUI](https://img.shields.io/badge/NuxtUI-4.x-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)  [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.x-06B6D4?logo=tailwind-css&labelColor=020420)](https://tailwindcss.com)
 
 Acumen is an intelligent platform designed specifically for learners and educators. It eliminates traditional learning barriers through personalized tracking, adaptive pathfinding, and actionable analytics.
 
