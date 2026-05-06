@@ -34,11 +34,11 @@ export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
         icon: 'i-lucide-clipboard-list',
         to: '/app/activity'
     },
-    {
-        label: 'Settings',
-        icon: 'i-lucide-settings',
-        to: '/app/settings'
-    }
+    // {
+    //     label: 'Settings',
+    //     icon: 'i-lucide-settings',
+    //     to: '/app/settings'
+    // }
 ]
 
 // export const IDENTITY_ACCESS_NAVIGATION_ITEMS: NavigationMenuItem[] = [

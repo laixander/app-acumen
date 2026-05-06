@@ -24,6 +24,7 @@ const links = computed(() =>
             <UNavigationMenu :items="links" content-orientation="vertical" :ui="{ list: 'gap-4' }" />
 
             <template #right>
+                <WorkspaceMenu />
                 <UserMenu />
             </template>
 

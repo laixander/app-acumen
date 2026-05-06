@@ -60,6 +60,18 @@ export const dataModels = [
         name: "Lesson",
         fields: "id, topic_id, title, order, content, status",
     },
+    {
+        name: "Workspace",
+        fields: "id, name, icon, description, plan, members, pendingInvites, lastActive",
+    },
+    {
+        name: "WorkspaceMember",
+        fields: "id, name, email, avatar, role, joinedAt",
+    },
+    {
+        name: "WorkspaceInvite",
+        fields: "id, email, role, sentAt, expiresAt",
+    },
 ];
 
 export const workflowSteps = [
@@ -96,6 +108,22 @@ export const workflowSteps = [
 ];
 
 export const changelogItems = [
+    {
+        date: "May 06, 2026",
+        version: "v1.6.0",
+        title: "Role-Based Workspace Management & UX Ecosystem",
+        changes: [
+            "Implemented a comprehensive role-based Workspace Management system with Owner, Admin, and Member support",
+            "Designed a centralized 'Manage Workspaces' hub with categorized sections for manageable and joined teams",
+            "Enhanced workspace cards with real member avatar stacks, live counts, and accurate activity statistics",
+            "Developed a dynamic Workspace Menu with role-aware links and context-sensitive redirections",
+            "Implemented role-specific Danger Zone actions: 'Delete Workspace' for Owners and 'Leave Workspace' for Members",
+            "Built a context-aware breadcrumb system that adapts paths based on the user's navigation origin",
+            "Optimized workspace settings with robust empty states and defensive error handling for missing data",
+            "Resolved multiple complex TypeScript type errors across the workspace ecosystem ensuring 100% type safety",
+            "Synchronized global workspace state and persistence across all management interfaces",
+        ],
+    },
     {
         date: "April 30, 2026",
         version: "v1.5.0",
@@ -346,6 +374,11 @@ export const modules = [
         name: "AI Tutor Chat",
         desc: "Interactive conversational layer for instant clarification during lessons.",
         icon: "i-lucide-message-square-quote",
+    },
+    {
+        name: "Workspace Management",
+        desc: "Role-based team coordination with granular access control and member management.",
+        icon: "i-lucide-users",
     },
 ];
 

@@ -8,6 +8,7 @@ Acumen is an intelligent platform designed specifically for learners and educato
 
 - **AI-Powered Assessments**: Context-aware diagnostics and milestone quizzes.
 - **Adaptive Lesson Planning**: Non-linear learning paths focusing on knowledge gaps.
+- **Workspace Management**: Role-based (Owner, Admin, Member) team coordination and organization.
 - **Dynamic Daily Quests**: Engaging activities with tracking and streaks.
 - **Topic Customization**: Personalize your learning path with custom themes and icons.
 - **Progress Analytics**: Visualizations for tracking learning speed and mastery levels.

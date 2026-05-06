@@ -1,5 +1,6 @@
 {
-  "name": "app-learnfast",
+  "name": "app-acumen",
+  "version": "1.6.0",
   "private": true,
   "type": "module",
   "scripts": {

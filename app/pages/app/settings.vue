@@ -53,6 +53,12 @@ const sections = computed(() => [
 <template>
     <UContainer class="max-w-4xl py-12">
         <div class="flex flex-col gap-10">
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-2 text-sm text-neutral-500 mb-2">
+                <ULink to="/app/dashboard" class="hover:text-primary transition-colors">App</ULink>
+                <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
+                <span class="font-medium text-neutral-900 dark:text-neutral-100">User Settings</span>
+            </nav>
             <!-- Header -->
             <header class="flex items-start gap-4">
                 <!-- <div class="p-2 bg-primary/10 rounded-lg">
