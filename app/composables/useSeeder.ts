@@ -1,4 +1,13 @@
-import { MOCK_TOPICS, injectAssessmentsIntoTimeline, MOCK_ACTIVITY_LOGS, MOCK_SESSION_LOGS, calculateInterval } from '~/utils/seeder'
+import { 
+    MOCK_TOPICS, 
+    injectAssessmentsIntoTimeline, 
+    MOCK_ACTIVITY_LOGS, 
+    MOCK_SESSION_LOGS, 
+    calculateInterval,
+    generateMockWorkspaces,
+    generateInitialWorkspaces,
+    MOCK_RECEIVED_INVITATIONS
+} from '~/utils/seeder'
 import { MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
 import { useTopics } from '~/composables/useTopics'
 import { useDashboard } from '~/composables/useDashboard'
@@ -13,11 +22,31 @@ export const useSeeder = () => {
     const { recommendedTopics } = useDashboard()
     const toast = useToast()
 
+    const { user } = useUser()
+
+    const seedWorkspaces = () => {
+        const { workspaces, pendingInvitations, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
+        workspaces.value = generateMockWorkspaces(user.value.profile)
+        pendingInvitations.value = [...MOCK_RECEIVED_INVITATIONS]
+        currentWorkspaceId.value = '1'
+        saveWorkspaces()
+    }
+
+    const clearWorkspaces = () => {
+        const { workspaces, pendingInvitations, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
+        workspaces.value = generateInitialWorkspaces(user.value.profile)
+        pendingInvitations.value = []
+        currentWorkspaceId.value = '1'
+        saveWorkspaces()
+    }
+
     const seedTopics = () => {
         topics.value = [...MOCK_TOPICS]
         logs.value = [...MOCK_ACTIVITY_LOGS]
         sessions.value = [...MOCK_SESSION_LOGS]
         recommendedTopics.value = [...MOCK_RECOMMENDED_TOPICS]
+        
+        seedWorkspaces()
         
         const allLessons: LessonOverview[] = []
         const allContents: LessonContent[] = []
@@ -74,8 +103,6 @@ export const useSeeder = () => {
                 topic.status === 'Completed'
             )
             
-            // The statuses are now correctly calculated inside injectAssessmentsIntoTimeline based on 'completed' and 'total'
-
             allLessons.push(...newTimeline)
             allAssessments.push(...newAssessments)
             allContents.push(...newContents)
@@ -95,11 +122,14 @@ export const useSeeder = () => {
         sessions.value = []
         recommendedTopics.value = []
         clearLessons()
+        clearWorkspaces()
         toast.add({ title: 'Test data cleared!', color: 'info' })
     }
 
     return {
         seedTopics,
-        clearTopics
+        clearTopics,
+        seedWorkspaces,
+        clearWorkspaces
     }
 }

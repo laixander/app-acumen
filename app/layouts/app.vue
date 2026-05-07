@@ -10,6 +10,10 @@ const links = computed(() =>
             ?? (item.to ? route.path.startsWith(item.to as string) : false),
     }))
 )
+
+// Initialize workspaces from localStorage
+const { initWorkspaces } = useWorkspaces()
+initWorkspaces()
 </script>
 
 <template>

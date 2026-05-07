@@ -12,6 +12,16 @@ export interface Topic {
     icon: string
     isPinned: boolean
     learningGoal?: LearningGoal
+    createdBy?: {
+        id: string
+        name: string
+        avatar?: string
+        role: string
+        topicsCount?: number
+    }
+    workspaceId?: string
+    viewersCount?: number
+    completedCount?: number
 }
 
 export interface LessonOverview {

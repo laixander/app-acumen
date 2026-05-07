@@ -1,12 +1,102 @@
-import type { Topic, LessonOverview, LessonContent, Assessment, ActivityLog, SessionLog } from '~/types/topic'
+import type { Topic, LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 export const MOCK_TOPICS: Topic[] = [
-    { id: 'introduction-to-algebra', title: 'Introduction to Algebra', progress: 80, tag: 'Math', status: 'Ongoing', lessons: '10/12', lastStudied: '2 hrs ago', lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000, icon: 'i-lucide-function-square', isPinned: true, learningGoal: 'Mastery' },
-    { id: 'world-war-ii-overview', title: 'World War II Overview', progress: 55, tag: 'History', status: 'Ongoing', lessons: '6/11', lastStudied: '1 day ago', lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000, icon: 'i-lucide-landmark', isPinned: false, learningGoal: 'Overview' },
-    { id: 'newtons-laws-of-motion', title: "Newton's Laws of Motion", progress: 30, tag: 'Science', status: 'Ongoing', lessons: '3/10', lastStudied: '3 days ago', lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, icon: 'i-lucide-microscope', isPinned: true, learningGoal: 'Exam Prep' },
-    { id: 'spanish-basics', title: 'Spanish Basics', progress: 65, tag: 'Language', status: 'Ongoing', lessons: '8/12', lastStudied: 'Yesterday', lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000, icon: 'i-lucide-languages', isPinned: false, learningGoal: 'Mastery' },
-    { id: 'greek-mythology', title: 'Greek Mythology', progress: 100, tag: 'History', status: 'Completed', lessons: '8/8', lastStudied: '1 week ago', lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000, icon: 'i-lucide-scroll', isPinned: false, learningGoal: 'Overview' },
-    { id: 'advanced-javascript', title: 'Advanced JavaScript', progress: 15, tag: 'Science', status: 'Ongoing', lessons: '2/12', lastStudied: '5 hrs ago', lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000, icon: 'i-lucide-code', isPinned: false, learningGoal: 'Project Based' },
+    { 
+        id: 'introduction-to-algebra', 
+        title: 'Introduction to Algebra', 
+        progress: 80, 
+        tag: 'Math', 
+        status: 'Ongoing', 
+        lessons: '10/12', 
+        lastStudied: '2 hrs ago', 
+        lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000, 
+        icon: 'i-lucide-function-square', 
+        isPinned: true, 
+        learningGoal: 'Mastery',
+        createdBy: { id: '2', name: 'Alice Smith', avatar: 'https://i.pravatar.cc/100?u=2', role: 'Admin', topicsCount: 15 },
+        viewersCount: 12,
+        completedCount: 4
+    },
+    { 
+        id: 'world-war-ii-overview', 
+        title: 'World War II Overview', 
+        progress: 55, 
+        tag: 'History', 
+        status: 'Ongoing', 
+        lessons: '6/11', 
+        lastStudied: '1 day ago', 
+        lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000, 
+        icon: 'i-lucide-landmark', 
+        isPinned: false, 
+        learningGoal: 'Overview',
+        createdBy: { id: '3', name: 'Bob Johnson', avatar: 'https://i.pravatar.cc/100?u=3', role: 'Admin', topicsCount: 8 },
+        viewersCount: 45,
+        completedCount: 12
+    },
+    { 
+        id: 'newtons-laws-of-motion', 
+        title: "Newton's Laws of Motion", 
+        progress: 30, 
+        tag: 'Science', 
+        status: 'Ongoing', 
+        lessons: '3/10', 
+        lastStudied: '3 days ago', 
+        lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, 
+        icon: 'i-lucide-microscope', 
+        isPinned: true, 
+        learningGoal: 'Exam Prep',
+        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
+        viewersCount: 8,
+        completedCount: 2
+    },
+    { 
+        id: 'spanish-basics', 
+        title: 'Spanish Basics', 
+        progress: 65, 
+        tag: 'Language', 
+        status: 'Ongoing', 
+        lessons: '8/12', 
+        lastStudied: 'Yesterday', 
+        lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000, 
+        icon: 'i-lucide-languages', 
+        isPinned: false, 
+        learningGoal: 'Mastery',
+        createdBy: { id: '4', name: 'Charlie Williams', avatar: 'https://i.pravatar.cc/100?u=4', role: 'Admin', topicsCount: 5 },
+        viewersCount: 24,
+        completedCount: 8
+    },
+    { 
+        id: 'greek-mythology', 
+        title: 'Greek Mythology', 
+        progress: 100, 
+        tag: 'History', 
+        status: 'Completed', 
+        lessons: '8/8', 
+        lastStudied: '1 week ago', 
+        lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000, 
+        icon: 'i-lucide-scroll', 
+        isPinned: false, 
+        learningGoal: 'Overview',
+        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
+        viewersCount: 156,
+        completedCount: 42
+    },
+    { 
+        id: 'advanced-javascript', 
+        title: 'Advanced JavaScript', 
+        progress: 15, 
+        tag: 'Science', 
+        status: 'Ongoing', 
+        lessons: '2/12', 
+        lastStudied: '5 hrs ago', 
+        lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000, 
+        icon: 'i-lucide-code', 
+        isPinned: false, 
+        learningGoal: 'Project Based',
+        createdBy: { id: '5', name: 'David Brown', avatar: 'https://i.pravatar.cc/100?u=5', role: 'Admin', topicsCount: 12 },
+        viewersCount: 3,
+        completedCount: 1
+    },
 ]
 
 export const TOPIC_CONTENT_MAP: Record<string, {
@@ -248,340 +338,3 @@ export const TOPIC_CONTENT_MAP: Record<string, {
         ]
     }
 }
-
-export const calculateInterval = (totalLessons: number) => {
-    if (totalLessons <= 5) return 2
-    if (totalLessons <= 8) return 3
-    return 5
-}
-
-export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string): {
-    baseLessons: LessonOverview[],
-    baseContents: LessonContent[],
-    baseAssessments: Assessment[]
-} => {
-    const custom = TOPIC_CONTENT_MAP[topicId]
-    const baseLessons: LessonOverview[] = []
-    const baseContents: LessonContent[] = []
-    const baseAssessments: Assessment[] = []
-
-    if (custom) {
-        custom.lessons.forEach((l, idx) => {
-            const lessonId = l.id || `${topicId}-lesson-${idx + 1}`
-            const status = idx === 0 ? 'current' : 'locked'
-
-            baseLessons.push({
-                id: lessonId,
-                topicId,
-                title: l.title || `Lesson ${idx + 1}`,
-                duration: l.duration || '15 min',
-                status: status as any,
-                type: l.type || 'reading',
-                icon: l.icon || 'i-lucide-book-open',
-                color: l.color || 'primary',
-                summary: l.summary || 'Custom lesson content.'
-            } as LessonOverview)
-
-            baseContents.push({
-                id: lessonId,
-                topicId,
-                title: l.title || `Lesson ${idx + 1}`,
-                description: l.content?.description || `Detailed study materials for ${l.title}.`,
-                lessonTypes: l.content?.lessonTypes || ['Reading', 'Video'],
-                sections: l.content?.sections || [
-                    { title: 'Overview', content: 'Study materials for this lesson.', aiInsight: null }
-                ]
-            } as LessonContent)
-
-            if (l.assessment) {
-                baseAssessments.push({
-                    id: `assess-${lessonId}`,
-                    lessonId,
-                    topicId,
-                    title: l.assessment.title || `Assessment: ${l.title}`,
-                    questions: l.assessment.questions || []
-                } as Assessment)
-            }
-        })
-    } else {
-        const count = 8 + Math.floor(Math.random() * 5)
-        for (let i = 1; i <= count; i++) {
-            const lessonId = `${topicId}-lesson-${i}`
-            const status = i === 1 ? 'current' : 'locked'
-
-            baseLessons.push({
-                id: lessonId,
-                topicId,
-                title: `Lesson ${i}: Understanding ${topicTitle}`,
-                duration: '20 min',
-                status: status as any,
-                type: 'reading',
-                icon: 'i-lucide-book-open',
-                color: i === 1 ? 'primary' : 'neutral',
-                summary: `Essential concepts for ${topicTitle} - part ${i}.`
-            })
-
-            baseContents.push({
-                id: lessonId,
-                topicId,
-                title: `Lesson ${i}: ${topicTitle}`,
-                description: `Deep dive into the core principles of ${topicTitle}.`,
-                lessonTypes: ['Reading', 'Video'],
-                sections: [
-                    { title: 'Core Objectives', content: 'AI-generated content for this section.', aiInsight: 'Focus on foundations.' }
-                ]
-            } as LessonContent)
-        }
-    }
-
-    return { baseLessons, baseContents, baseAssessments }
-}
-
-export const generateReviewContent = (id: string, topicId: string, topicTitle: string, isFinal: boolean): LessonContent => {
-    return {
-        id,
-        topicId,
-        title: isFinal ? 'Final Topic Review' : 'Checkpoint Review',
-        description: isFinal
-            ? `You've reached the end of ${topicTitle}! This final review session will help you synthesize everything you've learned before the final assessment.`
-            : `Great job reaching this milestone in ${topicTitle}. Take a moment to review core concepts.`,
-        lessonTypes: ['Reading'],
-        sections: [
-            {
-                title: "Key Takeaways",
-                content: "Review the core principles discussed in the preceding lessons. Focus on how these concepts integrate with your overall learning objectives.",
-                aiInsight: "This assessment will specifically test your ability to apply these concepts in combined scenarios."
-            },
-            {
-                title: "Quick Recap",
-                content: "Ensure you are comfortable with the terminology and logic flow before proceeding.",
-                aiInsight: null
-            }
-        ],
-        assessmentId: id
-    }
-}
-
-export const injectAssessmentsIntoTimeline = (
-    topicId: string,
-    topicTitle: string,
-    baseLessons: LessonOverview[],
-    completedCount: number = 0,
-    totalCount: number = 0,
-    isTopicComplete: boolean = false,
-    predefinedAssessments: Assessment[] = []
-) => {
-    const totalBaseLessons = baseLessons.filter(l => l.type !== 'quiz').length
-    const interval = calculateInterval(totalBaseLessons)
-
-    const newTimeline: LessonOverview[] = []
-    const newAssessments: Assessment[] = [...predefinedAssessments]
-    const newContents: LessonContent[] = []
-    let baseCount = 0
-
-    baseLessons.forEach((lesson, index) => {
-        newTimeline.push(lesson)
-        baseCount++
-
-        // Logic for specialized lessons that might already have assessments
-        const existingAssess = predefinedAssessments.find(a => a.lessonId === lesson.id)
-        if (existingAssess) {
-            lesson.assessmentId = existingAssess.id
-        }
-
-        if (baseCount % interval === 0 && index !== baseLessons.length - 1) {
-            const quizId = `${topicId}-quiz-${baseCount}`
-            
-            // Calculate precise status
-            let status: 'completed' | 'current' | 'locked' = 'locked'
-            let color: string = 'neutral'
-            
-            if (baseCount < completedCount) {
-                status = 'completed'
-                color = 'green'
-            } else if (baseCount === completedCount) {
-                status = 'current'
-                color = 'orange'
-            }
-
-            newTimeline.push({
-                id: quizId,
-                topicId,
-                title: `Checkpoint Quiz ${Math.ceil(baseCount / interval)}`,
-                duration: '10 min',
-                status,
-                type: 'Assessment',
-                icon: 'i-lucide-award',
-                color,
-                summary: `Review milestone for the last ${interval} lessons.`
-            })
-
-            const review = generateReviewContent(quizId, topicId, topicTitle, false)
-            newContents.push(review)
-
-            newAssessments.push({
-                id: quizId,
-                lessonId: quizId,
-                topicId,
-                title: `Checkpoint Quiz: ${topicTitle}`,
-                questions: [
-                    {
-                        id: 1,
-                        text: `What is the primary theme of the last ${interval} lessons?`,
-                        options: [{ id: '1', label: 'Correct Answer' }, { id: '2', label: 'Wrong' }, { id: '3', label: 'Wrong' }],
-                        correct: '1'
-                    },
-                    {
-                        id: 2,
-                        text: `How does this relate to ${topicTitle}?`,
-                        options: [{ id: '1', label: 'Related' }, { id: '2', label: 'Unrelated' }],
-                        correct: '1'
-                    }
-                ]
-            })
-        }
-    })
-
-    // Add Final Assessment
-    const finalId = `${topicId}-final`
-    let finalStatus: 'completed' | 'current' | 'locked' = 'locked'
-    let finalColor: string = 'neutral'
-
-    if (isTopicComplete) {
-        finalStatus = 'completed'
-        finalColor = 'green'
-    } else if (completedCount === totalCount) {
-        finalStatus = 'current'
-        finalColor = 'purple'
-    }
-
-    newTimeline.push({
-        id: finalId,
-        topicId,
-        title: 'Final Assessment',
-        duration: '25 min',
-        status: finalStatus,
-        type: 'Assessment',
-        icon: 'i-lucide-graduation-cap',
-        color: finalColor,
-        summary: 'Comprehensive evaluation of the entire topic.'
-    })
-
-    newContents.push(generateReviewContent(finalId, topicId, topicTitle, true))
-
-    newAssessments.push({
-        id: finalId,
-        lessonId: finalId,
-        topicId,
-        title: `Final Assessment: ${topicTitle}`,
-        questions: Array.from({ length: 5 }, (_, idx) => ({
-            id: idx + 1,
-            text: `Advanced evaluation question ${idx + 1} for ${topicTitle}.`,
-            options: [
-                { id: '1', label: 'Mastery Answer' },
-                { id: '2', label: 'Distractor A' },
-                { id: '3', label: 'Distractor B' },
-                { id: '4', label: 'Distractor C' }
-            ],
-            correct: '1'
-        }))
-    })
-
-    return { newTimeline, newAssessments, newContents }
-}
-
-export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
-    {
-        id: 'log-1',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
-        lessonId: 'introduction-to-algebra-lesson-1',
-        lessonTitle: 'Understanding Variables',
-        type: 'Lesson',
-        durationMinutes: 10,
-        completedAt: Date.now() - (2 * 24 * 60 * 60 * 1000) // 2 days ago
-    },
-    {
-        id: 'log-2',
-        topicId: 'world-war-ii-overview',
-        topicTitle: 'World War II Overview',
-        lessonId: 'world-war-ii-overview-lesson-1',
-        lessonTitle: 'The Road to War',
-        type: 'Lesson',
-        durationMinutes: 15,
-        completedAt: Date.now() - (1 * 24 * 60 * 60 * 1000) // 1 day ago
-    },
-    {
-        id: 'log-3',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
-        lessonId: 'introduction-to-algebra-lesson-2',
-        lessonTitle: 'Solving One-Step Equations',
-        type: 'Lesson',
-        durationMinutes: 20,
-        completedAt: Date.now() - (6 * 60 * 60 * 1000) // 6 hours ago
-    },
-    {
-        id: 'log-4',
-        topicId: 'advanced-javascript',
-        topicTitle: 'Advanced JavaScript',
-        lessonId: 'advanced-javascript-lesson-1',
-        lessonTitle: 'Closures & Scope',
-        type: 'Assessment',
-        durationMinutes: 25,
-        completedAt: Date.now() - (2 * 60 * 60 * 1000) // 2 hours ago
-    },
-    {
-        id: 'log-5',
-        topicId: 'spanish-basics',
-        topicTitle: 'Spanish Basics',
-        lessonId: 'spanish-basics-lesson-1',
-        lessonTitle: 'Essential Greetings',
-        type: 'Lesson',
-        durationMinutes: 12,
-        completedAt: Date.now() - (1 * 60 * 60 * 1000) // 1 hour ago
-    }
-]
-
-export const MOCK_SESSION_LOGS: SessionLog[] = [
-    {
-        id: 'session-1',
-        action: 'Account Logged In',
-        device: 'Chrome on MacOS',
-        location: 'California, USA',
-        status: 'Success',
-        timestamp: Date.now() - (10 * 60 * 1000)
-    },
-    {
-        id: 'session-2',
-        action: 'Profile Updated',
-        device: 'LearnFast Windows App',
-        location: 'New York, USA',
-        status: 'Success',
-        timestamp: Date.now() - (45 * 60 * 1000)
-    },
-    {
-        id: 'session-3',
-        action: 'Failed Login Attempt',
-        device: 'Safari on iPhone',
-        location: 'London, UK',
-        status: 'Failed',
-        timestamp: Date.now() - (2 * 60 * 60 * 1000)
-    },
-    {
-        id: 'session-4',
-        action: 'Security Settings Changed',
-        device: 'Chrome on MacOS',
-        location: 'California, USA',
-        status: 'Warning',
-        timestamp: Date.now() - (3 * 24 * 60 * 60 * 1000)
-    },
-    {
-        id: 'session-5',
-        action: 'Account Logged In',
-        device: 'LearnFast Android',
-        location: 'Tokyo, Japan',
-        status: 'Success',
-        timestamp: Date.now() - (4 * 24 * 60 * 60 * 1000)
-    }
-]

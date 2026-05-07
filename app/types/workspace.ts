@@ -5,6 +5,7 @@ export interface WorkspaceMember {
     role: 'Owner' | 'Admin' | 'Member'
     avatar?: string
     status?: 'online' | 'offline'
+    tokens?: number
 }
 
 export interface WorkspaceInvite {
@@ -24,4 +25,6 @@ export interface Workspace {
     pendingInvites: WorkspaceInvite[]
     lastActive: string
     color?: string
+    tokens?: number
+    maxTokens?: number
 }

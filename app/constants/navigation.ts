@@ -12,7 +12,7 @@ export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
     //     to: '/app/topics/new'
     // },
     {
-        label: 'My Topics',
+        label: 'Topics',
         icon: 'i-lucide-book-open',
         children: [
             {

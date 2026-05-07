@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { workspaces, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
+const { workspaces, currentWorkspaceId, pendingInvitations, isInitialized, saveWorkspaces } = useWorkspaces()
 
 const switchWorkspace = (id: string) => {
     currentWorkspaceId.value = id
@@ -31,34 +31,35 @@ const joinedWorkspaces = computed(() => workspaces.value.filter(ws => {
     return me && me.role === 'Member'
 }))
 
-const pendingInvitations = ref([
-    {
-        id: 'inv_1',
-        workspaceName: 'Acme Marketing',
-        invitedBy: 'Alice Freeman',
-        role: 'Member',
-        sentAt: '1 day ago'
-    }
-])
+
 
 const acceptInvitation = (id: string) => {
     pendingInvitations.value = pendingInvitations.value.filter(inv => inv.id !== id)
+    saveWorkspaces()
     // Add logic to join workspace
 }
 
 const declineInvitation = (id: string) => {
     pendingInvitations.value = pendingInvitations.value.filter(inv => inv.id !== id)
+    saveWorkspaces()
 }
 
 const getMyRole = (ws: any) => {
     const me = ws.members.find((m: any) => m.id === '1')
     return me ? me.role : 'Member'
 }
+
+const formatTokens = (val?: number) => {
+    if (!val) return '0'
+    if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M'
+    if (val >= 1000) return (val / 1000).toFixed(1) + 'k'
+    return val.toString()
+}
 </script>
 
 <template>
     <UContainer class="py-12">
-        <div class="flex flex-col gap-10">
+        <div v-if="isInitialized" class="flex flex-col gap-10">
             <!-- Breadcrumbs -->
             <nav class="flex items-center gap-2 text-sm text-neutral-500 -mb-6">
                 <ULink to="/app/dashboard" class="hover:text-primary transition-colors">App</ULink>
@@ -143,12 +144,12 @@ const getMyRole = (ws: any) => {
                             <!-- Stats -->
                             <div class="grid grid-cols-3 gap-4 p-3 rounded-xl bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-100 dark:border-neutral-800">
                                 <div class="flex flex-col items-center gap-0.5">
-                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ ws.members.length }}</span>
+                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ ws.members.length - 1 }}</span>
                                     <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Members</span>
                                 </div>
                                 <div class="flex flex-col items-center gap-0.5 border-x border-neutral-200 dark:border-neutral-800">
-                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ (ws as any).lessons || 0 }}</span>
-                                    <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Lessons</span>
+                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ formatTokens(ws.tokens) }}</span>
+                                    <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Tokens</span>
                                 </div>
                                 <div class="flex flex-col items-center gap-0.5">
                                     <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ ws.plan }}</span>
@@ -158,12 +159,13 @@ const getMyRole = (ws: any) => {
 
                             <!-- Footer Action -->
                             <div class="flex items-center justify-between pt-2">
-                                <div class="flex -space-x-2">
-                                    <UAvatar v-for="m in ws.members.slice(0, 3)" :key="m.id" :src="m.avatar || `https://i.pravatar.cc/100?u=${m.id}`" size="xs" class="ring-2 ring-white dark:ring-neutral-900" />
-                                    <div v-if="ws.members.length > 3" class="w-6 h-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-500 ring-2 ring-white dark:ring-neutral-900">
-                                        +{{ ws.members.length - 3 }}
+                                <div v-if="ws.members.length > 1" class="flex -space-x-2">
+                                    <UAvatar v-for="m in ws.members.filter(m => m.id !== '1').slice(0, 3)" :key="m.id" :src="m.avatar || `https://i.pravatar.cc/100?u=${m.id}`" size="xs" class="ring-2 ring-white dark:ring-neutral-900" />
+                                    <div v-if="ws.members.length > 4" class="w-6 h-6 rounded-full bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center text-[10px] font-bold text-neutral-500 ring-2 ring-white dark:ring-neutral-900">
+                                        +{{ ws.members.length - 4 }}
                                     </div>
                                 </div>
+                                <UButton v-else label="Invite Members" variant="subtle" color="primary" size="xs" icon="i-lucide-plus" @click.stop="navigateTo('/app/workspaces/members')" />
                                 <UButton label="Workspace Settings" variant="link" color="primary" icon-right="i-lucide-arrow-right" size="sm" class="p-0" />
                             </div>
                         </div>
@@ -206,8 +208,8 @@ const getMyRole = (ws: any) => {
                                     <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Members</span>
                                 </div>
                                 <div class="flex flex-col items-center gap-0.5 border-x border-neutral-200 dark:border-neutral-800">
-                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ (ws as any).lessons || 0 }}</span>
-                                    <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Lessons</span>
+                                    <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ formatTokens(ws.tokens) }}</span>
+                                    <span class="text-[10px] uppercase font-bold text-neutral-500 tracking-wider">Tokens</span>
                                 </div>
                                 <div class="flex flex-col items-center gap-0.5">
                                     <span class="text-lg font-bold text-neutral-900 dark:text-neutral-100">{{ ws.plan }}</span>
@@ -228,6 +230,15 @@ const getMyRole = (ws: any) => {
                         </div>
                     </UCard>
                 </div>
+            </div>
+        </div>
+        <div v-else class="flex flex-col gap-10">
+            <div class="flex flex-col gap-4">
+                <div class="h-4 w-32 bg-neutral-200 dark:bg-neutral-800 rounded animate-pulse"></div>
+                <div class="h-10 w-64 bg-neutral-200 dark:bg-neutral-800 rounded-lg animate-pulse"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="i in 3" :key="i" class="h-64 bg-neutral-100 dark:bg-neutral-900 rounded-2xl animate-pulse"></div>
             </div>
         </div>
     </UContainer>

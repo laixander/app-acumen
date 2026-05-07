@@ -48,7 +48,7 @@ const actions = [
                     class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
 
                 <div class="absolute top-4 left-4 flex gap-2">
-                    <div class="bg-primary/20 backdrop-blur-md p-2 rounded-xl">
+                    <div class="bg-primary/20 backdrop-blur-md p-2 rounded-xl relative">
                         <UIcon :name="topic.icon" class="text-xl text-primary flex shrink-0" />
                     </div>
                 </div>
@@ -94,8 +94,8 @@ const actions = [
                     </div>
                 </div>
 
-                <UButton icon="i-lucide-play" color="primary" variant="ghost" size="sm"
-                    @click="updateLastStudied(topic.title)" />
+                <!-- <UButton icon="i-lucide-play" color="primary" variant="ghost" size="sm"
+                    @click="updateLastStudied(topic.title)" /> -->
             </div>
             <!-- Grid View Meta -->
             <div v-if="viewMode === 'grid'" class="flex items-center justify-between mt-4">
@@ -112,6 +112,38 @@ const actions = [
                     :color="GOAL_COLORS[topic.learningGoal]" class="shrink-0" />
             </div>
 
+            <!-- Grid View Workspace/Creator Meta -->
+            <div v-if="viewMode === 'grid' && topic.createdBy"
+                class="mt-4 pt-4 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="xs"
+                        class="ring-1 ring-neutral-200 dark:ring-neutral-800" />
+                    <div class="flex flex-col">
+                        <span
+                            class="text-[9px] text-neutral-400 font-bold uppercase tracking-wider leading-none mb-0.5">Author</span>
+                        <span class="text-[10px] text-neutral-700 dark:text-neutral-300 font-medium leading-none">{{
+                            topic.createdBy.name }}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <UTooltip text="Studying">
+                        <div v-if="topic.viewersCount"
+                            class="flex items-center gap-1 text-neutral-400 dark:text-neutral-500">
+                            <UIcon name="i-lucide-eye" class="size-4" />
+                            <span class="text-xs">{{ topic.viewersCount }}</span>
+                        </div>
+                    </UTooltip>
+                    <UTooltip text="Completed">
+                        <div v-if="topic.completedCount"
+                            class="flex items-center gap-1 text-neutral-400 dark:text-neutral-500">
+                            <UIcon name="i-lucide-flag" class="size-4" />
+                            <span class="text-xs">{{ topic.completedCount }}</span>
+                        </div>
+                    </UTooltip>
+                </div>
+            </div>
+
             <!-- List View Meta -->
             <div v-if="viewMode === 'list'" class="hidden md:flex items-center gap-6 shrink-0">
                 <USeparator orientation="vertical" class="mx-2 h-6" />
@@ -122,6 +154,13 @@ const actions = [
                 <span class="flex flex-col">
                     <span class="text-[10px] text-dimmed/80 font-semibold uppercase tracking-wider">Last Studied</span>
                     <span class="text-xs">{{ topic.lastStudied }}</span>
+                </span>
+                <span v-if="topic.createdBy" class="flex flex-col">
+                    <span class="text-[10px] text-dimmed/80 font-semibold uppercase tracking-wider">Created By</span>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <UAvatar :src="topic.createdBy.avatar" size="xs" class="size-4" />
+                        <span class="text-xs">{{ topic.createdBy.name }}</span>
+                    </div>
                 </span>
                 <div class="flex items-center gap-2 shrink-0">
                     <UButton :icon="topic.isPinned ? 'i-lucide-pin' : 'i-lucide-pin-off'"

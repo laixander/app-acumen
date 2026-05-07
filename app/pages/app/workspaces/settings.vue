@@ -1,12 +1,23 @@
 <script setup lang="ts">
 
+
 const { user } = useUser()
 const { currentWorkspace: workspace, updateWorkspace, workspaces, currentWorkspaceId } = useWorkspaces()
+const { topics } = useTopics()
+
+const workspaceTopics = computed(() => {
+    if (!workspace.value) return []
+    return topics.value.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
+})
+
+const workspaceTopicsCount = computed(() => workspaceTopics.value.length)
 
 const isEditNameModalOpen = ref(false)
 const newWorkspaceName = ref(workspace.value?.name || '')
 
 const isChangeIconModalOpen = ref(false)
+const isDeleteModalOpen = ref(false)
+
 const iconOptions = [
     'i-lucide-user', 'i-lucide-users', 'i-lucide-briefcase', 'i-lucide-graduation-cap',
     'i-lucide-code-2', 'i-lucide-globe', 'i-lucide-brain-circuit', 'i-lucide-rocket',
@@ -15,8 +26,6 @@ const iconOptions = [
     'i-lucide-shield', 'i-lucide-lock', 'i-lucide-key', 'i-lucide-fingerprint',
     'i-lucide-zap', 'i-lucide-flame', 'i-lucide-heart', 'i-lucide-star'
 ]
-
-const isDeleteModalOpen = ref(false)
 
 const updateWorkspaceName = () => {
     if (workspace.value) {
@@ -44,6 +53,13 @@ const currentUserRole = computed(() => {
     return me ? me.role : 'Member'
 })
 
+const formatTokens = (val?: number) => {
+    if (!val) return '0'
+    if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M'
+    if (val >= 1000) return (val / 1000).toFixed(1) + 'k'
+    return val.toString()
+}
+
 const sections = computed(() => [
     {
         title: 'General',
@@ -59,6 +75,13 @@ const sections = computed(() => [
                 value: 'Change Icon',
                 icon: workspace.value?.icon || 'i-lucide-user',
                 color: 'blue'
+            },
+            {
+                label: 'Total Topics',
+                value: `${workspaceTopicsCount.value} Active Topics`,
+                icon: 'i-lucide-book-open',
+                color: 'orange',
+                action: '/app/workspaces/topics'
             }
         ]
     },
@@ -81,7 +104,8 @@ const sections = computed(() => [
                 label: 'Subscription',
                 value: workspace.value?.plan || 'Free',
                 icon: 'i-lucide-credit-card',
-                color: 'emerald'
+                color: 'emerald',
+                action: '/app/workspaces/billing'
             }
         ]
     }

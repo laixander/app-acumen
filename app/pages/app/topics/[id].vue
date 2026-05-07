@@ -62,7 +62,8 @@ useHead({
                     <ContentHeading :title="topic.title" :icon="topic.icon">
                         <template #description>
                             <p class="text-dimmed max-w-lg">
-                                Master this topic with an AI-curated learning path tailored to your specific materials
+                                Master this topic with an AI-curated learning path tailored to your specific
+                                materials
                                 and objectives.
                             </p>
                         </template>
@@ -165,7 +166,7 @@ useHead({
                                         </UBadge>
                                     </div>
                                     <p class="text-sm text-dimmed mt-1.5 leading-relaxed truncate">{{ lesson.summary
-                                        }}
+                                    }}
                                     </p>
                                     <div class="flex items-center gap-3 mt-4" v-if="lesson.status !== 'locked'">
                                         <UButton v-if="lesson.status === 'current'"
@@ -236,6 +237,38 @@ useHead({
                                 <UIcon name="i-lucide-presentation" class="text-orange-500 shrink-0" />
                                 <span class="text-xs font-medium truncate">Lecture_Deck_Final.pptx</span>
                             </UCard>
+                        </div>
+                    </UCard>
+
+                    <!-- Author Widget -->
+                    <UCard v-if="topic.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-muted">
+                                Curated By
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4">
+                            <div class="flex items-center gap-3">
+                                <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="md"
+                                    class="ring-2 ring-primary-500/20" />
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
+                                            topic.createdBy.name }}</span>
+                                    <span
+                                        class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
+                                            topic.createdBy.role }}</span>
+                                </div>
+                            </div>
+
+                            <div
+                                class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
+                                <div class="flex flex-col items-center">
+                                    <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
+                                        topic.createdBy.topicsCount || 0 }}</span>
+                                    <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
+                                </div>
+                            </div>
                         </div>
                     </UCard>
                 </div>
