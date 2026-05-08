@@ -5,13 +5,18 @@ import { useTopics } from '~/composables/useTopics'
 import { useLessons } from '~/composables/useLessons'
 import { useActivityLogs } from '~/composables/useActivityLogs'
 import { useDashboard } from '~/composables/useDashboard'
+import { generateMockOrganizations, generateMockAdminAccounts, generateMockPlans } from '~/utils/seeder'
 
 const { initTheme } = useTheme()
-const { initUser } = useUser()
+const { initUser, user } = useUser()
 const { initTopics } = useTopics()
 const { initLessons } = useLessons()
 const { initActivityLogs } = useActivityLogs()
 const { initDashboard } = useDashboard()
+const { initOrganizations } = useOrganizations()
+const { initWorkspaces } = useWorkspaces()
+const { initAdminAccounts } = useAdminAccounts()
+const { initPlans } = usePlans()
 
 useSeoMeta({
   title: 'Acumen - AI-Assisted Learning Platform',
@@ -28,6 +33,16 @@ onMounted(() => {
     initLessons()
     initActivityLogs()
     initDashboard()
+    
+    // Admin & Org Initialization
+    const mockOrgs = generateMockOrganizations(user.value.profile)
+    const mockAccounts = generateMockAdminAccounts()
+    const mockPlans = generateMockPlans()
+
+    initOrganizations(mockOrgs)
+    initAdminAccounts(mockAccounts)
+    initPlans(mockPlans)
+    initWorkspaces()
 })
 </script>
 

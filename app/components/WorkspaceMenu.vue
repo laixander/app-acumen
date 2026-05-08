@@ -2,8 +2,14 @@
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { workspaces, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
+const { organizations } = useOrganizations()
 
 const currentWorkspace = computed(() => workspaces.value.find(w => w.id === currentWorkspaceId.value) || workspaces.value[0])
+
+const workspaceOrganization = computed(() => {
+    if (!currentWorkspace.value?.organizationId) return null
+    return organizations.value.find(org => org.id === currentWorkspace.value?.organizationId) || null
+})
 
 const switchWorkspace = (id: string) => {
     currentWorkspaceId.value = id
@@ -66,6 +72,9 @@ const items = computed<DropdownMenuItem[][]>(() => [
                 <UIcon :name="currentWorkspace?.icon" class="w-4 h-4" />
             </div>
             <div class="flex flex-col items-start leading-tight hidden sm:flex">
+                <span v-if="workspaceOrganization" class="text-[9px] text-primary-500 font-bold uppercase tracking-tight">
+                    {{ workspaceOrganization.name }}
+                </span>
                 <span class="text-[13px] font-semibold truncate max-w-[100px]">
                     {{ currentWorkspace?.name }}
                 </span>

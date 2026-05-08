@@ -17,6 +17,7 @@ export interface WorkspaceInvite {
 
 export interface Workspace {
     id: string
+    organizationId?: string
     name: string
     icon: string
     description: string

@@ -11,9 +11,6 @@ const links = computed(() =>
     }))
 )
 
-// Initialize workspaces from localStorage
-const { initWorkspaces } = useWorkspaces()
-initWorkspaces()
 </script>
 
 <template>

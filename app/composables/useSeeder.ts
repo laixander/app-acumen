@@ -6,12 +6,16 @@ import {
     calculateInterval,
     generateMockWorkspaces,
     generateInitialWorkspaces,
-    MOCK_RECEIVED_INVITATIONS
+    MOCK_RECEIVED_INVITATIONS,
+    generateMockOrganizations,
+    generateMockAdminAccounts
 } from '~/utils/seeder'
 import { MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
 import { useTopics } from '~/composables/useTopics'
 import { useDashboard } from '~/composables/useDashboard'
 import { useLessons } from '~/composables/useLessons'
+import { useOrganizations } from '~/composables/useOrganizations'
+import { useAdminAccounts } from '~/composables/useAdminAccounts'
 import { useToast } from '#ui/composables/useToast'
 import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
@@ -32,12 +36,38 @@ export const useSeeder = () => {
         saveWorkspaces()
     }
 
+    const seedOrganizations = () => {
+        const { organizations, currentOrganizationId, saveOrganizations } = useOrganizations()
+        organizations.value = generateMockOrganizations(user.value.profile)
+        currentOrganizationId.value = organizations.value[0]?.id || null
+        saveOrganizations()
+    }
+
     const clearWorkspaces = () => {
         const { workspaces, pendingInvitations, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
         workspaces.value = generateInitialWorkspaces(user.value.profile)
         pendingInvitations.value = []
         currentWorkspaceId.value = '1'
         saveWorkspaces()
+    }
+
+    const clearOrganizations = () => {
+        const { organizations, currentOrganizationId, saveOrganizations } = useOrganizations()
+        organizations.value = []
+        currentOrganizationId.value = null
+        saveOrganizations()
+    }
+
+    const seedAdminAccounts = () => {
+        const { adminAccounts, saveAdminAccounts } = useAdminAccounts()
+        adminAccounts.value = generateMockAdminAccounts()
+        saveAdminAccounts()
+    }
+
+    const clearAdminAccounts = () => {
+        const { adminAccounts, saveAdminAccounts } = useAdminAccounts()
+        adminAccounts.value = []
+        saveAdminAccounts()
     }
 
     const seedTopics = () => {
@@ -47,6 +77,8 @@ export const useSeeder = () => {
         recommendedTopics.value = [...MOCK_RECOMMENDED_TOPICS]
         
         seedWorkspaces()
+        seedOrganizations()
+        seedAdminAccounts()
         
         const allLessons: LessonOverview[] = []
         const allContents: LessonContent[] = []
@@ -123,6 +155,8 @@ export const useSeeder = () => {
         recommendedTopics.value = []
         clearLessons()
         clearWorkspaces()
+        clearOrganizations()
+        clearAdminAccounts()
         toast.add({ title: 'Test data cleared!', color: 'info' })
     }
 
@@ -130,6 +164,10 @@ export const useSeeder = () => {
         seedTopics,
         clearTopics,
         seedWorkspaces,
-        clearWorkspaces
+        clearWorkspaces,
+        seedOrganizations,
+        clearOrganizations,
+        seedAdminAccounts,
+        clearAdminAccounts
     }
 }

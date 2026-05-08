@@ -109,6 +109,33 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 08, 2026",
+        version: "v1.8.0",
+        title: "Admin Organization Management & Dynamic Plans Ecosystem",
+        changes: [
+            "Implemented full Organization lifecycle management with Suspend/Activate toggles and custom ConfirmModals",
+            "Launched the Billing & Usage tracker with aggregate token monitoring and workspace-level breakdown",
+            "Developed the Platform Plans management module (CRUD) with dynamic status toggling and feature lists",
+            "Centralized data initialization in app.vue to ensure state persistence and reliability across refreshes",
+            "Synchronized administrative UI patterns (Tables, Modals, Toasts) for a unified premium design system",
+            "Integrated 'Manage in Stripe' secure portal simulation and PCI-DSS compliance trust indicators",
+            "Optimized table performance with loading skeletons and skeleton-aware navigation transitions",
+        ],
+    },
+    {
+        date: "May 07, 2026",
+        version: "v1.7.0",
+        title: "Workspace Infrastructure Expansion & Modular Seeder System",
+        changes: [
+            "Implemented dedicated Workspace Billing and Subscription management interfaces",
+            "Launched Workspace-specific Topics management for granular content organization",
+            "Overhauled the Seeder System into a modular architecture (Generators, Logs, Topics, Workspaces)",
+            "Enhanced Workspace Menu and Topic Cards with refined UI/UX and better state handling",
+            "Improved workspace member invitation flows and role-based access logic",
+            "Refactored useWorkspaces and useSeeder composables for better performance and maintainability",
+        ],
+    },
+    {
         date: "May 06, 2026",
         version: "v1.6.0",
         title: "Role-Based Workspace Management & UX Ecosystem",

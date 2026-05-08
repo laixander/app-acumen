@@ -3,6 +3,7 @@ import {
     learnerSteps,
     aiEnginePhases,
     administratorTasks,
+    appWalkthrough,
 } from "~/constants/user-manual";
 
 const appConfig = useAppConfig()
@@ -56,10 +57,33 @@ onMounted(() => {
                     <div class="space-y-4">
                         <h1 class="text-4xl font-extrabold tracking-tight">User Manual</h1>
                         <p class="text-lg text-muted max-w-2xl">
-                            A comprehensive, step-by-step reference describing what each role does within the Learn Fast
+                            A comprehensive, step-by-step reference describing the end-to-end experience within the Acumen
                             AI-Assisted Learning Platform.
                         </p>
                     </div>
+
+                    <!-- Full Walkthrough -->
+                    <DocsSection id="walkthrough" title="Full App Walkthrough" icon="i-lucide-map">
+                        <p class="text-lg text-dimmed leading-relaxed mb-6">
+                            From initial organization setup to personalized knowledge mastery, here is the complete journey through the platform.
+                        </p>
+
+                        <div class="space-y-6">
+                            <DocsTimeline :items="appWalkthrough">
+                                <template #item="{ item }">
+                                    <div class="flex flex-col gap-1">
+                                        <div class="flex items-center gap-2 mb-1">
+                                            <UIcon v-if="item.icon" :name="item.icon" class="text-primary-500 text-lg" />
+                                            <h5 class="font-bold">{{ item.title }}</h5>
+                                        </div>
+                                        <p class="text-sm text-neutral-500 leading-relaxed">{{ item.description }}</p>
+                                    </div>
+                                </template>
+                            </DocsTimeline>
+                        </div>
+                    </DocsSection>
+
+                    <USeparator />
 
                     <!-- Learner -->
                     <DocsSection id="learner" title="Learner" icon="i-lucide-user">

@@ -57,6 +57,16 @@ export const useWorkspaces = () => {
         }
     }
 
+    const addWorkspace = (workspace: Workspace) => {
+        workspaces.value.push(workspace)
+        saveWorkspaces()
+    }
+
+    const deleteWorkspace = (id: string) => {
+        workspaces.value = workspaces.value.filter(w => w.id !== id)
+        saveWorkspaces()
+    }
+
     return {
         workspaces,
         currentWorkspaceId,
@@ -65,6 +75,8 @@ export const useWorkspaces = () => {
         isInitialized,
         initWorkspaces,
         updateWorkspace,
+        addWorkspace,
+        deleteWorkspace,
         saveWorkspaces
     }
 }

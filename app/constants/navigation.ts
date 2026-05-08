@@ -162,6 +162,16 @@ export const ADMIN_NAVIGATION_ITEMS: NavigationMenuItem[] = [
         to: '/admin/accounts'
     },
     {
+        label: 'Organizations',
+        icon: 'i-lucide-building-2',
+        to: '/admin/organizations'
+    },
+    {
+        label: 'Plans',
+        icon: 'i-lucide-credit-card',
+        to: '/admin/plans'
+    },
+    {
         label: 'AI Configuration',
         icon: 'i-lucide-settings-2',
         to: '/admin/ai-configuration'
@@ -199,15 +209,37 @@ export const DOCS_MENU_SECTIONS = [
 
 export const MANUAL_MENU_SECTIONS = [
     {
-        label: 'User Roles',
-        icon: 'i-lucide-users',
-        to: '/manual',
+        label: 'Platform Overview',
+        icon: 'i-lucide-map',
+        to: '/user-manual',
         defaultOpen: true,
         type: 'trigger' as const,
         children: [
-            { to: '#learner', label: 'Learner', exact: true, sectionId: 'learner' },
+            { to: '#walkthrough', label: 'Full App Walkthrough', exact: true, sectionId: 'walkthrough' },
+            { to: '#learner', label: 'Learner Experience', exact: true, sectionId: 'learner' },
             { to: '#ai-engine', label: 'AI Learning Engine', exact: true, sectionId: 'ai-engine' },
-            { to: '#administrator', label: 'Administrator', exact: true, sectionId: 'administrator' },
+            { to: '#administrator', label: 'Administrator Control', exact: true, sectionId: 'administrator' },
+        ],
+    },
+]
+
+export const UI_MENU_SECTIONS = [
+    {
+        label: 'Design System',
+        icon: 'i-lucide-palette',
+        to: '/ui',
+        defaultOpen: true,
+        type: 'trigger' as const,
+        children: [
+            { to: '#typography', label: 'Typography', exact: true, sectionId: 'typography' },
+            { to: '#buttons', label: 'Buttons', exact: true, sectionId: 'buttons' },
+            { to: '#inputs', label: 'Inputs & Forms', exact: true, sectionId: 'inputs' },
+            { to: '#selectors', label: 'Selectors', exact: true, sectionId: 'selectors' },
+            { to: '#feedback', label: 'Feedback & Badges', exact: true, sectionId: 'feedback' },
+            { to: '#containers', label: 'Cards & Containers', exact: true, sectionId: 'containers' },
+            { to: '#data', label: 'Data & Tables', exact: true, sectionId: 'data' },
+            { to: '#navigation', label: 'Navigation & Tabs', exact: true, sectionId: 'navigation' },
+            { to: '#overlays', label: 'Modals & Overlays', exact: true, sectionId: 'overlays' },
         ],
     },
 ]

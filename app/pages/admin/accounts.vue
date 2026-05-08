@@ -2,6 +2,13 @@
 import { upperFirst } from 'scule'
 
 const table = useTemplateRef('table')
+const loading = ref(true)
+
+onMounted(() => {
+    setTimeout(() => {
+        loading.value = false
+    }, 600)
+})
 
 const columnVisibility = ref({
     id: false
@@ -32,17 +39,15 @@ const userColumns = [{
     },
 }]
 
-const staticUsers = [
-    { id: 1, name: 'Alice Smith', email: 'alice@example.com', status: 'Active', subscription: 'Premium' },
-    { id: 2, name: 'Bob Johnson', email: 'bob@example.com', status: 'Inactive', subscription: 'Free' },
-    { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', status: 'Active', subscription: 'Pro' },
-    { id: 4, name: 'Diana Prince', email: 'diana@example.com', status: 'Active', subscription: 'Premium' },
-]
+import type { AdminLearner } from '~/utils/seeder/accounts'
+
+const { adminAccounts } = useAdminAccounts()
+const staticUsers = adminAccounts
 
 // Modal state
 const showSubscriptionModal = ref(false)
 const showSupportModal = ref(false)
-const selectedUser = ref<typeof staticUsers[0] | null>(null)
+const selectedUser = ref<AdminLearner | null>(null)
 
 
 
@@ -106,7 +111,7 @@ const getRowActions = (user: any) => {
                 </UDropdownMenu>
             </div>
 
-            <UTable :data="staticUsers" :columns="userColumns" ref="table" v-model:column-visibility="columnVisibility">
+            <UTable :data="staticUsers" :columns="userColumns" ref="table" :loading="loading" v-model:column-visibility="columnVisibility">
                 <template #status-cell="{ row }">
                     <UBadge :color="row.original.status === 'Active' ? 'success' : 'neutral'" variant="soft">
                         {{ row.original.status }}

@@ -3,6 +3,7 @@ import { onClickOutside } from '@vueuse/core'
 
 const fabRef = ref(null)
 const fabOpen = ref(false)
+const isRoadmapOpen = ref(false)
 
 onClickOutside(fabRef, () => {
     fabOpen.value = false
@@ -21,7 +22,7 @@ const demoPages = [
         label: 'Admin',
         icon: 'i-lucide-user-round-cog',
         to: '/admin/dashboard',
-        color: 'sky' as const
+        color: 'indigo' as const
     },
     {
         id: 'landing',
@@ -50,8 +51,23 @@ const demoPages = [
         icon: 'i-lucide-grid-2x2-check',
         to: '/ui',
         color: 'rose' as const
+    },
+    {
+        id: 'roadmap',
+        label: 'Dev Roadmap',
+        icon: 'i-lucide-list-checks',
+        color: 'orange' as const,
+        onSelect: () => { isRoadmapOpen.value = true; fabOpen.value = false }
     }
 ]
+
+const handlePageClick = (page: any) => {
+    if (page.onSelect) {
+        page.onSelect()
+    } else {
+        fabOpen.value = false
+    }
+}
 </script>
 
 <template>
@@ -59,12 +75,14 @@ const demoPages = [
         <Transition name="fab-menu">
             <div v-if="fabOpen" class="flex flex-col items-end gap-2 mb-2">
                 <UButton v-for="page in demoPages" :key="page.id" :icon="page.icon" :label="page.label" size="lg"
-                    :color="page.color" variant="soft" class="shadow-lg" :to="page.to" @click="fabOpen = false" />
+                    :color="page.color" variant="soft" class="shadow-lg" :to="page.to" @click="handlePageClick(page)" />
             </div>
         </Transition>
         <UButton icon="i-lucide-orbit" size="xl" variant="solid"
             class="rounded-full shadow-lg transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95 ring-4 ring-primary-500/20"
             :class="{ '-rotate-180 opacity-20': fabOpen }" @click="fabOpen = !fabOpen" />
+
+        <DevRoadmap v-model:open="isRoadmapOpen" />
     </div>
 </template>
 

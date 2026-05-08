@@ -1,68 +1,112 @@
 export const learnerSteps = [
     {
-        title: "Topic Definition",
-        description: "Define your goals via the AI Learning Engine. Upload study materials (PDFs, text) or provide a topic title to start the automated path-crafting process.",
+        title: "Personalized Onboarding",
+        description: "Access your dashboard to see your active learning topics. If you belong to an organization, your topics are safely organized within your institution's specific workspaces.",
         status: "Step 1",
     },
     {
-        title: "Initial Assessment",
-        description: "Complete the AI-generated diagnostic test. Use the confidence slider for each answer to help the AI understand where you feel uncertain.",
+        title: "Topic Analysis & Assessment",
+        description: "Upload materials or provide a title. The AI Engine extracts key objectives and generates a diagnostic quiz to measure your existing knowledge base.",
         status: "Step 2",
     },
     {
-        title: "Follow Lesson Plan",
-        description: "Access your restructured dashboard to view your learning timeline side-by-side with real-time activity analytics and progress tracking.",
+        title: "AI-Crafted Learning Path",
+        description: "Follow a non-linear lesson timeline generated specifically for you. The path adapts in real-time as you complete lessons and demonstrate mastery.",
         status: "Step 3",
     },
     {
-        title: "Interactive Learning",
-        description: "Utilize the AI Tutor for real-time clarifications. Complete exercises and lessons at your own pace with context-aware assistance.",
+        title: "Interactive AI Tutoring",
+        description: "Use the integrated AI Tutor for instant clarifications. The tutor has access to your specific topic context, providing highly relevant hints and explanations.",
         status: "Step 4",
     },
     {
-        title: "Mastery Verification",
-        description: "Take the final assessment to verify your mastery of the topic. The AI will either mark the topic complete or suggest additional review steps.",
+        title: "Certification & Completion",
+        description: "Verify your mastery through a final assessment. Upon completion, your progress is logged in the activity audit, and you can move on to your next objective.",
         status: "Step 5",
     },
 ];
 
 export const aiEnginePhases = [
     {
-        title: "Material Processing",
-        description: "The engine parses uploaded documents using NLP to identify key learning objectives and extract relevant context snippets.",
+        title: "Knowledge Extraction",
+        description: "The engine uses advanced NLP to parse your documents, identifying core concepts, relationships, and learning hierarchies.",
         status: "Phase 1",
     },
     {
-        title: "Assessment Generation",
-        description: "Based on the extracted material, the AI generates a balanced set of questions covering all core objectives of the topic.",
+        title: "Diagnostic Profiling",
+        description: "By analyzing your quiz scores and self-reported confidence levels, the AI builds a unique 'Knowledge Map' of your current expertise.",
         status: "Phase 2",
     },
     {
-        title: "Path Adaptation",
-        description: "After diagnostic completion, the AI analyzes scores and confidence levels to build a personalized, non-linear lesson path focusing on identified gaps.",
+        title: "Path Personalization",
+        description: "The AI crafts a custom learning sequence, prioritizing your knowledge gaps to ensure you master the topic in the shortest time possible.",
         status: "Phase 3",
     },
     {
-        title: "Real-time Tutoring",
-        description: "The AI monitors your progress within lessons, providing hints and simplified explanations when it detects struggles.",
+        title: "Global Resource Balancing",
+        description: "The engine monitors token usage across the platform, ensuring optimal performance for all users while respecting organization-level limits.",
         status: "Phase 4",
     },
 ];
 
 export const administratorTasks = [
     {
-        title: "User Management",
-        description: "Oversee user accounts, manage subscriptions, and provide technical support via dedicated admin modules.",
+        title: "Organization Lifecycle",
+        description: "Onboard institutions, manage their active status, and use Suspend/Activate toggles to control platform access at scale.",
         status: "Task 1",
     },
     {
-        title: "AI Configuration",
-        description: "Configure the model pipeline (Primary/Fallback), adjust creativity levels, set content safety filters, and enable reasoning engines.",
+        title: "Subscription Management",
+        description: "Define platform-wide Plans (Free, Pro, Enterprise) with custom pricing, token limits, and feature inclusions in the dedicated Plans dashboard.",
         status: "Task 2",
     },
     {
-        title: "Analytics Review",
-        description: "Monitor system-wide performance via interactive charts and trend visualizations to optimize learning benchmarks.",
+        title: "Billing & Usage Auditing",
+        description: "Monitor real-time token consumption across all workspaces. Use the Stripe integration to manage institutional payment methods and invoice history.",
         status: "Task 3",
     },
+    {
+        title: "Workspace Orchestration",
+        description: "Coordinate institutional departments by creating Workspaces, inviting members, and assigning role-based access controls.",
+        status: "Task 4",
+    },
+];
+
+export const appWalkthrough = [
+    {
+        title: "Institutional Setup",
+        description: "Superadmins create the Organization and set the initial subscription tier. This establishes the foundation for all subsequent activities.",
+        icon: "i-lucide-building-2",
+        status: "Step 1"
+    },
+    {
+        title: "Collaborative Workspaces",
+        description: "Admins build out specialized workspaces for teams or departments, ensuring learners have a structured environment for their topics.",
+        icon: "i-lucide-users",
+        status: "Step 2"
+    },
+    {
+        title: "AI Knowledge Intake",
+        description: "Learners feed the AI with study materials. The engine processes these inputs to build a comprehensive learning model of the topic.",
+        icon: "i-lucide-brain-circuit",
+        status: "Step 3"
+    },
+    {
+        title: "Diagnostic Gap Analysis",
+        description: "A tailored assessment identifies exactly where the learner stands, pinpointing both strengths and critical knowledge gaps.",
+        icon: "i-lucide-clipboard-check",
+        status: "Step 4"
+    },
+    {
+        title: "The Mastery Loop",
+        description: "Learners move through personalized lessons with AI-tutor support, continuously refining their path based on real-time performance.",
+        icon: "i-lucide-refresh-cw",
+        status: "Step 5"
+    },
+    {
+        title: "Administrative Oversight",
+        description: "Platform owners monitor the entire ecosystem, adjusting plans, managing billing, and ensuring the platform's commercial health.",
+        icon: "i-lucide-shield-check",
+        status: "Step 6"
+    }
 ];
