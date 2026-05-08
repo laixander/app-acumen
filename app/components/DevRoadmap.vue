@@ -15,43 +15,44 @@ const roadmapItems = [
         category: 'Immediate Next Steps',
         tasks: [
             { id: 1, label: 'Hierarchy-Aware Widgets', description: 'Modify UI widgets to dynamically match the user hierarchy (Superadmin vs Org Admin).', status: 'todo', priority: 'high' },
-            { id: 2, label: 'Advanced Admin Analytics', description: 'Update dashboard stats and graphs to integrate with the new Organizations and Plans modules.', status: 'todo', priority: 'high' },
-            { id: 3, label: 'Hierarchy-Aware Audit Logs', description: 'Modify the audit logs page to filter and display data based on the user hierarchy.', status: 'todo', priority: 'high' },
-            { id: 4, label: 'Audit Log Deep-Linking', description: 'Enable direct navigation from activity logs to the affected Org/Workspace.', status: 'todo', priority: 'medium' },
-            { id: 5, label: 'Automated Threshold Alerts', description: 'Notify admins when an institution reaches 80% of their monthly token limit.', status: 'todo', priority: 'medium' }
+            { id: 2, label: 'Organization UI Alignment', description: 'Ensure the interface and dashboard layouts align with organization-specific branding and user needs.', status: 'todo', priority: 'high' },
+            { id: 3, label: 'Advanced Admin Analytics', description: 'Update dashboard stats and graphs to integrate with the new Organizations and Plans modules.', status: 'todo', priority: 'high' },
+            { id: 4, label: 'Hierarchy-Aware Audit Logs', description: 'Modify the audit logs page to filter and display data based on the user hierarchy.', status: 'todo', priority: 'high' },
+            { id: 5, label: 'Audit Log Deep-Linking', description: 'Enable direct navigation from activity logs to the affected Org/Workspace.', status: 'todo', priority: 'medium' },
+            { id: 6, label: 'Automated Threshold Alerts', description: 'Notify admins when an institution reaches 80% of their monthly token limit.', status: 'todo', priority: 'medium' }
         ]
     },
     {
         category: 'Core Architecture',
         tasks: [
-            { id: 6, label: 'Database Migration', description: 'Move from localStorage to Supabase/PostgreSQL for multi-user sync.', status: 'todo', priority: 'high' },
-            { id: 7, label: 'Real Authentication', description: 'Implement Supabase Auth or Clerk for secure institutional identity.', status: 'todo', priority: 'high' },
-            { id: 8, label: 'File Ingestion Pipeline', description: 'Build actual PDF/Docx processing with AWS S3 storage.', status: 'todo', priority: 'medium' }
+            { id: 7, label: 'Database Migration', description: 'Move from localStorage to Supabase/PostgreSQL for multi-user sync.', status: 'todo', priority: 'high' },
+            { id: 8, label: 'Real Authentication', description: 'Implement Supabase Auth or Clerk for secure institutional identity.', status: 'todo', priority: 'high' },
+            { id: 9, label: 'File Ingestion Pipeline', description: 'Build actual PDF/Docx processing with AWS S3 storage.', status: 'todo', priority: 'medium' }
         ]
     },
     {
         category: 'AI Engine',
         tasks: [
-            { id: 9, label: 'Live LLM Integration', description: 'Connect to Gemini 1.5 Pro or GPT-4o APIs for real-time analysis.', status: 'todo', priority: 'high' },
-            { id: 10, label: 'Vector RAG Implementation', description: 'Setup Pinecone for topic knowledge embedding and retrieval.', status: 'todo', priority: 'medium' },
-            { id: 11, label: 'Adaptive Pathfinding', description: 'Refine logic for dynamic lesson adjustment based on performance.', status: 'todo', priority: 'medium' }
+            { id: 10, label: 'Live LLM Integration', description: 'Connect to Gemini 1.5 Pro or GPT-4o APIs for real-time analysis.', status: 'todo', priority: 'high' },
+            { id: 11, label: 'Vector RAG Implementation', description: 'Setup Pinecone for topic knowledge embedding and retrieval.', status: 'todo', priority: 'medium' },
+            { id: 12, label: 'Adaptive Pathfinding', description: 'Refine logic for dynamic lesson adjustment based on performance.', status: 'todo', priority: 'medium' }
         ]
     },
     {
         category: 'Commercial & Admin',
         tasks: [
-            { id: 12, label: 'Stripe Integration', description: 'Connect billing tab to real Stripe Checkout and Portal.', status: 'todo', priority: 'high' },
-            { id: 13, label: 'Activity Analytics', description: 'Replace mock charts with real usage data aggregation.', status: 'todo', priority: 'medium' },
-            { id: 14, label: 'Email Service', description: 'Integrate Resend for member invitations and billing alerts.', status: 'todo', priority: 'low' }
+            { id: 13, label: 'Stripe Integration', description: 'Connect billing tab to real Stripe Checkout and Portal.', status: 'todo', priority: 'high' },
+            { id: 14, label: 'Activity Analytics', description: 'Replace mock charts with real usage data aggregation.', status: 'todo', priority: 'medium' },
+            { id: 15, label: 'Email Service', description: 'Integrate Resend for member invitations and billing alerts.', status: 'todo', priority: 'low' }
         ]
     },
     {
         category: 'UI & UX Experience',
         tasks: [
-            { id: 15, label: 'Member CRUD Logic', description: 'Enable Invite/Remove/Role actions in the Members tab.', status: 'todo', priority: 'high' },
-            { id: 16, label: 'Interactive Onboarding', description: 'Build a guided tour for first-time learners and admins.', status: 'todo', priority: 'medium' },
-            { id: 17, label: 'Mobile Optimization', description: 'Responsive audit for complex billing and analytics tables.', status: 'todo', priority: 'medium' },
-            { id: 18, label: 'Accessibility Audit', description: 'Ensure full WCAG 2.1 compliance for all platform users.', status: 'todo', priority: 'low' }
+            { id: 16, label: 'Member CRUD Logic', description: 'Enable Invite/Remove/Role actions in the Members tab.', status: 'todo', priority: 'high' },
+            { id: 17, label: 'Interactive Onboarding', description: 'Build a guided tour for first-time learners and admins.', status: 'todo', priority: 'medium' },
+            { id: 18, label: 'Mobile Optimization', description: 'Responsive audit for complex billing and analytics tables.', status: 'todo', priority: 'medium' },
+            { id: 19, label: 'Accessibility Audit', description: 'Ensure full WCAG 2.1 compliance for all platform users.', status: 'todo', priority: 'low' }
         ]
     }
 ]
