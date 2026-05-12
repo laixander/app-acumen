@@ -3,7 +3,6 @@ import { useTopics } from '~/composables/useTopics'
 import { useLessons } from '~/composables/useLessons'
 import { computed, onMounted } from 'vue'
 import { injectAssessmentsIntoTimeline } from '~/utils/seeder'
-import { GOAL_COLORS } from '~/constants/topics'
 
 const route = useRoute()
 const { topics } = useTopics()
@@ -20,16 +19,46 @@ const lessons = computed(() => {
     return local.length > 0 ? local : (serverLessons.value || [])
 })
 
+// Mock data for the specific screenshot view
+const userProfile = {
+    name: 'Alex'
+}
+
+const examInfo = {
+    name: 'LET SEPTEMBER 2026',
+    daysAway: 28
+}
+
+const stats = [
+    { label: 'Master (Overall)', value: '62%', subtext: 'from 41% on Day 1', icon: 'i-lucide-award' },
+    { label: 'Pass Probability', value: '47%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
+    { label: 'Sessions This Week', value: '12', subtext: '14 hrs total', icon: 'i-lucide-calendar-days' }
+]
+
+const strongTopics = [
+    { name: 'Philippine History', progress: 88, color: 'text-green-500' },
+    { name: 'Filipino Grammar', progress: 84, color: 'text-green-500' },
+    { name: 'English Literature', progress: 79, color: 'text-green-500' },
+    { name: 'Educational Technology', progress: 76, color: 'text-green-500' }
+]
+
+const weakTopics = [
+    { name: 'Philippine Government & Rights', progress: 38, color: 'text-orange-500' },
+    { name: 'Basic Economics & Taxation', progress: 42, color: 'text-orange-500' },
+    { name: 'General Biology', progress: 51, color: 'text-orange-500' },
+    { name: 'Plane Geometry', progress: 55, color: 'text-orange-500' }
+]
+
+const weakestTopic = weakTopics[0]
+
 const injectAssessments = () => {
     if (!topic.value) return
     const currentLessons = [...lessons.value]
     if (currentLessons.length === 0) return
 
-    // Check if we already have assessments (to avoid infinite loop or duplication)
     const hasQuizzes = currentLessons.some(l => l.type === 'Assessment')
     if (hasQuizzes) return
 
-    // Use centralized logic to inject assessments
     const {
         newTimeline,
         newAssessments,
@@ -46,235 +75,118 @@ onMounted(() => {
 })
 
 useHead({
-    title: topic.value ? `${topic.value.title} - LearnFast` : 'Topic Not Found'
+    title: topic.value ? `${topic.value.title} - Acumen` : 'Topic Not Found'
 })
 </script>
 
 <template>
-    <UContainer v-if="topic" class="flex flex-col gap-6 py-6">
-        <div class="flex flex-col gap-8 pb-12">
-            <!-- Hero Section -->
-            <UCard class="relative overflow-hidden" :ui="{ body: 'p-8 sm:p-10' }">
-                <div
-                    class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent pointer-events-none" />
+    <UContainer v-if="topic" class="py-8 flex flex-col gap-10">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="flex flex-col gap-1">
+                <h1 class="text-4xl font-bold tracking-tight">
+                    Welcome back, <span class="text-primary">{{ userProfile.name }}.</span>
+                </h1>
+                <p class="text-muted">You're making great progress towards your goal.</p>
+            </div>
+            <div class="flex flex-col items-end gap-1 text-right border-l-2 border-primary/20 pl-4">
+                <span class="text-xs font-semibold tracking-wider text-muted uppercase">
+                    {{ topic.learningGoal ||
+                        'Target Exam' }} · {{ examInfo.name }}</span>
+                <span class="text-3xl font-bold text-primary">{{ examInfo.daysAway }} Days Away</span>
+            </div>
+        </header>
 
-                <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <ContentHeading :title="topic.title" :icon="topic.icon">
-                        <template #description>
-                            <p class="text-dimmed max-w-lg">
-                                Master this topic with an AI-curated learning path tailored to your specific
-                                materials
-                                and objectives.
-                            </p>
-                        </template>
-                    </ContentHeading>
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <UCard v-for="(stat, i) in stats" :key="i" variant="soft" class="relative overflow-hidden group"
+                :ui="{ body: 'p-6 flex flex-col gap-2' }">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-bold tracking-wider text-muted uppercase">{{ stat.label }}</span>
+                        <span class="text-5xl font-bold tracking-tight mt-2" :class="i === 1 ? 'text-primary' : ''">{{
+                            stat.value
+                            }}</span>
+                        <span class="text-sm text-dimmed mt-1">{{ stat.subtext }}</span>
+                    </div>
+                    <div
+                        class="bg-primary/10 text-primary p-4 rounded-2xl ring-4 ring-primary/5 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                        <UIcon :name="stat.icon" class="text-2xl flex" />
+                    </div>
+                </div>
+
+            </UCard>
+        </div>
+
+        <!-- Topics Analysis Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Strong Topics -->
+            <UCard variant="soft" :ui="{ body: 'p-8 flex flex-col gap-8' }">
+                <div class="flex items-center gap-2">
+                    <UIcon name="i-lucide-trending-up" class="text-green-500" />
+                    <h2 class="text-sm font-bold tracking-wider text-green-500 uppercase">Strong Topics</h2>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <div v-for="t in strongTopics" :key="t.name" class="flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold">{{ t.name }}</span>
+                            <span class="text-xs text-muted font-medium">{{ t.progress }}%</span>
+                        </div>
+                        <UProgress :model-value="t.progress" color="green" size="sm" />
+                    </div>
                 </div>
             </UCard>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Main Timeline Column -->
-                <div class="md:col-span-2 flex flex-col gap-6">
-
-                    <div class="flex items-center justify-between border-b border-default pb-4">
-                        <h2 class="text-lg font-bold flex items-center gap-2">
-                            <UIcon name="i-lucide-list-ordered" class="text-primary" />
-                            Lesson Timeline
-                        </h2>
-                        <!-- <UBadge label="Generated by AI" variant="soft" color="neutral" size="sm"
-                            class="text-dimmed uppercase tracking-wider text-xs font-medium px-2 py-1 rounded-md" /> -->
-                        <div class="flex items-center gap-2">
-                            <UBadge variant="soft" color="neutral" size="sm" icon="i-lucide-check"
-                                class="text-dimmed uppercase tracking-wider text-xs font-medium px-2 py-1 rounded-md">
-                                {{lessons.filter(l => l.status === 'completed').length}}/{{ lessons.length }}
-                            </UBadge>
-                            <UBadge variant="soft" color="neutral" size="sm"
-                                class="text-dimmed uppercase tracking-wider text-xs font-medium px-2 py-1 rounded-md">
-                                {{ lessons.length }} Lessons
-                            </UBadge>
-                            <UBadge variant="soft" color="neutral" size="sm"
-                                class="text-dimmed uppercase tracking-wider text-xs font-medium px-2 py-1 rounded-md">
-                                {{lessons.filter(l => l.type === 'Assessment').length}} Assessments
-                            </UBadge>
-                        </div>
-                    </div>
-
-                    <!-- TIMELINE COMPONENT -->
-                    <div class="relative pl-6 ml-2 mt-4 space-y-8">
-                        <!-- Vertical Line -->
-                        <div
-                            class="absolute left-[-1px] top-0 bottom-0 w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 rounded-full" />
-
-                        <div v-for="(lesson, index) in lessons" :key="index" class="relative group">
-                            <!-- Timeline Dot / Icon -->
-                            <div class="absolute -left-[37px] w-7 h-7 rounded-full flex items-center justify-center border-[3px] border-white dark:border-neutral-900 z-10 transition-colors duration-300"
-                                :class="{
-                                    'bg-green-500 text-white': lesson.status === 'completed',
-                                    'shadow-[0_0_15px_rgba(var(--color-primary-500),0.5)]': lesson.status === 'current',
-                                    'bg-primary-500 text-white': lesson.status === 'current' && lesson.color === 'primary',
-                                    'bg-orange-500 text-white': lesson.status === 'current' && lesson.color === 'orange',
-                                    'bg-purple-500 text-white': lesson.status === 'current' && lesson.color === 'purple',
-                                    'bg-neutral-200 dark:bg-neutral-800 text-dimmed': lesson.status === 'locked'
-                                }">
-                                <UIcon v-if="lesson.status === 'completed'" name="i-lucide-check" class="text-sm" />
-                                <div v-else-if="lesson.status === 'current'"
-                                    class="w-2 h-2 rounded-full bg-white animate-ping" />
-                                <div v-else class="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-600" />
-                            </div>
-
-                            <!-- Content Card -->
-                            <UCard variant="subtle" class="transition-all duration-300 transform" :class="{
-                                'opacity-70 grayscale-[0.3] hover:grayscale-0 hover:opacity-100 cursor-pointer'
-                                    : lesson.status === 'completed',
-                                'ring-2 shadow-md transform -translate-y-1 relative overflow-hidden'
-                                    : lesson.status === 'current',
-                                'ring-primary-500': lesson.status === 'current' && lesson.color === 'primary',
-                                'ring-orange-500': lesson.status === 'current' && lesson.color === 'orange',
-                                'ring-purple-500': lesson.status === 'current' && lesson.color === 'purple',
-                                'opacity-50 pointer-events-none'
-                                    : lesson.status === 'locked',
-                                'hover:-translate-y-1 hover:shadow-md cursor-pointer'
-                                    : lesson.status !== 'locked' && lesson.status !== 'current'
-                            }" :ui="{ body: 'flex items-start gap-4 p-4 sm:p-5' }">
-                                <template v-if="lesson.status === 'current'">
-                                    <div v-if="lesson.color === 'primary'"
-                                        class="absolute inset-0 bg-primary-500/5 pointer-events-none" />
-                                    <div v-if="lesson.color === 'orange'"
-                                        class="absolute inset-0 bg-orange-500/5 pointer-events-none" />
-                                    <div v-if="lesson.color === 'purple'"
-                                        class="absolute inset-0 bg-purple-500/5 pointer-events-none" />
-                                </template>
-                                <div class="bg-neutral-100 dark:bg-neutral-800 p-2.5 rounded-lg shrink-0" :class="{
-                                    'text-primary-500 dark:text-primary-400 bg-primary-100 dark:bg-primary-500/10': lesson.status === 'current' && lesson.color === 'primary',
-                                    'text-orange-500 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/10': lesson.status === 'current' && lesson.color === 'orange',
-                                    'text-purple-500 dark:text-purple-400 bg-purple-100 dark:bg-purple-500/10': lesson.status === 'current' && lesson.color === 'purple'
-                                }">
-                                    <UIcon :name="lesson.icon" class="text-lg flex" />
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <h3 class="font-bold text-base truncate" :class="{
-                                            'text-primary-600 dark:text-primary-400': lesson.status === 'current' && lesson.color === 'primary',
-                                            'text-orange-600 dark:text-orange-400': lesson.status === 'current' && lesson.color === 'orange',
-                                            'text-purple-600 dark:text-purple-400': lesson.status === 'current' && lesson.color === 'purple'
-                                        }">
-                                            {{ lesson.title }}
-                                        </h3>
-                                        <UBadge variant="subtle" size="sm"
-                                            :color="lesson.status === 'current' ? 'primary' : 'neutral'"
-                                            class="shrink-0 font-medium font-mono">
-                                            {{ lesson.duration }}
-                                        </UBadge>
-                                    </div>
-                                    <p class="text-sm text-dimmed mt-1.5 leading-relaxed truncate">{{ lesson.summary
-                                    }}
-                                    </p>
-                                    <div class="flex items-center gap-3 mt-4" v-if="lesson.status !== 'locked'">
-                                        <UButton v-if="lesson.status === 'current'"
-                                            :label="lesson.type === 'Assessment' ? 'Start Assessment' : 'Start Lesson'"
-                                            icon="i-lucide-play-circle" color="primary" size="sm"
-                                            :to="`/app/lesson/${lesson.id}`" />
-                                        <UButton v-else
-                                            :label="lesson.type === 'Assessment' ? 'Review Results' : 'Review'"
-                                            icon="i-lucide-rotate-ccw" color="neutral" variant="soft" size="sm"
-                                            :to="`/app/lesson/${lesson.id}`" />
-                                    </div>
-                                </div>
-                            </UCard>
-                        </div>
-                    </div>
+            <!-- Weak Topics -->
+            <UCard variant="soft" :ui="{ body: 'p-8 flex flex-col gap-8' }">
+                <div class="flex items-center gap-2">
+                    <UIcon name="i-lucide-alert-circle" class="text-orange-500" />
+                    <h2 class="text-sm font-bold tracking-wider text-orange-500 uppercase">Weak Topics — Focus Areas
+                    </h2>
                 </div>
 
-                <!-- Sidebar Content -->
                 <div class="flex flex-col gap-6">
-
-                    <!-- Progress Card -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                    Overall Progress
-                                </span>
-                                <span class="text-sm font-bold text-primary">{{ topic.progress }}%</span>
-                            </div>
-                            <UProgress :model-value="topic.progress" color="primary" size="sm" />
-                        </div>
-                        <p class="text-xs text-dimmed">
-                            You are doing great! Keep up the momentum to reach your goal.
-                        </p>
-                    </UCard>
-
-                    <!-- Tags Card -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                Tags
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <UBadge :label="topic.tag" variant="soft" />
-                            <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle"
-                                :color="GOAL_COLORS[topic.learningGoal]" />
-                        </div>
-                    </UCard>
-
-                    <!-- Knowledge Sources Details -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-3' }"
-                        class="bg-blue-50/50 dark:bg-blue-900/10">
-                        <div class="flex items-center gap-2 mb-1">
-                            <UIcon name="i-lucide-brain-circuit" class="text-blue-500" />
-                            <h3 class="text-sm font-semibold uppercase tracking-wider text-blue-500">AI Context</h3>
-                        </div>
-                        <p class="text-xs text-dimmed mb-2">
-                            This syllabus was dynamically generated from your uploaded materials.
-                        </p>
-
-                        <div class="flex flex-col gap-2">
-                            <UCard :ui="{ body: 'flex items-center gap-2 p-2 sm:p-2' }" class="rounded-md shadow-sm">
-                                <UIcon name="i-lucide-file-text" class="text-red-500 shrink-0" />
-                                <span class="text-xs font-medium truncate">{{ topic.title }} Chapter 1-3.pdf</span>
-                            </UCard>
-                            <UCard :ui="{ body: 'flex items-center gap-2 p-2 sm:p-2' }" class="rounded-md shadow-sm">
-                                <UIcon name="i-lucide-presentation" class="text-orange-500 shrink-0" />
-                                <span class="text-xs font-medium truncate">Lecture_Deck_Final.pptx</span>
-                            </UCard>
-                        </div>
-                    </UCard>
-
-                    <!-- Author Widget -->
-                    <UCard v-if="topic.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
+                    <div v-for="t in weakTopics" :key="t.name" class="flex flex-col gap-2.5">
                         <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-muted">
-                                Curated By
-                            </span>
+                            <span class="font-bold">{{ t.name }}</span>
+                            <span class="text-xs text-muted font-medium">{{ t.progress }}%</span>
                         </div>
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="md"
-                                    class="ring-2 ring-primary-500/20" />
-                                <div class="flex flex-col">
-                                    <span
-                                        class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
-                                            topic.createdBy.name }}</span>
-                                    <span
-                                        class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
-                                            topic.createdBy.role }}</span>
-                                </div>
-                            </div>
+                        <UProgress :model-value="t.progress" color="orange" size="sm" />
+                    </div>
+                </div>
+            </UCard>
+        </div>
 
-                            <div
-                                class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
-                                <div class="flex flex-col items-center">
-                                    <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
-                                        topic.createdBy.topicsCount || 0 }}</span>
-                                    <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
-                                </div>
-                            </div>
-                        </div>
-                    </UCard>
+        <!-- Premium CTA Box (Horizontal) -->
+        <UCard
+            class="overflow-hidden relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 bg-gradient-to-r from-white to-neutral-50/50 dark:from-neutral-900 dark:to-neutral-900/50"
+            :ui="{ body: 'p-8 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12 relative z-10' }">
+            <!-- Decorative Glows -->
+            <div class="absolute top-0 left-0 w-1/2 h-full bg-primary/5 rounded-full blur-[100px] -translate-x-1/2">
+            </div>
+
+            <div
+                class="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left flex-1 relative z-10">
+                <div class="bg-primary/10 text-primary p-4 rounded-2xl ring-4 ring-primary/5 shrink-0">
+                    <UIcon name="i-lucide-sparkles" class="text-3xl flex animate-pulse" />
                 </div>
 
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-xs font-bold tracking-[0.2em] text-primary uppercase">Recommended for you</h3>
+                    <p class="text-3xl font-bold tracking-tight leading-tight">
+                        Focus on <span class="text-primary underline decoration-primary/30 underline-offset-8">{{
+                            weakestTopic?.name }}</span>
+                    </p>
+                    <p class="text-muted max-w-lg">
+                        Acumen identifies this as your highest impact area for improvement. Ready to master it?
+                    </p>
+                </div>
             </div>
-        </div>
+
+            <UButton label="Press Play" icon="i-lucide-play-circle" size="xl" color="primary"
+                class="rounded-full px-12 py-5 uppercase text-sm font-semibold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 shrink-0 relative z-10" />
+        </UCard>
     </UContainer>
 
     <!-- 404 Empty State -->
@@ -285,3 +197,5 @@ useHead({
         <UButton label="Back to Dashboard" color="primary" variant="subtle" to="/app/dashboard" class="mt-6" />
     </div>
 </template>
+
+<style scoped></style>
