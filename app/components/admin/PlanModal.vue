@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Plan } from '~/types/plan'
+import type { Plan, PlanStatus } from '~/types/plan'
 
 const props = defineProps<{
     open: boolean
@@ -22,10 +22,10 @@ const form = reactive({
     name: '',
     description: '',
     price: 0,
-    interval: 'monthly' as const,
+    interval: 'monthly' as 'monthly' | 'yearly',
     tokenLimit: 1000000,
     features: [] as string[],
-    status: 'Active' as const
+    status: 'Active' as PlanStatus
 })
 
 const featureInput = ref('')
@@ -84,7 +84,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
-    <UModal v-model:open="isOpen" :ui="{ width: 'sm:max-w-xl' }">
+    <UModal v-model:open="isOpen" class="sm:max-w-xl">
         <template #content>
             <div class="p-6 flex flex-col gap-6">
                 <div class="flex flex-col gap-1">
@@ -100,7 +100,8 @@ const handleSubmit = () => {
                     </UFormField>
 
                     <UFormField label="Description">
-                        <UTextarea v-model="form.description" placeholder="What is included in this plan?" class="w-full" :rows="2" />
+                        <UTextarea v-model="form.description" placeholder="What is included in this plan?"
+                            class="w-full" :rows="2" />
                     </UFormField>
 
                     <div class="grid grid-cols-2 gap-4">
@@ -114,7 +115,8 @@ const handleSubmit = () => {
 
                     <UFormField label="Monthly Token Limit">
                         <template #hint>
-                            <span class="text-[10px] text-neutral-400">Current: {{ (form.tokenLimit / 1000000).toFixed(1) }}M tokens</span>
+                            <span class="text-[10px] text-neutral-400">Current: {{ (form.tokenLimit /
+                                1000000).toFixed(1) }}M tokens</span>
                         </template>
                         <UInput v-model.number="form.tokenLimit" type="number" step="100000" class="w-full" />
                     </UFormField>
@@ -122,13 +124,16 @@ const handleSubmit = () => {
                     <UFormField label="Features">
                         <div class="flex flex-col gap-3">
                             <div class="flex gap-2">
-                                <UInput v-model="featureInput" placeholder="Add a feature..." class="grow" @keydown.enter.prevent="addFeature" />
+                                <UInput v-model="featureInput" placeholder="Add a feature..." class="grow"
+                                    @keydown.enter.prevent="addFeature" />
                                 <UButton icon="i-lucide-plus" color="neutral" variant="soft" @click="addFeature" />
                             </div>
                             <div class="flex flex-wrap gap-2">
-                                <UBadge v-for="(feature, index) in form.features" :key="index" variant="subtle" color="neutral" class="pr-1">
+                                <UBadge v-for="(feature, index) in form.features" :key="index" variant="subtle"
+                                    color="neutral" class="pr-1">
                                     {{ feature }}
-                                    <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs" class="ml-1" @click="removeFeature(index)" />
+                                    <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs" class="ml-1"
+                                        @click="removeFeature(index)" />
                                 </UBadge>
                             </div>
                         </div>
@@ -140,7 +145,8 @@ const handleSubmit = () => {
 
                     <div class="flex items-center justify-end gap-3 mt-4">
                         <UButton label="Cancel" variant="ghost" color="neutral" @click="isOpen = false" />
-                        <UButton type="submit" :label="isEdit ? 'Save Changes' : 'Create Plan'" color="primary" :disabled="!form.name" />
+                        <UButton type="submit" :label="isEdit ? 'Save Changes' : 'Create Plan'" color="primary"
+                            :disabled="!form.name" />
                     </div>
                 </form>
             </div>
