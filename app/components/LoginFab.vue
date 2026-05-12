@@ -15,14 +15,14 @@ const mockRoles: MockRole[] = [
         label: 'Admin',
         icon: 'i-lucide-shield',
         color: 'error',
-        route: '/'
+        route: '/admin/dashboard'
     },
     {
         role: 'learner',
         label: 'Learner',
         icon: 'i-lucide-user',
         color: 'primary',
-        route: '/'
+        route: '/app/dashboard'
     }
 ]
 

@@ -108,8 +108,8 @@ export const pricings = [
             'Custom study plans'
         ],
         button: {
-            label: 'Start Free Trail',
-            to: '/signup'
+            label: 'Subscribe',
+            to: '/signup?plan=pro'
         },
         scale: true,
         class: 'ring-2 ring-primary',

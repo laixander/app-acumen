@@ -13,6 +13,22 @@ definePageMeta({
     layout: 'guest'
 })
 
+const isContactModalOpen = ref(false)
+
+const displayPricings = computed(() => pricings.map((plan: any) => {
+    if (plan.title === 'Enterprise') {
+        return {
+            ...plan,
+            button: {
+                ...plan.button,
+                to: undefined,
+                onClick: () => { isContactModalOpen.value = true }
+            }
+        }
+    }
+    return plan
+}))
+
 onMounted(() => {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -91,7 +107,7 @@ onMounted(() => {
         <UPageSection id="pricing" title="Simple, Transparent Pricing"
             class="reveal-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out"
             description="No hidden fees, cancel anytime. Choose the plan that suits you best.">
-            <UPricingPlans scale :plans="pricings" />
+            <UPricingPlans scale :plans="displayPricings" />
         </UPageSection>
 
         <!-- Testimonials Section -->
@@ -130,24 +146,13 @@ onMounted(() => {
                     Join thousands of students who are learning faster, retaining more, and spending less time stressing
                     over exams.
                 </template>
-                <!-- Background Shapes -->
-                <!-- <div class="absolute inset-0 z-0 pointer-events-none opacity-60">
-                    <div class="absolute -top-20 -left-20 w-100 h-100 rounded-full bg-white/5 mix-blend-overlay">
-                    </div>
-                    <div class="absolute top-40 -right-40 w-100 h-100 rounded-full bg-white/5 mix-blend-overlay">
-                    </div>
-                    <div
-                        class="absolute top-20 left-20 w-100 h-100 rounded-full border-40 border-white/5 mix-blend-overlay">
-                    </div>
-                    <div
-                        class="absolute top-20 right-20 w-60 h-60 rounded-full border-30 border-white/5 mix-blend-overlay">
-                    </div>
-                </div> -->
             </UPageCTA>
         </UPageSection>
 
         <DocsFooter icon-name="i-lucide-brain-circuit" icon-color="primary" app-name="LearnFast"
             app-description="AI-powered learning companion designed to identify your knowledge gaps and accelerate your mastery."
             :link-groups="footerLinkGroups" copyright-name="LearnFast" copyright-suffix="Built with ❤️ by Laix" />
+
+        <ContactSalesModal v-model:open="isContactModalOpen" />
     </div>
 </template>

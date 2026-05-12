@@ -33,7 +33,7 @@ definePageMeta({
 
             <!-- Logo Header -->
             <div class="relative z-10 flex items-center gap-3">
-                <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
+                <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
             </div>
 
             <!-- Body Text -->
@@ -46,7 +46,7 @@ definePageMeta({
 
             <!-- Footer -->
             <div class="relative z-10 text-sm opacity-80 font-medium">
-                &copy; {{ new Date().getFullYear() }} LearnFast
+                &copy; {{ new Date().getFullYear() }} Acumen
             </div>
         </div>
 

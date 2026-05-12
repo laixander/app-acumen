@@ -12,7 +12,32 @@ export const useWorkspaces = () => {
     const pendingInvitations = useState<any[]>('receivedInvitations', () => [])
     const isInitialized = useState<boolean>('workspacesInitialized', () => false)
 
+    const { currentOrganization } = useOrganizations()
     const currentWorkspace = computed(() => workspaces.value.find(w => w.id === currentWorkspaceId.value))
+
+    const currentUserRole = computed(() => {
+        if (!currentWorkspace.value) return null
+        const member = currentWorkspace.value.members.find(m => m.email === user.value.profile.email)
+        return member?.role || null
+    })
+
+    const currentUserOrgRole = computed(() => {
+        if (!currentOrganization.value) return null
+        const member = currentOrganization.value.members.find(m => m.email === user.value.profile.email)
+        return member?.orgRole || null
+    })
+
+    const isAdmin = computed(() => {
+        const workspaceRole = currentUserRole.value
+        const orgRole = currentUserOrgRole.value
+
+        return workspaceRole === 'Admin' ||
+            workspaceRole === 'Owner' ||
+            orgRole === 'Org_Admin' ||
+            orgRole === 'Org_Owner'
+    })
+
+    const canManageBilling = computed(() => isAdmin.value)
 
     const initWorkspaces = () => {
         if (import.meta.client) {
@@ -73,6 +98,9 @@ export const useWorkspaces = () => {
         currentWorkspace,
         pendingInvitations,
         isInitialized,
+        currentUserRole,
+        isAdmin,
+        canManageBilling,
         initWorkspaces,
         updateWorkspace,
         addWorkspace,

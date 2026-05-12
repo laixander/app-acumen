@@ -5,16 +5,35 @@ definePageMeta({
     layout: false
 })
 
+import { PLANS } from '~/constants/billing'
+
+const route = useRoute()
 const toast = useToast()
 const step = ref(1)
 const loading = ref(false)
+
+const planInfo = computed(() => {
+    const planId = (route.query.plan as string) || 'free'
+    // If enterprise is requested, we could either redirect or default to free.
+    // For now, let's treat any non-pro paid plan as free signup since Enterprise is handled via modal.
+    const plan = PLANS.find(p => p.id === planId.toLowerCase() && p.id !== 'enterprise')
+    return (plan || PLANS[0]) as typeof PLANS[0] & { id: string, name: string, price: number }
+})
+
+const shouldShowPayment = computed(() => planInfo.value.id === 'pro')
 
 const form = reactive({
     email: '',
     code: ['', '', '', '', '', ''],
     fullName: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    card: {
+        number: '',
+        expiry: '',
+        cvc: '',
+        name: ''
+    }
 })
 
 const nextStep = () => {
@@ -53,9 +72,24 @@ const nextStep = () => {
         loading.value = true
         setTimeout(() => {
             loading.value = false
-            toast.add({ title: 'Account created!', description: 'Welcome to LearnFast! You can now log in.' })
+            if (shouldShowPayment.value) {
+                step.value = 4
+            } else {
+                toast.add({ title: 'Account created!', description: 'Welcome to LearnFast! You can now log in.' })
+                navigateTo('/login')
+            }
+        }, 800)
+    } else if (step.value === 4) {
+        if (!form.card.number || !form.card.expiry || !form.card.cvc) {
+            toast.add({ title: 'Error', description: 'Please complete your payment details.', color: 'red' })
+            return
+        }
+        loading.value = true
+        setTimeout(() => {
+            loading.value = false
+            toast.add({ title: 'Account created!', description: 'Welcome to LearnFast! Your subscription is now active.' })
             navigateTo('/login')
-        }, 1000)
+        }, 1500)
     }
 }
 
@@ -125,8 +159,7 @@ const text = computed(() => {
 
             <!-- Logo Header -->
             <div class="relative z-10 flex items-center gap-3">
-                <UIcon name="i-lucide-brain-circuit" class="w-10 h-10" />
-                <span class="text-2xl font-racing">LearnFast</span>
+                <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
             </div>
 
             <!-- Body Text -->
@@ -177,7 +210,7 @@ const text = computed(() => {
 
                 <!-- Stepper UI -->
                 <div class="flex items-center gap-3 mb-10">
-                    <template v-for="i in 3" :key="i">
+                    <template v-for="i in (shouldShowPayment ? 4 : 3)" :key="i">
                         <div class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold transition-colors"
                             :class="[
                                 step > i ? 'bg-primary text-white dark:text-neutral-900' : step === i ? 'bg-primary/20 text-primary-600 dark:text-primary-400' : 'bg-neutral-100 dark:bg-neutral-800 text-neutral-400'
@@ -185,7 +218,7 @@ const text = computed(() => {
                             <UIcon v-if="step > i" name="i-lucide-check" class="w-4 h-4" />
                             <span v-else>{{ i }}</span>
                         </div>
-                        <div v-if="i < 3" class="w-8 h-px transition-colors"
+                        <div v-if="i < (shouldShowPayment ? 4 : 3)" class="w-8 h-px transition-colors"
                             :class="[step > i ? 'bg-primary' : 'bg-neutral-200 dark:bg-neutral-700']"></div>
                     </template>
                 </div>
@@ -290,8 +323,76 @@ const text = computed(() => {
                         </UInput>
                     </UFormField>
                     <UButton block size="xl" color="primary" @click="nextStep" :loading="loading" class="mt-4">
-                        Create Account
+                        {{ shouldShowPayment ? 'Continue to Payment' : 'Create Account' }}
                     </UButton>
+                </div>
+
+                <!-- 04. payment information -->
+                <div v-else-if="step === 4" class="space-y-6">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Payment method</h2>
+                        <p class="text-muted text-sm">Safe and secure payment. Cancel anytime.</p>
+                    </div>
+
+                    <!-- Card Preview (Visual) -->
+                    <div class="relative w-full aspect-[1.586/1] bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-2xl p-6 text-white overflow-hidden shadow-xl mb-4">
+                        <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
+                        <div class="flex justify-between items-start relative z-10">
+                            <UIcon name="i-lucide-contact" class="w-10 h-10 text-white/40" />
+                            <div class="flex gap-1.5 items-center">
+                                <div class="w-8 h-5 rounded bg-white/20" />
+                                <div class="w-8 h-5 rounded bg-white/10" />
+                            </div>
+                        </div>
+                        <div class="mt-8 relative z-10">
+                            <div class="text-xl tracking-[0.2em] font-mono">
+                                {{ form.card.number || '•••• •••• •••• ••••' }}
+                            </div>
+                        </div>
+                        <div class="mt-6 flex justify-between relative z-10">
+                            <div>
+                                <div class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Card Holder</div>
+                                <div class="text-sm font-medium">{{ form.fullName || 'YOUR NAME' }}</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] uppercase tracking-widest text-white/40 mb-1">Expires</div>
+                                <div class="text-sm font-medium">{{ form.card.expiry || 'MM/YY' }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <UFormField label="Card number">
+                            <UInput v-model="form.card.number" placeholder="0000 0000 0000 0000" variant="soft" size="lg" icon="i-lucide-credit-card" />
+                        </UFormField>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <UFormField label="Expiry date">
+                                <UInput v-model="form.card.expiry" placeholder="MM/YY" variant="soft" size="lg" />
+                            </UFormField>
+                            <UFormField label="CVC">
+                                <UInput v-model="form.card.cvc" placeholder="•••" type="password" variant="soft" size="lg" />
+                            </UFormField>
+                        </div>
+                    </div>
+
+                    <div class="bg-neutral-50 dark:bg-neutral-800/50 p-4 rounded-xl border border-neutral-100 dark:border-neutral-800">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-muted">{{ planInfo.name }} Plan Subscription</span>
+                            <span class="font-bold">${{ planInfo.price }}.00</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-dimmed">
+                            <span>Billed monthly</span>
+                            <span>VAT (0%)</span>
+                        </div>
+                    </div>
+
+                    <UButton block size="xl" color="primary" @click="nextStep" :loading="loading">
+                        Confirm & Pay
+                    </UButton>
+                    <p class="text-[10px] text-center text-muted px-4 leading-relaxed">
+                        By clicking "Confirm & Pay", you agree to our Terms of Service and Privacy Policy. You can cancel your subscription at any time.
+                    </p>
                 </div>
             </div>
         </div>
