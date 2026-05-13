@@ -2,6 +2,8 @@
 definePageMeta({
     layout: false
 })
+const route = useRoute()
+const isDevMode = computed(() => route.query.dev !== undefined)
 </script>
 <template>
     <div class="fixed inset-0 grid grid-cols-1 lg:grid-cols-2 bg-background">
@@ -66,7 +68,7 @@ definePageMeta({
                     <NuxtLink to="/signup" class="text-primary font-medium hover:underline">Sign up</NuxtLink>
                 </div>
             </div>
-            <LoginFab />
+            <LoginFab v-if="isDevMode" />
         </div>
     </div>
 </template>

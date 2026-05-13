@@ -3,6 +3,8 @@ import { APP_NAVIGATION_ITEMS } from '~/constants/navigation'
 
 const route = useRoute()
 
+const isDevMode = computed(() => route.query.dev !== undefined)
+
 const links = computed(() =>
     APP_NAVIGATION_ITEMS.map(item => ({
         ...item,
@@ -51,7 +53,9 @@ const links = computed(() =>
                     aria-label="GitHub" color="neutral" variant="ghost" />
             </template>
         </UFooter>
-        <SeederFab />
-        <DemoFab />
+        <template v-if="isDevMode">
+            <SeederFab />
+            <DemoFab />
+        </template>
     </div>
 </template>

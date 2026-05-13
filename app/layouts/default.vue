@@ -3,6 +3,8 @@ import { ADMIN_NAVIGATION_ITEMS } from '~/constants/navigation'
 
 const links = ref(ADMIN_NAVIGATION_ITEMS)
 const { uiNavigation, uiDashboardSidebar } = useUiConfig()
+const route = useRoute()
+const isDevMode = computed(() => route.query.dev !== undefined)
 </script>
 <template>
     <UDashboardGroup>
@@ -19,7 +21,9 @@ const { uiNavigation, uiDashboardSidebar } = useUiConfig()
             </template>
         </UDashboardSidebar>
         <slot />
-        <SeederFab />
-        <DemoFab />
+        <template v-if="isDevMode">
+            <SeederFab />
+            <DemoFab />
+        </template>
     </UDashboardGroup>
 </template>

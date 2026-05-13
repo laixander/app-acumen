@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const { sections } = useDocsMenu()
+const route = useRoute()
+const isDevMode = computed(() => route.query.dev !== undefined)
 </script>
 
 <template>
@@ -42,5 +44,5 @@ const { sections } = useDocsMenu()
                 aria-label="GitHub" color="neutral" variant="ghost" />
         </template>
     </UFooter>
-    <DemoFab />
+    <DemoFab v-if="isDevMode" />
 </template>

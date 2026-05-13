@@ -83,6 +83,7 @@ export interface AssessmentOption {
 export interface AssessmentQuestion {
     id: string | number
     text: string
+    type?: 'multiple_choice' | 'true_false'
     options: AssessmentOption[]
     correct: string
 }

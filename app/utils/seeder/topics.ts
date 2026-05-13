@@ -1,17 +1,17 @@
 import type { Topic, LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
 export const MOCK_TOPICS: Topic[] = [
-    { 
-        id: 'introduction-to-algebra', 
-        title: 'Introduction to Algebra', 
-        progress: 80, 
-        tag: 'Math', 
-        status: 'Ongoing', 
-        lessons: '10/12', 
-        lastStudied: '2 hrs ago', 
-        lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000, 
-        icon: 'i-lucide-function-square', 
-        isPinned: true, 
+    {
+        id: 'introduction-to-algebra',
+        title: 'Introduction to Algebra',
+        progress: 80,
+        tag: 'Math',
+        status: 'Ongoing',
+        lessons: '10/12',
+        lastStudied: '2 hrs ago',
+        lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000,
+        icon: 'i-lucide-function-square',
+        isPinned: true,
         learningGoal: 'Mastery',
         createdBy: { id: '2', name: 'Alice Smith', avatar: 'https://i.pravatar.cc/100?u=2', role: 'Admin', topicsCount: 15 },
         viewersCount: 12,
@@ -35,17 +35,17 @@ export const MOCK_TOPICS: Topic[] = [
             { name: 'Algebraic Word Problems', progress: 62, color: 'text-orange-500' }
         ]
     },
-    { 
-        id: 'world-war-ii-overview', 
-        title: 'World War II Overview', 
-        progress: 55, 
-        tag: 'History', 
-        status: 'Ongoing', 
-        lessons: '6/11', 
-        lastStudied: '1 day ago', 
-        lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000, 
-        icon: 'i-lucide-landmark', 
-        isPinned: false, 
+    {
+        id: 'world-war-ii-overview',
+        title: 'World War II Overview',
+        progress: 55,
+        tag: 'History',
+        status: 'Ongoing',
+        lessons: '6/11',
+        lastStudied: '1 day ago',
+        lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000,
+        icon: 'i-lucide-landmark',
+        isPinned: false,
         learningGoal: 'Overview',
         createdBy: { id: '3', name: 'Bob Johnson', avatar: 'https://i.pravatar.cc/100?u=3', role: 'Admin', topicsCount: 8 },
         viewersCount: 45,
@@ -69,17 +69,17 @@ export const MOCK_TOPICS: Topic[] = [
             { name: 'Nuclear Age Beginnings', progress: 50, color: 'text-orange-500' }
         ]
     },
-    { 
-        id: 'newtons-laws-of-motion', 
-        title: "Newton's Laws of Motion", 
-        progress: 30, 
-        tag: 'Science', 
-        status: 'Ongoing', 
-        lessons: '3/10', 
-        lastStudied: '3 days ago', 
-        lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000, 
-        icon: 'i-lucide-microscope', 
-        isPinned: true, 
+    {
+        id: 'newtons-laws-of-motion',
+        title: "Newton's Laws of Motion",
+        progress: 30,
+        tag: 'Science',
+        status: 'Ongoing',
+        lessons: '3/10',
+        lastStudied: '3 days ago',
+        lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+        icon: 'i-lucide-microscope',
+        isPinned: true,
         learningGoal: 'Exam Prep',
         createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
         viewersCount: 8,
@@ -103,17 +103,17 @@ export const MOCK_TOPICS: Topic[] = [
             { name: 'Force Diagrams', progress: 35, color: 'text-orange-500' }
         ]
     },
-    { 
-        id: 'spanish-basics', 
-        title: 'Spanish Basics', 
-        progress: 65, 
-        tag: 'Language', 
-        status: 'Ongoing', 
-        lessons: '8/12', 
-        lastStudied: 'Yesterday', 
-        lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000, 
-        icon: 'i-lucide-languages', 
-        isPinned: false, 
+    {
+        id: 'spanish-basics',
+        title: 'Spanish Basics',
+        progress: 65,
+        tag: 'Language',
+        status: 'Ongoing',
+        lessons: '8/12',
+        lastStudied: 'Yesterday',
+        lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000,
+        icon: 'i-lucide-languages',
+        isPinned: false,
         learningGoal: 'Mastery',
         createdBy: { id: '4', name: 'Charlie Williams', avatar: 'https://i.pravatar.cc/100?u=4', role: 'Admin', topicsCount: 5 },
         viewersCount: 24,
@@ -137,17 +137,17 @@ export const MOCK_TOPICS: Topic[] = [
             { name: 'Future Tense', progress: 55, color: 'text-orange-500' }
         ]
     },
-    { 
-        id: 'greek-mythology', 
-        title: 'Greek Mythology', 
-        progress: 100, 
-        tag: 'History', 
-        status: 'Completed', 
-        lessons: '8/8', 
-        lastStudied: '1 week ago', 
-        lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000, 
-        icon: 'i-lucide-scroll', 
-        isPinned: false, 
+    {
+        id: 'greek-mythology',
+        title: 'Greek Mythology',
+        progress: 100,
+        tag: 'History',
+        status: 'Completed',
+        lessons: '8/8',
+        lastStudied: '1 week ago',
+        lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
+        icon: 'i-lucide-scroll',
+        isPinned: false,
         learningGoal: 'Overview',
         createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
         viewersCount: 156,
@@ -171,17 +171,17 @@ export const MOCK_TOPICS: Topic[] = [
             { name: 'Regional Variants', progress: 92, color: 'text-orange-500' }
         ]
     },
-    { 
-        id: 'advanced-javascript', 
-        title: 'Advanced JavaScript', 
-        progress: 15, 
-        tag: 'Science', 
-        status: 'Ongoing', 
-        lessons: '2/12', 
-        lastStudied: '5 hrs ago', 
-        lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000, 
-        icon: 'i-lucide-code', 
-        isPinned: false, 
+    {
+        id: 'advanced-javascript',
+        title: 'Advanced JavaScript',
+        progress: 15,
+        tag: 'Science',
+        status: 'Ongoing',
+        lessons: '2/12',
+        lastStudied: '5 hrs ago',
+        lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000,
+        icon: 'i-lucide-code',
+        isPinned: false,
         learningGoal: 'Project Based',
         createdBy: { id: '5', name: 'David Brown', avatar: 'https://i.pravatar.cc/100?u=5', role: 'Admin', topicsCount: 12 },
         viewersCount: 3,
@@ -324,7 +324,7 @@ export const TOPIC_CONTENT_MAP: Record<string, {
                     title: "Pacific Mastery",
                     questions: [
                         { id: 1, text: "Which battle is considered the turning point of the Pacific War?", options: [{ id: 'a', label: 'Pearl Harbor' }, { id: 'b', label: 'Iwo Jima' }, { id: 'c', label: 'Midway' }, { id: 'd', label: 'Guadalcanal' }], correct: 'c' },
-                        { id: 2, text: "True or False: Island hopping was a strategy to capture every single island in the Pacific.", options: [{ id: 'true', label: 'True' }, { id: 'false', label: 'False' }], correct: 'false' },
+                        { id: 2, text: "True or False: Island hopping was a strategy to capture every single island in the Pacific.", type: 'true_false', options: [{ id: 'true', label: 'True' }, { id: 'false', label: 'False' }], correct: 'false' },
                         { id: 3, text: "What was the primary purpose of the 'Island Hopping' strategy?", options: [{ id: 'a', label: 'Capture every island' }, { id: 'b', label: 'Bypass strongholds to reach Japan' }, { id: 'c', label: 'Establish trade routes' }, { id: 'd', label: 'Avoid naval combat' }], correct: 'b' }
                     ],
                     completionSummary: "Strategic mastery achieved. You correctly identified the tactical nuances of the Pacific theater. Your understanding of Midway as a turning point is excellent. Next up: The Atomic Age.",
@@ -535,7 +535,7 @@ export const TOPIC_CONTENT_MAP: Record<string, {
                     questions: [
                         { id: 1, text: "Which of the following is true about arrow functions?", options: [{ id: 'a', label: 'They have their own this binding' }, { id: 'b', label: 'They inherit this from the parent scope' }, { id: 'c', label: 'They cannot be used as callbacks' }, { id: 'd', label: 'They require the function keyword' }], correct: 'b' },
                         { id: 2, text: "What is the result of [1, 2, 3].map(x => x * 2)?", options: [{ id: 'a', label: '[1, 2, 3]' }, { id: 'b', label: '[2, 4, 6]' }, { id: 'c', label: '6' }, { id: 'd', label: 'undefined' }], correct: 'b' },
-                        { id: 3, text: "True or False: Arrow functions can be used as constructors with the 'new' keyword.", options: [{ id: 'true', label: 'True' }, { id: 'false', label: 'False' }], correct: 'false' }
+                        { id: 3, text: "True or False: Arrow functions can be used as constructors with the 'new' keyword.", type: 'true_false', options: [{ id: 'true', label: 'True' }, { id: 'false', label: 'False' }], correct: 'false' }
                     ],
                     completionSummary: "Engineering proficiency rising. Your understanding of ES6 syntax and lexical scoping is strong. You're well-equipped to handle complex React or Vue architectures.",
                     whatYouDidWell: "Arrow function syntax and simple array mapping.",
