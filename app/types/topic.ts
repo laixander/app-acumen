@@ -1,5 +1,23 @@
 export type LearningGoal = 'Mastery' | 'Overview' | 'Project Based' | 'Exam Prep'
 
+export interface ExamInfo {
+    name: string
+    daysAway: number
+}
+
+export interface TopicStat {
+    label: string
+    value: string
+    subtext: string
+    icon: string
+}
+
+export interface SubTopicAnalysis {
+    name: string
+    progress: number
+    color: string
+}
+
 export interface Topic {
     id: string
     title: string
@@ -22,6 +40,10 @@ export interface Topic {
     workspaceId?: string
     viewersCount?: number
     completedCount?: number
+    examInfo?: ExamInfo
+    stats?: TopicStat[]
+    strongTopics?: SubTopicAnalysis[]
+    weakTopics?: SubTopicAnalysis[]
 }
 
 export interface LessonOverview {
@@ -71,6 +93,12 @@ export interface Assessment {
     topicId: string
     title: string
     questions: AssessmentQuestion[]
+    completionSummary?: string
+    whatYouDidWell?: string
+    whereYouStruggled?: string
+    passProbBefore?: string
+    passProbAfter?: string
+    aiFinalComment?: string
 }
 
 export interface ActivityLog {

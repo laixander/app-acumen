@@ -109,6 +109,22 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 13, 2026",
+        version: "v1.9.0",
+        title: "Diagnostic Mastery & AI-Probing Session Architecture",
+        changes: [
+            "Launched 'Begin Session' diagnostic flow with immersive AI processing and transition states",
+            "Implemented the 'Probing Your Reasoning' AI layer with serif-styled lexical prompts and distractor-aware inquiries",
+            "Developed the 3-Card Assessment system featuring: ↑ What you did well, ↓ Where you struggled, and ↑ Mastery Profile Update",
+            "Integrated dynamic 'Pass Probability' tracking with before/after comparison and trend badges",
+            "Engineered the 'Acumen AI Insight' module with historical exam correlation (LET, SAT, AP, GRE benchmarks)",
+            "Implemented multi-choice validation with answer locking, visual success/error states, and focus fading",
+            "Overhauled the Topic Seeder to include complete 3-question assessments for all 10+ core modules",
+            "Optimized reasoning evaluation flow with simulated AI analysis and context-aware feedback transitions",
+            "Enhanced light/dark mode support for all session interfaces ensuring a premium glassmorphic aesthetic",
+        ],
+    },
+    {
         date: "May 08, 2026",
         version: "v1.8.0",
         title: "Admin Organization Management & Dynamic Plans Ecosystem",
