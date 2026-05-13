@@ -109,6 +109,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 12, 2026",
+        version: "v1.9.0",
+        title: "Enterprise Sales, Billing Ecosystem & Advanced Topic Analytics",
+        changes: [
+            "Launched the Lead-First Enterprise Sales model with dedicated ContactSalesModal integration",
+            "Implemented the CheckoutModal for seamless Pro plan upgrades and payment method management",
+            "Integrated Organizational Hierarchy logic into user management and billing services",
+            "Refined Topic Detail pages with new 'Strong/Weak' analysis sections and standardized content layouts",
+            "Updated sidebar navigation logic to support precise redirection for Card System variants",
+            "Enhanced the Billing Dashboard with functional upgrade/cancel actions and invoice download capabilities",
+            "Standardized UI/UX across the Enterprise suite with consistent modal patterns and success notifications",
+        ],
+    },
+    {
         date: "May 08, 2026",
         version: "v1.8.0",
         title: "Admin Organization Management & Dynamic Plans Ecosystem",
