@@ -67,6 +67,7 @@ const handleSubjectSelect = (subject: string) => {
 
 const handleAssessmentComplete = () => {
     flowState.value = 'review'
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 const nextStep = () => {
@@ -126,7 +127,14 @@ const confirmFinish = () => {
 </script>
 
 <template>
-    <UContainer class="lg:max-w-4xl py-10 flex flex-col grow">
+    <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
+        <!-- Breadcrumbs -->
+        <nav v-if="flowState !== 'entry'" class="flex items-center gap-2 text-sm text-neutral-500">
+            <ULink to="/app/topics/new" class="hover:text-primary transition-colors">Create</ULink>
+            <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
+            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ creationMode === 'upload' ? 'Materials' : 'Explore' }} Mode</span>
+        </nav>
+
         <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
             enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
             leave-active-class="transition-all duration-200 ease-in" leave-from-class="opacity-100 translate-y-0"
@@ -159,8 +167,8 @@ const confirmFinish = () => {
                 </div>
 
                 <!-- Step Content -->
-                <UCard v-else class="shadow-sm border-neutral-100 dark:border-neutral-800 overflow-visible"
-                    :ui="{ body: 'p-8 sm:p-10 relative' }">
+                <UCard v-else class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
+                    :ui="{ body: 'p-0 sm:p-0 relative' }">
                     
                     <div class="min-h-full">
                         <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
@@ -188,59 +196,33 @@ const confirmFinish = () => {
                                     v-else-if="flowState === 'assessment'" 
                                     v-model="formData" 
                                     @complete="handleAssessmentComplete"
+                                    @back="prevStep"
                                 />
 
                                 <!-- Review Step -->
-                                <AppTopicFormReview 
-                                    v-else-if="flowState === 'review'" 
-                                    :form-data="formData" 
+                                <AppSessionReadinessPlan 
+                                     v-else-if="flowState === 'review'" 
+                                     :topic-title="formData.title"
+                                     is-onboarding
+                                     @close="handleFinish"
                                 />
+
                             </div>
                         </Transition>
                     </div>
 
-                    <!-- Navigation Buttons (Side) -->
-                    <div class="absolute top-0 -right-13 h-full pointer-events-none hidden lg:block">
-                        <div class="sticky top-18 flex flex-col gap-2 pointer-events-auto">
-                            <UTooltip :text="flowState === 'review' ? 'Generate Plan' : (flowState === 'setup' && creationMode === 'upload' ? 'Start Indexing' : 'Continue')" :delay-duration="0" :content="{
-                                side: 'right', sideOffset: 8
-                            }">
-                                <UButton :icon="flowState === 'review' ? 'i-lucide-sparkles' : 'i-lucide-arrow-right'"
-                                    variant="soft" size="xl" class="rounded-lg"
-                                    :disabled="(flowState === 'setup' && creationMode === 'upload' && formData.files.length === 0) || flowState === 'assessment'"
-                                    @click="nextStep" />
-                            </UTooltip>
-                            <UTooltip text="Back" :delay-duration="0" :content="{
-                                side: 'right', sideOffset: 8
-                            }">
-                                <UButton icon="i-lucide-arrow-left" variant="soft"
-                                    color="neutral" size="xl" class="rounded-lg" @click="prevStep" />
-                            </UTooltip>
-                        </div>
-                    </div>
-
                     <!-- Bottom Navigation -->
-                    <div class="flex items-center justify-between mt-8 sm:mt-10 pt-8 sm:pt-10 border-t border-default">
+                    <!-- <div v-if="flowState === 'review'" class="flex items-center justify-center w-full mt-8">
                         <UButton 
-                            :label="flowState === 'setup' ? 'Cancel' : 'Back'"
-                            :icon="flowState === 'setup' ? 'i-lucide-x' : 'i-lucide-arrow-left'" 
-                            size="xl" 
-                            variant="soft"
-                            color="neutral" 
-                            @click="prevStep" 
-                        />
-
-                        <UButton 
-                            v-if="(flowState !== 'setup' || creationMode === 'upload') && flowState !== 'assessment'"
-                            :label="flowState === 'review' ? 'Generate Plan' : (flowState === 'setup' && creationMode === 'upload' ? 'Start Indexing' : 'Continue')"
-                            :trailing-icon="flowState === 'review' ? 'i-lucide-sparkles' : 'i-lucide-arrow-right'" 
-                            color="primary"
-                            size="xl" 
+                            label="Generate Plan"
+                            trailing-icon="i-lucide-sparkles"  
                             variant="solid"
-                            :disabled="flowState === 'setup' && creationMode === 'upload' && formData.files.length === 0"
                             @click="nextStep" 
+                            size="xl" color="primary"
+                            class="rounded-full px-12 py-5 uppercase text-sm font-semibold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30"
                         />
-                    </div>
+                    </div> -->
+
                 </UCard>
             </div>
         </Transition>

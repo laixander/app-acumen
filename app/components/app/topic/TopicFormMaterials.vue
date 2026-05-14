@@ -5,7 +5,7 @@ const props = defineProps<{
     }
 }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'upload-ready'])
 
 const isUploading = ref(false)
 
@@ -33,7 +33,7 @@ const removeFile = (index: number) => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-8 p-8 sm:p-10">
         <div class="flex items-center gap-4">
             <div class="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-2xl">
                 <UIcon name="i-lucide-upload-cloud" class="text-2xl text-primary flex shrink-0" />
@@ -116,6 +116,18 @@ const removeFile = (index: number) => {
                         <div class="h-3 bg-neutral-100 dark:bg-neutral-800 rounded w-16"></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Start Indexing Action -->
+            <div v-if="modelValue.files.length > 0 && !isUploading" class="flex justify-center mt-6 animate-fade-in [animation-delay:200ms]">
+                <UButton 
+                    label="Start Indexing"
+                    trailing-icon="i-lucide-arrow-right"  
+                    variant="solid"
+                    size="xl" color="primary"
+                    class="rounded-full px-12 py-5 uppercase text-sm font-bold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30"
+                    @click="$emit('upload-ready')"
+                />
             </div>
         </div>
     </div>
