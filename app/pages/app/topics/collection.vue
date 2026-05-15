@@ -4,7 +4,7 @@ import { TOPIC_TAGS, TOPIC_STATUSES, TOPIC_SORT_OPTIONS } from '~/constants/topi
 
 const searchQuery = ref('')
 const selectedTag = ref('All')
-const currentStatus = ref('All')
+const currentStatus = ref('Ongoing')
 const viewMode = ref<'grid' | 'list'>('grid')
 const sortBy = ref('Recent')
 

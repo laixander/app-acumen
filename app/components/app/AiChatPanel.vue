@@ -246,10 +246,10 @@ const dynamicHeight = computed(() => {
                 <!-- Pending Quote -->
                 <div v-if="pendingQuote"
                     class="mb-3 p-2 bg-primary-50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-800/30 rounded-lg flex items-start gap-2 relative group">
-                    <UIcon name="i-lucide-quote" class="text-primary-500 mt-0.5 shrink-0" />
+                    <UIcon name="i-ph-quotes-duotone" class="text-primary-500 mt-0.5 shrink-0" />
                     <p class="text-xs text-primary-700 dark:text-primary-300 line-clamp-2 m-0 flex-1">{{
                         pendingQuote.text
-                    }}</p>
+                        }}</p>
                     <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="xs"
                         @click="emit('update:pendingQuote', null)" class="absolute top-1 right-1" />
                 </div>

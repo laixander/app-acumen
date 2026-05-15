@@ -119,6 +119,11 @@ export const changelogItems = [
             "Enhanced source material accessibility with new downloadable card actions and status indicators",
             "Refactored component type definitions across the core topic module for 100% TypeScript stability",
             "Improved session lifecycle state transitions (Ready, Processing, Active) with synchronized UI feedback",
+            "Refactored Dashboard AI Prompt into a multi-mode interface (Prompt, Upload, Subject Discovery)",
+            "Unified the topic creation workflow by synchronizing Dashboard actions with the main Stepper flow via intelligent query-based redirection",
+            "Enhanced Material Upload UI with robust error guards, retry mechanisms, and real-time status indicators",
+            "Implemented a compact, inline Subject Picker for rapid curriculum selection directly from the dashboard",
+            "Optimized Topic Wizard state initialization to eliminate UI flashes during dashboard-to-stepper transitions",
         ],
     },
     {

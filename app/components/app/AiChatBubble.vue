@@ -30,7 +30,7 @@ const emit = defineEmits<{
                     class="text-xs bg-white/80 dark:bg-black/20 p-2.5 rounded-lg border border-primary-200/50 dark:border-primary-800/30 cursor-pointer hover:bg-white dark:hover:bg-black/40 transition-colors shadow-sm"
                     :class="msg.role === 'user' ? 'text-primary-900 dark:text-primary-100' : 'text-neutral-700 dark:text-neutral-300'">
                     <div class="flex items-center gap-1.5 mb-1.5 font-semibold opacity-90">
-                        <UIcon name="i-lucide-quote" class="w-3.5 h-3.5" />
+                        <UIcon name="i-ph-quotes-duotone" class="w-3.5 h-3.5" />
                         Referred Line
                     </div>
                     <p class="m-0 line-clamp-2 italic opacity-90">{{ msg.quote.text }}</p>
@@ -45,7 +45,7 @@ const emit = defineEmits<{
                     <div class="flex-1 min-w-0">
                         <p class="text-[11px] font-medium truncate"
                             :class="msg.role === 'user' ? 'text-white' : 'text-neutral-700 dark:text-neutral-200'">{{
-                            msg.attachment.name }}</p>
+                                msg.attachment.name }}</p>
                         <p class="text-[9px]" :class="msg.role === 'user' ? 'text-white/60' : 'text-neutral-500'">{{
                             (msg.attachment.size / 1024).toFixed(1) }} KB</p>
                     </div>

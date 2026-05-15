@@ -12,12 +12,46 @@ const router = useRouter()
 
 // Flow States
 type FlowState = 'entry' | 'setup' | 'indexing' | 'details' | 'schedule' | 'assessment' | 'review'
-const flowState = ref<FlowState>('entry')
-const creationMode = ref<'upload' | 'explore' | null>(null)
+
+// Bootstrap from dashboard redirect — read query synchronously to avoid flash on first render
+const route = useRoute()
+const _qMode = route.query.mode as string | undefined
+const _qStep = route.query.step as string | undefined
+
+const flowState = ref<FlowState>(
+    _qMode === 'upload' && _qStep === 'indexing' ? 'indexing'
+    : _qMode === 'prompt' ? 'assessment'
+    : _qMode === 'explore' ? 'assessment'
+    : 'entry'
+)
+const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(
+    _qMode === 'upload' ? 'upload'
+    : _qMode === 'explore' ? 'explore'
+    : _qMode === 'prompt' ? 'prompt'
+    : null
+)
+
+onMounted(() => {
+    const promptParam = route.query.prompt as string | undefined
+    const subjectParam = route.query.subject as string | undefined
+
+    if (_qMode === 'prompt' && promptParam) {
+        formData.title = promptParam
+        formData.description = `AI-generated curriculum for: ${promptParam}`
+    } else if (_qMode === 'explore' && subjectParam) {
+        formData.title = subjectParam
+        formData.description = `Universal curriculum for ${subjectParam}`
+    } else if (_qMode === 'upload' && _qStep === 'indexing') {
+        setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    }
+})
 
 const steps = computed(() => {
     if (creationMode.value === 'explore') {
         return ['Mode', 'Subject', 'Pre-Assessment', 'Review']
+    }
+    if (creationMode.value === 'prompt') {
+        return ['Mode', 'Pre-Assessment', 'Review']
     }
     return ['Mode', 'Materials', 'Pre-Assessment', 'Review']
 })
@@ -25,8 +59,8 @@ const steps = computed(() => {
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'assessment') return 2
-    if (flowState.value === 'review') return 3
+    if (flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
+    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
     return 0
 })
 
@@ -66,6 +100,13 @@ const handleSubjectSelect = (subject: string) => {
     flowState.value = 'assessment'
 }
 
+const handlePromptSelect = (prompt: string) => {
+    formData.title = prompt
+    formData.description = `AI-generated curriculum for: ${prompt}`
+    creationMode.value = 'prompt'
+    flowState.value = 'assessment'
+}
+
 const handleAssessmentComplete = () => {
     flowState.value = 'review'
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -82,7 +123,15 @@ const prevStep = () => {
         flowState.value = 'entry'
         creationMode.value = null
     }
-    else if (flowState.value === 'assessment') flowState.value = 'setup'
+    else if (flowState.value === 'assessment') {
+        // Prompt mode has no setup step — go back to entry
+        if (creationMode.value === 'prompt') {
+            flowState.value = 'entry'
+            creationMode.value = null
+        } else {
+            flowState.value = 'setup'
+        }
+    }
     else if (flowState.value === 'review') flowState.value = 'assessment'
     else if (flowState.value === 'entry') router.push('/app/dashboard')
 }
@@ -127,7 +176,7 @@ const confirmFinish = () => {
         lessons: `0/${newTimeline.length}`,
         lastStudied: 'Just now',
         lastStudiedAt: Date.now(),
-        icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : 'i-lucide-book-open',
+        icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : creationMode.value === 'prompt' ? 'i-lucide-sparkles' : 'i-lucide-book-open',
         isPinned: false,
         learningGoal: formData.learningGoal,
         createdBy: {
@@ -155,8 +204,9 @@ const confirmFinish = () => {
         <nav v-if="flowState !== 'entry'" class="flex items-center gap-2 text-sm text-neutral-500">
             <button @click="resetFlow" class="hover:text-primary transition-colors cursor-pointer">Create</button>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
-            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ creationMode === 'upload' ? 'Materials'
-                : 'Explore' }} Mode</span>
+            <span class="font-medium text-neutral-900 dark:text-neutral-100">
+                {{ creationMode === 'upload' ? 'Materials' : creationMode === 'prompt' ? 'AI Prompt' : 'Explore' }} Mode
+            </span>
         </nav>
 
         <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
@@ -185,8 +235,10 @@ const confirmFinish = () => {
 
                 <!-- Entry Point -->
                 <div v-if="flowState === 'entry'">
-                    <AppTopicDoorSelection @select-upload="selectMode('upload')"
-                        @select-explore="selectMode('explore')" />
+                    <AppTopicDoorSelection
+                        @select-upload="selectMode('upload')"
+                        @select-explore="selectMode('explore')"
+                        @select-prompt="handlePromptSelect" />
                 </div>
 
                 <!-- Step Content -->

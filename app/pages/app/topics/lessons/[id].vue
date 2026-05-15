@@ -14,6 +14,12 @@ const topic = computed(() => {
     return topics.value.find(t => t.id === route.params.id)
 })
 
+// Dynamically count topics authored by the same user so newly created topics are counted
+const topicsCountForAuthor = computed(() => {
+    if (!topic.value?.createdBy?.id) return 0
+    return topics.value.filter(t => t.createdBy?.id === topic.value!.createdBy!.id).length
+})
+
 const { data: serverLessons } = await useFetch(`/api/lessons?topicId=${route.params.id}`)
 
 const lessons = computed(() => {
@@ -310,8 +316,7 @@ useHead({
                                 <div
                                     class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
                                     <div class="flex flex-col items-center">
-                                        <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
-                                            topic.createdBy.topicsCount || 0 }}</span>
+                                        <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{ topicsCountForAuthor }}</span>
                                         <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
                                     </div>
                                 </div>

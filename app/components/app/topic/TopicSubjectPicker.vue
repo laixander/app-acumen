@@ -6,6 +6,7 @@ const emit = defineEmits(['select'])
 const searchQuery = ref('')
 const selectedSubject = ref('')
 const displayLimit = ref(4)
+const rootEl = ref<HTMLElement | null>(null)
 
 const filteredCategories = computed(() => {
     if (!searchQuery.value) return CURRICULUM_CATEGORIES
@@ -18,8 +19,6 @@ const filteredCategories = computed(() => {
         if (matchesCategory || matchingSubjects.length > 0) {
             return {
                 ...category,
-                // If the category matches, show all subjects. 
-                // If only subjects match, we could filter them, but let's keep it simple for now and show the category.
                 subjects: matchesCategory ? category.subjects : matchingSubjects
             }
         }
@@ -31,12 +30,32 @@ const visibleCategories = computed(() => filteredCategories.value.slice(0, displ
 const hasMore = computed(() => displayLimit.value < filteredCategories.value.length)
 const canShowLess = computed(() => !hasMore.value && displayLimit.value > 4 && !searchQuery.value)
 
-const showMore = () => {
-    displayLimit.value = Math.min(displayLimit.value + 4, filteredCategories.value.length)
+const showMore = async () => {
+    const prevLimit = displayLimit.value
+    displayLimit.value = Math.min(prevLimit + 4, filteredCategories.value.length)
+    await nextTick()
+    // Scroll to the first newly visible card
+    if (rootEl.value) {
+        const cards = rootEl.value.querySelectorAll<HTMLElement>('.subject-card')
+        const firstNewCard = cards[prevLimit]
+        if (firstNewCard) {
+            const top = firstNewCard.getBoundingClientRect().top + window.scrollY - 120
+            window.scrollTo({ top, behavior: 'smooth' })
+        }
+    }
 }
 
-const showLess = () => {
+const showLess = async () => {
     displayLimit.value = 4
+    await nextTick()
+    // Scroll to the first card with a 60px gap from the top
+    if (rootEl.value) {
+        const firstCard = rootEl.value.querySelector<HTMLElement>('.subject-card')
+        if (firstCard) {
+            const top = firstCard.getBoundingClientRect().top + window.scrollY - 90
+            window.scrollTo({ top, behavior: 'smooth' })
+        }
+    }
 }
 
 // Reset limit when searching
@@ -51,7 +70,7 @@ const handleSelect = (subject: string) => {
 </script>
 
 <template>
-    <div class="space-y-12 p-8 sm:p-10">
+    <div ref="rootEl" class="space-y-12 p-8 sm:p-10">
         <div class="text-center space-y-6">
             <div class="space-y-4">
                 <h2 class="text-2xl font-bold text-neutral-900 dark:text-white">Pick a subject to master</h2>
@@ -68,8 +87,8 @@ const handleSelect = (subject: string) => {
                     placeholder="Search subjects (e.g. Algebra, Physics...)" size="xl" variant="none"
                     class="w-full bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xl border border-neutral-200/50 dark:border-neutral-800/50 rounded-2xl ring-1 ring-neutral-200/50 dark:ring-neutral-800/50 focus-within:ring-primary-500/50 focus-within:border-primary-500/50 transition-all duration-300">
                     <template #trailing v-if="searchQuery">
-                        <UButton color="neutral" variant="link" icon="i-lucide-x"
-                            :padded="false" @click="searchQuery = ''" />
+                        <UButton color="neutral" variant="link" icon="i-lucide-x" :padded="false"
+                            @click="searchQuery = ''" />
                     </template>
                 </UInput>
             </div>
@@ -99,7 +118,7 @@ const handleSelect = (subject: string) => {
             leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-8"
             move-class="transition-all duration-500 ease-in-out">
             <div v-for="(category, index) in visibleCategories" :key="category.name"
-                class="group relative flex flex-col p-8 rounded-[2.5rem] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl transition-all duration-700 hover:shadow-2xl overflow-hidden"
+                class="subject-card group relative flex flex-col p-8 rounded-[2.5rem] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl transition-all duration-700 hover:shadow-2xl overflow-hidden"
                 :style="{ animationDelay: `${(index % 4) * 100}ms` }" :class="[
                     `hover:border-${category.color}-500/30 shadow-${category.color}-500/5`
                 ]">
