@@ -8,6 +8,7 @@ import { GOAL_COLORS } from '~/constants/topics'
 const route = useRoute()
 const { topics } = useTopics()
 const { getLessonsByTopic, addAssessments, addLessonContents, updateLessonsForTopic } = useLessons()
+const toast = useToast()
 
 const topic = computed(() => {
     return topics.value.find(t => t.id === route.params.id)
@@ -45,6 +46,29 @@ onMounted(() => {
     injectAssessments()
 })
 
+const simulateDownload = (filename: string) => {
+    toast.add({
+        id: 'downloading',
+        title: 'Downloading...',
+        description: `Preparing ${filename}`,
+        icon: 'i-lucide-loader-2',
+        color: 'primary',
+        ui: {
+            icon: 'animate-spin'
+        }
+    })
+
+    setTimeout(() => {
+        toast.remove('downloading')
+        toast.add({
+            title: 'Download Complete',
+            description: `${filename} has been saved successfully.`,
+            icon: 'i-lucide-check-circle',
+            color: 'success'
+        })
+    }, 2000)
+}
+
 useHead({
     title: topic.value ? `${topic.value.title} - LearnFast` : 'Topic Not Found'
 })
@@ -56,7 +80,8 @@ useHead({
         <nav class="flex items-center gap-2 text-sm text-neutral-500">
             <ULink to="/app/topics/collection" class="hover:text-primary transition-colors">Collection</ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
-            <ULink :to="`/app/topics/${topic.id}`" class="hover:text-primary transition-colors">{{ topic.title }}</ULink>
+            <ULink :to="`/app/topics/${topic.id}`" class="hover:text-primary transition-colors">{{ topic.title }}
+            </ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
             <span class="font-medium text-neutral-900 dark:text-neutral-100">Lessons</span>
         </nav>
@@ -193,92 +218,106 @@ useHead({
                 </div>
 
                 <!-- Sidebar Content -->
-                <div class="flex flex-col gap-6">
+                <div>
+                    <div class="flex flex-col gap-6 sticky top-20">
+                        <!-- Progress Card -->
+                        <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-semibold uppercase tracking-wider text-muted">
+                                        Overall Progress
+                                    </span>
+                                    <span class="text-sm font-bold text-primary">{{ topic.progress }}%</span>
+                                </div>
+                                <UProgress :model-value="topic.progress" color="primary" size="sm" />
+                            </div>
+                            <p class="text-xs text-dimmed">
+                                You are doing great! Keep up the momentum to reach your goal.
+                            </p>
+                        </UCard>
 
-                    <!-- Progress Card -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                        <div>
+                        <!-- Tags Card -->
+                        <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                    Overall Progress
+                                    Tags
                                 </span>
-                                <span class="text-sm font-bold text-primary">{{ topic.progress }}%</span>
                             </div>
-                            <UProgress :model-value="topic.progress" color="primary" size="sm" />
-                        </div>
-                        <p class="text-xs text-dimmed">
-                            You are doing great! Keep up the momentum to reach your goal.
-                        </p>
-                    </UCard>
+                            <div class="flex flex-wrap gap-2">
+                                <UBadge :label="topic.tag" variant="soft" />
+                                <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle"
+                                    :color="GOAL_COLORS[topic.learningGoal]" />
+                            </div>
+                        </UCard>
 
-                    <!-- Tags Card -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                Tags
-                            </span>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <UBadge :label="topic.tag" variant="soft" />
-                            <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle"
-                                :color="GOAL_COLORS[topic.learningGoal]" />
-                        </div>
-                    </UCard>
+                        <!-- Knowledge Sources Details -->
+                        <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-3' }"
+                            class="bg-blue-50/50 dark:bg-blue-900/10">
+                            <div class="flex items-center gap-2 mb-1">
+                                <UIcon name="i-lucide-brain-circuit" class="text-blue-500" />
+                                <h3 class="text-sm font-semibold uppercase tracking-wider text-blue-500">AI Context</h3>
+                            </div>
+                            <p class="text-xs text-dimmed mb-2">
+                                This syllabus was dynamically generated from your uploaded materials.
+                            </p>
 
-                    <!-- Knowledge Sources Details -->
-                    <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-3' }"
-                        class="bg-blue-50/50 dark:bg-blue-900/10">
-                        <div class="flex items-center gap-2 mb-1">
-                            <UIcon name="i-lucide-brain-circuit" class="text-blue-500" />
-                            <h3 class="text-sm font-semibold uppercase tracking-wider text-blue-500">AI Context</h3>
-                        </div>
-                        <p class="text-xs text-dimmed mb-2">
-                            This syllabus was dynamically generated from your uploaded materials.
-                        </p>
+                            <div class="flex flex-col gap-2">
+                                <UCard :ui="{ body: 'flex items-center justify-between gap-2 p-2 sm:p-2' }"
+                                    class="rounded-md shadow-sm group/file hover:bg-white dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                                    @click="simulateDownload(`${topic.title} Chapter 1-3.pdf`)">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <UIcon name="i-lucide-file-text" class="text-red-500 shrink-0" />
+                                        <span class="text-xs font-medium truncate">{{ topic.title }} Chapter
+                                            1-3.pdf</span>
+                                    </div>
+                                    <UButton icon="i-lucide-download" variant="ghost" size="xs"
+                                        class="opacity-0 group-hover/file:opacity-100 transition-opacity shrink-0" />
+                                </UCard>
+                                <UCard :ui="{ body: 'flex items-center justify-between gap-2 p-2 sm:p-2' }"
+                                    class="rounded-md shadow-sm group/file hover:bg-white dark:hover:bg-neutral-800 transition-colors cursor-pointer"
+                                    @click="simulateDownload('Lecture_Deck_Final.pptx')">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <UIcon name="i-lucide-presentation" class="text-orange-500 shrink-0" />
+                                        <span class="text-xs font-medium truncate">Lecture_Deck_Final.pptx</span>
+                                    </div>
+                                    <UButton icon="i-lucide-download" variant="ghost" size="xs"
+                                        class="opacity-0 group-hover/file:opacity-100 transition-opacity shrink-0" />
+                                </UCard>
+                            </div>
+                        </UCard>
 
-                        <div class="flex flex-col gap-2">
-                            <UCard :ui="{ body: 'flex items-center gap-2 p-2 sm:p-2' }" class="rounded-md shadow-sm">
-                                <UIcon name="i-lucide-file-text" class="text-red-500 shrink-0" />
-                                <span class="text-xs font-medium truncate">{{ topic.title }} Chapter 1-3.pdf</span>
-                            </UCard>
-                            <UCard :ui="{ body: 'flex items-center gap-2 p-2 sm:p-2' }" class="rounded-md shadow-sm">
-                                <UIcon name="i-lucide-presentation" class="text-orange-500 shrink-0" />
-                                <span class="text-xs font-medium truncate">Lecture_Deck_Final.pptx</span>
-                            </UCard>
-                        </div>
-                    </UCard>
+                        <!-- Author Widget -->
+                        <UCard v-if="topic.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-muted">
+                                    Curated By
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="md"
+                                        class="ring-2 ring-primary-500/20" />
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
+                                                topic.createdBy.name }}</span>
+                                        <span
+                                            class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
+                                                topic.createdBy.role }}</span>
+                                    </div>
+                                </div>
 
-                    <!-- Author Widget -->
-                    <UCard v-if="topic.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-semibold uppercase tracking-wider text-muted">
-                                Curated By
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="md"
-                                    class="ring-2 ring-primary-500/20" />
-                                <div class="flex flex-col">
-                                    <span
-                                        class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
-                                            topic.createdBy.name }}</span>
-                                    <span
-                                        class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
-                                            topic.createdBy.role }}</span>
+                                <div
+                                    class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
+                                    <div class="flex flex-col items-center">
+                                        <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
+                                            topic.createdBy.topicsCount || 0 }}</span>
+                                        <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
+                                    </div>
                                 </div>
                             </div>
-
-                            <div
-                                class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
-                                <div class="flex flex-col items-center">
-                                    <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
-                                        topic.createdBy.topicsCount || 0 }}</span>
-                                    <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
-                                </div>
-                            </div>
-                        </div>
-                    </UCard>
+                        </UCard>
+                    </div>
                 </div>
 
             </div>

@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import type { SessionProcessingLine } from '~/types/session'
+import type { SessionProcessingLine, SessionProcessingProps } from '~/types/session'
 
-const props = defineProps<{
-    lines: SessionProcessingLine[]
-}>()
+const props = defineProps<SessionProcessingProps>()
 
 const emit = defineEmits(['complete'])
 

@@ -5,6 +5,7 @@ import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/ut
 import { slugify } from '~/utils/format'
 import type { LearningGoal } from '~/types/topic'
 
+const { user } = useUser()
 const { addTopic } = useTopics()
 const { addLessons, addLessonContents, addAssessments } = useLessons()
 const router = useRouter()
@@ -90,6 +91,15 @@ const handleFinish = () => {
     isGenerating.value = true
 }
 
+const resetFlow = () => {
+    flowState.value = 'entry'
+    creationMode.value = null
+    // Reset form data if needed
+    formData.title = ''
+    formData.description = ''
+    formData.files = []
+}
+
 const confirmFinish = () => {
     const topicId = slugify(formData.title || 'Untitled Topic')
 
@@ -119,7 +129,20 @@ const confirmFinish = () => {
         lastStudiedAt: Date.now(),
         icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : 'i-lucide-book-open',
         isPinned: false,
-        learningGoal: formData.learningGoal
+        learningGoal: formData.learningGoal,
+        createdBy: {
+            id: 'user-1',
+            name: user.value.profile.fullName,
+            avatar: user.value.profile.avatar,
+            role: 'Author'
+        },
+        stats: [
+            { label: 'Master (Overall)', value: '0%', subtext: 'Analysis pending', icon: 'i-lucide-award' },
+            { label: 'Pass Probability', value: '0%', subtext: 'Initial benchmark', icon: 'i-lucide-line-chart' },
+            { label: 'Sessions This Week', value: '0', subtext: 'Ready to start', icon: 'i-lucide-calendar-days' }
+        ],
+        strongTopics: [],
+        weakTopics: []
     })
 
     router.push('/app/dashboard')
@@ -130,9 +153,10 @@ const confirmFinish = () => {
     <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
         <!-- Breadcrumbs -->
         <nav v-if="flowState !== 'entry'" class="flex items-center gap-2 text-sm text-neutral-500">
-            <ULink to="/app/topics/new" class="hover:text-primary transition-colors">Create</ULink>
+            <button @click="resetFlow" class="hover:text-primary transition-colors cursor-pointer">Create</button>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
-            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ creationMode === 'upload' ? 'Materials' : 'Explore' }} Mode</span>
+            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ creationMode === 'upload' ? 'Materials'
+                : 'Explore' }} Mode</span>
         </nav>
 
         <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
@@ -153,59 +177,46 @@ const confirmFinish = () => {
             <!-- Main Flow -->
             <div v-else class="flex flex-col gap-8">
                 <!-- Stepper (Visible after mode selection) -->
-                <div v-if="flowState !== 'entry'" class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div v-if="flowState !== 'entry'"
+                    class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
                     <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered />
                     <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
                 </div>
 
                 <!-- Entry Point -->
                 <div v-if="flowState === 'entry'">
-                    <AppTopicDoorSelection 
-                        @select-upload="selectMode('upload')" 
-                        @select-explore="selectMode('explore')" 
-                    />
+                    <AppTopicDoorSelection @select-upload="selectMode('upload')"
+                        @select-explore="selectMode('explore')" />
                 </div>
 
                 <!-- Step Content -->
-                <UCard v-else class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
+                <UCard v-else
+                    class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
                     :ui="{ body: 'p-0 sm:p-0 relative' }">
-                    
+
                     <div class="min-h-full">
                         <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
                             enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
                             leave-active-class="transition-all duration-200 ease-in"
                             leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
-                            
+
                             <div :key="flowState">
                                 <!-- Setup Step -->
                                 <template v-if="flowState === 'setup'">
-                                    <AppTopicFormMaterials 
-                                        v-if="creationMode === 'upload'" 
-                                        :model-value="formData"
+                                    <AppTopicFormMaterials v-if="creationMode === 'upload'" :model-value="formData"
                                         @update:model-value="val => Object.assign(formData, val)"
-                                        @upload-ready="handleUploadComplete" 
-                                    />
-                                    <AppTopicSubjectPicker 
-                                        v-else-if="creationMode === 'explore'" 
-                                        @select="handleSubjectSelect" 
-                                    />
+                                        @upload-ready="handleUploadComplete" />
+                                    <AppTopicSubjectPicker v-else-if="creationMode === 'explore'"
+                                        @select="handleSubjectSelect" />
                                 </template>
 
                                 <!-- Assessment Step -->
-                                <AppTopicFormPreAssessment 
-                                    v-else-if="flowState === 'assessment'" 
-                                    v-model="formData" 
-                                    @complete="handleAssessmentComplete"
-                                    @back="prevStep"
-                                />
+                                <AppTopicFormPreAssessment v-else-if="flowState === 'assessment'" v-model="formData"
+                                    @complete="handleAssessmentComplete" @back="prevStep" />
 
                                 <!-- Review Step -->
-                                <AppSessionReadinessPlan 
-                                     v-else-if="flowState === 'review'" 
-                                     :topic-title="formData.title"
-                                     is-onboarding
-                                     @close="handleFinish"
-                                />
+                                <AppSessionReadinessPlan v-else-if="flowState === 'review'"
+                                    :topic-title="formData.title" is-onboarding @close="handleFinish" />
 
                             </div>
                         </Transition>

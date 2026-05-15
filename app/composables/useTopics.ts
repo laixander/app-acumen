@@ -84,12 +84,45 @@ export const useTopics = () => {
         }
     }
 
+    const archiveTopic = (topicId: string) => {
+        const topic = topics.value.find(t => t.id === topicId)
+        if (topic) {
+            topic.status = 'Archived'
+            topic.isPinned = false
+        }
+    }
+
+    const deleteTopic = (topicId: string) => {
+        const index = topics.value.findIndex(t => t.id === topicId)
+        if (index !== -1) {
+            topics.value.splice(index, 1)
+        }
+    }
+
+    const renameTopic = (topicId: string, newTitle: string) => {
+        const topic = topics.value.find(t => t.id === topicId)
+        if (topic) {
+            topic.title = newTitle
+        }
+    }
+
+    const updateTopic = (topicId: string, updates: Partial<Omit<Topic, 'id'>>) => {
+        const topic = topics.value.find(t => t.id === topicId)
+        if (topic) {
+            Object.assign(topic, updates)
+        }
+    }
+
     return {
         topics,
         initTopics,
         togglePin,
         updateLastStudied,
         updateTopicProgress,
+        archiveTopic,
+        deleteTopic,
+        renameTopic,
+        updateTopic,
         pinnedTopics,
         continueLearningTopic,
         recentTopics,

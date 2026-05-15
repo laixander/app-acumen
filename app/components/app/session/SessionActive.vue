@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import type { AssessmentQuestion, AssessmentOption } from '~/types/topic'
+import type { SessionActiveProps } from '~/types/session'
 
-const props = defineProps<{
-    questions: AssessmentQuestion[]
-    moduleTitle: string
-}>()
+const props = defineProps<SessionActiveProps>()
 
 
 const emit = defineEmits(['complete', 'close'])
@@ -21,9 +19,16 @@ const selectedOptionLabel = computed(() => {
 })
 
 
+const answers = ref<Record<string | number, string>>({})
+
 const selectOption = (id: string) => {
     if (selectedOptionId.value) return
     selectedOptionId.value = id
+    
+    // Store the answer for the current question
+    if (currentQuestion.value) {
+        answers.value[currentQuestion.value.id] = id
+    }
 }
 
 
@@ -43,7 +48,7 @@ const nextQuestion = () => {
         isReasoningSubmitted.value = false
         isEvaluating.value = false
     } else {
-        emit('complete')
+        emit('complete', answers.value)
     }
 }
 </script>

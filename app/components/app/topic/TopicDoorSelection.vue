@@ -39,7 +39,10 @@ const doors = [
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div v-for="door in doors" :key="door.id"
-                class="group relative flex flex-col p-8 rounded-[2rem] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-primary-500/10 hover:border-primary-500/50 dark:hover:border-primary-500/50 transition-all duration-700 cursor-pointer overflow-hidden"
+                class="group relative flex flex-col p-8 rounded-[2rem] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer overflow-hidden"
+                :class="[
+                    door.id === 'upload' ? 'hover:shadow-primary-500/10 hover:border-primary-500/50 dark:hover:border-primary-500/50' : 'hover:shadow-emerald-500/10 hover:border-emerald-500/50 dark:hover:border-emerald-500/50'
+                ]"
                 @click="$emit(`select-${door.id}`)">
                 <!-- Background Glow -->
                 <div class="absolute -top-32 -right-32 w-80 h-80 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700"
@@ -51,7 +54,12 @@ const doors = [
                         <UIcon :name="door.icon" class="w-8 h-8 flex" />
                     </div>
                     <div
-                        class="px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 group-hover:text-primary-600 transition-colors">
+                        class="px-3 py-1 rounded-full text-xs font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-500 dark:text-neutral-400 transition-colors"
+                        :class="[
+                            door.id === 'upload'
+                                ? 'group-hover:bg-primary-50 dark:group-hover:bg-primary-950/30 group-hover:text-primary-600'
+                                : 'group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/30 group-hover:text-emerald-600'
+                        ]">
                         {{ door.title }}
                     </div>
                 </div>

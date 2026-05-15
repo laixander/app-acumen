@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useLessons } from '~/composables/useLessons'
 import { useTopics } from '~/composables/useTopics'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { Assessment } from '~/types/topic'
+import type { SessionState, SessionProcessingLine } from '~/types/session'
 
 const route = useRoute()
+const router = useRouter()
 const { getAssessmentByLessonId, completeLesson, getLessonsByTopic } = useLessons()
 const { updateTopicProgress, topics } = useTopics()
 const { addLog } = useActivityLogs()
@@ -23,52 +25,32 @@ const title = computed(() => {
 
 useHead({ title: `${title.value} - LearnFast Assessment` })
 
-const currentQuestionIndex = ref(0)
-const selectedAnswer = ref<string | null>(null)
-const isCompleted = ref(false)
-
+const sessionState = ref<SessionState>('processing')
 const questions = computed(() => assessmentData.value?.questions || [])
-
-const progress = computed(() => {
-    return Math.round((currentQuestionIndex.value / questions.value.length) * 100)
-})
-
-const currentQuestion = computed(() => questions.value[currentQuestionIndex.value]!)
-
 const answers = ref<Record<string | number, string>>({})
 
-const nextQuestion = () => {
-    const question = currentQuestion.value
-    if (question && selectedAnswer.value) {
-        answers.value[question.id] = selectedAnswer.value
-    }
+const processingLines = computed<SessionProcessingLine[]>(() => [
+    { text: 'Analyzing lesson requirements...', delay: 800 },
+    { text: 'Generating targeted assessment scenarios...', delay: 1200 },
+    { text: 'Integrating Reasoning Probes...', delay: 1000 },
+    { text: 'System ready.', delay: 500 }
+])
 
-    if (currentQuestionIndex.value < questions.value.length - 1) {
-        currentQuestionIndex.value++
-        const nextQ = questions.value[currentQuestionIndex.value]
-        if (nextQ) {
-            selectedAnswer.value = answers.value[nextQ.id] || null
-        }
-    } else {
-        submitAssessment()
-    }
+const handleProcessingComplete = () => {
+    sessionState.value = 'ready'
 }
 
-const prevQuestion = () => {
-    if (currentQuestionIndex.value > 0) {
-        currentQuestionIndex.value--
-        const prevQ = questions.value[currentQuestionIndex.value]
-        if (prevQ) {
-            selectedAnswer.value = answers.value[prevQ.id] || null
-        }
-    }
+const beginSessionAction = () => {
+    sessionState.value = 'active'
 }
 
-const submitAssessment = () => {
-    isCompleted.value = true
+const handleSessionComplete = (finalAnswers: Record<string | number, string>) => {
+    answers.value = finalAnswers
+    sessionState.value = 'complete'
 }
 
 const calculatedScore = computed(() => {
+    if (questions.value.length === 0) return 0
     let score = 0
     questions.value.forEach(q => {
         if (answers.value[q.id] === (q.correct as string)) score++
@@ -76,142 +58,90 @@ const calculatedScore = computed(() => {
     return Math.round((score / questions.value.length) * 100)
 })
 
-const resultTitle = computed(() => {
-    return calculatedScore.value > 70 ? 'Great job!' : 'Needs some review.'
-})
+const resetSession = () => {
+    router.push(`/app/topics/${assessmentData.value?.topicId}`)
+}
 
-const resultMessage = computed(() => {
-    return calculatedScore.value > 70
-        ? "You've successfully mastered the key concepts in this lesson snippet. Your AI tutor has logged your progress."
-        : "You passed, but there's room for improvement. The AI tutor recommends reviewing the provided materials again."
+const handleViewPlan = () => {
+    sessionState.value = 'plan'
+}
+
+// Completion logic for progress updates
+const finalizeAssessment = () => {
+    completeLesson(route.params.id as string);
+
+    // Trigger Progress Update
+    const topicId = assessmentData.value?.topicId;
+    if (topicId) {
+        const topic = topics.value.find(t => t.id === topicId)
+        const topicLessons = getLessonsByTopic(topicId);
+        const lessonOverview = topicLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData.value?.lessonId)
+
+        if (topic && lessonOverview) {
+            addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
+        }
+
+        const completedCount = topicLessons.filter(l => l.status === 'completed').length;
+        const totalCount = topicLessons.length;
+        const progress = Math.round((completedCount / totalCount) * 100);
+        updateTopicProgress(topicId, completedCount, totalCount, progress);
+    }
+
+    router.push(`/app/topics/${assessmentData.value?.topicId}`)
+}
+
+const description = computed(() => {
+    const id = route.params.id?.toString() || ''
+    if (id.includes('-final')) return 'Final Assessment'
+    if (id.includes('-quiz-')) return 'Checkpoint Quiz'
+    return 'Lesson Knowledge Check'
 })
 
 </script>
 
 <template>
-    <UContainer class="w-full lg:max-w-4xl mx-auto flex flex-col gap-6 py-6">
-        <UBadge label="Quiz / Assessment" variant="subtle" color="rose" class="w-fit" />
+    <UContainer class="py-6">
+        <!-- title + description base on previous route context: if lessons, Checkpoint Quiz/Final Assessment -->
+        <ContentHeading :title="title" :description="description" class="mb-6" />
+        <Transition name="fade" mode="out-in">
+            <UCard :key="sessionState"
+                class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
+                :ui="{ body: 'p-0 sm:p-0' }">
+                <AppSessionProcessing v-if="sessionState === 'processing'" :lines="processingLines"
+                    @complete="handleProcessingComplete" />
 
-        <template v-if="!isCompleted">
-            <!-- Progress Header -->
-            <div class="flex flex-col gap-2 mb-4">
-                <div class="flex items-center justify-between text-sm font-semibold">
-                    <span class="text-dimmed uppercase tracking-wider">Question {{ currentQuestionIndex + 1 }} of {{
-                        questions.length }}</span>
-                    <span class="text-primary">{{ progress }}% Completed</span>
-                </div>
-                <UProgress :model-value="progress" color="primary" size="sm" />
-            </div>
+                <AppSessionReady v-else-if="sessionState === 'ready'"
+                    :topic-name="assessmentData?.title || 'Checkpoint'" :module-title="description" difficulty="Medium"
+                    :duration="`${questions.length * 2} min`" @start="beginSessionAction" />
 
-            <!-- Quiz Card -->
-            <UCard class="shadow-sm border border-neutral-200 dark:border-neutral-800"
-                :ui="{ body: 'p-8 sm:p-12 flex flex-col gap-8' }">
-                <!-- Question Text -->
-                <h2 class="text-2xl sm:text-3xl font-bold leading-tight">
-                    {{ currentQuestion.text }}
-                </h2>
+                <AppSessionActive v-else-if="sessionState === 'active'" :questions="questions"
+                    :module-title="assessmentData?.title || 'Assessment'" @close="resetSession"
+                    @complete="handleSessionComplete" />
 
-                <!-- Options -->
-                <div class="flex flex-col gap-4">
-                    <label v-for="option in currentQuestion.options" :key="option.id"
-                        class="flex items-center gap-4 p-5 rounded-xl border-2 transition-all duration-200 cursor-pointer group"
-                        :class="[
-                            selectedAnswer === option.id
-                                ? 'border-primary bg-primary-50/50 dark:bg-primary-900/20'
-                                : 'border-neutral-200 dark:border-neutral-800 hover:border-primary-500/50 hover:bg-neutral-50 dark:hover:bg-neutral-900/50'
-                        ]">
-                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
-                            :class="selectedAnswer === option.id ? 'border-primary' : 'border-neutral-300 dark:border-neutral-700'">
-                            <div v-if="selectedAnswer === option.id" class="w-3 h-3 rounded-full bg-primary" />
-                        </div>
-                        <input type="radio" :value="option.id" v-model="selectedAnswer" class="sr-only" />
-                        <span class="text-lg font-medium"
-                            :class="{ 'text-primary-600 dark:text-primary-400': selectedAnswer === option.id }">
-                            {{ option.label }}
-                        </span>
-                    </label>
-                </div>
+                <AppSessionComplete v-else-if="sessionState === 'complete'"
+                    :module-title="assessmentData?.title || 'Assessment'"
+                    :what-you-did-well="calculatedScore >= 70 ? 'Strong grasp of core concepts and reasoning.' : 'Partial understanding of the topic basics.'"
+                    :where-you-struggled="calculatedScore >= 70 ? 'Keep practicing complex applications.' : 'Needs review on fundamental principles.'"
+                    :pass-prob-before="assessmentData?.passProbBefore || '45%'"
+                    :pass-prob-after="calculatedScore >= 70 ? (assessmentData?.passProbAfter || '75%') : assessmentData?.passProbBefore || '45%'"
+                    :ai-final-comment="calculatedScore >= 70 ? 'Excellent work. Your reasoning shows deep integration of the material.' : 'Don\'t worry, this is part of the learning curve. Review the lesson and try again!'"
+                    @close="finalizeAssessment" @view-plan="handleViewPlan" />
+
+                <AppSessionReadinessPlan v-else-if="sessionState === 'plan'" @close="finalizeAssessment" />
             </UCard>
-
-            <!-- Navigation Controls -->
-            <div class="flex items-center justify-between mt-4">
-                <UButton @click="prevQuestion" :disabled="currentQuestionIndex === 0" label="Previous"
-                    icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="lg" />
-
-                <UButton @click="nextQuestion" :disabled="!selectedAnswer"
-                    :label="currentQuestionIndex === questions.length - 1 ? 'Submit Assessment' : 'Next Question'"
-                    :icon="currentQuestionIndex === questions.length - 1 ? 'i-lucide-check-circle' : 'i-lucide-arrow-right'"
-                    :trailing="true" color="primary" size="lg" />
-            </div>
-        </template>
-
-        <!-- Results State -->
-        <template v-else>
-            <UCard class="shadow-md text-center py-12" :ui="{ body: 'flex flex-col items-center gap-6' }">
-                <div
-                    class="relative w-40 h-40 flex items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-900">
-                    <!-- Simulated circular progress -->
-                    <svg class="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="10"
-                            class="text-neutral-200 dark:text-neutral-800" />
-                        <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="10"
-                            :class="calculatedScore > 70 ? 'text-green-500' : 'text-amber-500'" :stroke-dasharray="283"
-                            :stroke-dashoffset="283 - (283 * calculatedScore) / 100" stroke-linecap="round" />
-                    </svg>
-                    <div class="flex flex-col items-center">
-                        <span class="text-4xl font-extrabold"
-                            :class="calculatedScore > 70 ? 'text-green-500' : 'text-amber-500'">{{ calculatedScore
-                            }}%</span>
-                        <span class="text-xs text-dimmed uppercase tracking-wider font-semibold">Score</span>
-                    </div>
-                </div>
-
-                <div class="max-w-md mx-auto">
-                    <h2 class="text-3xl font-bold">{{ resultTitle }}</h2>
-                    <p class="text-muted mt-2">
-                        {{ resultMessage }}
-                    </p>
-                </div>
-
-                <div class="flex flex-col items-center gap-4 mt-6">
-                    <template v-if="calculatedScore >= 70">
-                        <UButton label="Return to Topic" icon="i-lucide-arrow-right" trailing color="primary" size="lg"
-                            @click="() => {
-                                completeLesson(route.params.id as string);
-
-                                // Trigger Progress Update
-                                const topicId = assessmentData?.topicId;
-                                if (topicId) {
-                                    const topic = topics.find(t => t.id === topicId)
-                                    const topicLessons = getLessonsByTopic(topicId);
-                                    const lessonOverview = topicLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData?.lessonId)
-                                    
-                                    if (topic && lessonOverview) {
-                                        addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
-                                    }
-
-                                    const completedCount = topicLessons.filter(l => l.status === 'completed').length;
-                                    const totalCount = topicLessons.length;
-                                    const progress = Math.round((completedCount / totalCount) * 100);
-                                    updateTopicProgress(topicId, completedCount, totalCount, progress);
-                                }
-
-                                $router.push(`/app/topics/${assessmentData?.topicId}`)
-                            }" />
-                    </template>
-                    <template v-else>
-                        <p class="text-sm text-red-500 font-medium mb-2">You need at least 70% to pass and unlock
-                            the next lesson.</p>
-                        <div class="flex items-center gap-3">
-                            <UButton label="Retry Assessment" icon="i-lucide-rotate-ccw" color="primary" variant="solid"
-                                size="lg"
-                                @click="() => { isCompleted = false; currentQuestionIndex = 0; answers = {}; selectedAnswer = null }" />
-                            <UButton label="Back to Topic" icon="i-lucide-layout-dashboard" color="neutral"
-                                variant="ghost" size="lg" :to="`/app/topics/${assessmentData?.topicId}`" />
-                        </div>
-                    </template>
-                </div>
-            </UCard>
-        </template>
+        </Transition>
     </UContainer>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(15px);
+}
+</style>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick, watch } from 'vue'
+import { ref, nextTick, watch, computed } from 'vue'
+import { useWindowScroll, useWindowSize } from '@vueuse/core'
 import type { ChatMessage, ChatQuote } from '~/types/chat'
 
 const props = defineProps<{
@@ -134,12 +135,46 @@ const scrollToLine = (id: string) => {
         }, 2000)
     }
 }
+
+// Scroll-responsive height logic
+const { y } = useWindowScroll()
+const { height: vh } = useWindowSize()
+
+const dynamicHeight = computed(() => {
+    // 1. Initial Height Expansion (Top-down)
+    // Starts at calc(100vh - 240px) and expands to calc(100vh - 100px)
+    const startOffset = 240
+    const endOffset = 100
+    const scrollThreshold = 200 // Complete transition over 200px scroll
+
+    const progress = Math.min(y.value / scrollThreshold, 1)
+    const currentTopOffset = startOffset - (progress * (startOffset - endOffset))
+
+    // Calculate base height in pixels
+    let heightPx = vh.value - currentTopOffset
+
+    // 2. Footer Avoidance (Bottom-up)
+    // Prevents the chatbox from being pushed upward by the footer
+    if (typeof document !== 'undefined') {
+        const docHeight = document.documentElement.scrollHeight
+        const footerThreshold = 70 // Distance from bottom where we start shrinking
+        const distanceFromBottom = docHeight - (y.value + vh.value)
+
+        if (distanceFromBottom < footerThreshold) {
+            // Reduce height as we get closer to the footer
+            heightPx -= (footerThreshold - distanceFromBottom)
+        }
+    }
+
+    // Return as pixels with a minimum height to ensure usability
+    return `${Math.max(heightPx, 500)}px`
+})
 </script>
 
 <template>
     <div class="relative">
-        <div
-            class="sticky top-20 flex flex-col h-[calc(100vh-200px)] min-h-[500px] border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-white dark:bg-neutral-900 shadow-sm">
+        <div class="sticky top-20 flex flex-col min-h-[500px] border border-neutral-200 dark:border-neutral-800 rounded-lg overflow-hidden bg-white dark:bg-neutral-900 shadow-sm transition-[height] duration-300 ease-out"
+            :style="{ height: dynamicHeight }">
             <!-- Chat Header -->
             <div
                 class="p-4 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/50 flex items-center justify-between shrink-0">
@@ -187,7 +222,7 @@ const scrollToLine = (id: string) => {
             <div ref="chatContainer"
                 class="flex-1 overflow-y-auto p-4 flex flex-col gap-6 bg-neutral-50/50 dark:bg-neutral-900/50 custom-scrollbar">
 
-                <AiChatBubble v-for="(msg, idx) in chatMessages" :key="idx" :msg="msg" @scroll-to-line="scrollToLine"
+                <AppAiChatBubble v-for="(msg, idx) in chatMessages" :key="idx" :msg="msg" @scroll-to-line="scrollToLine"
                     @toggle-pin="togglePin(idx)" />
 
                 <!-- Typing Indicator -->
@@ -214,7 +249,7 @@ const scrollToLine = (id: string) => {
                     <UIcon name="i-lucide-quote" class="text-primary-500 mt-0.5 shrink-0" />
                     <p class="text-xs text-primary-700 dark:text-primary-300 line-clamp-2 m-0 flex-1">{{
                         pendingQuote.text
-                        }}</p>
+                    }}</p>
                     <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="xs"
                         @click="emit('update:pendingQuote', null)" class="absolute top-1 right-1" />
                 </div>

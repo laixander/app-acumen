@@ -39,10 +39,11 @@ const handleSubmit = () => {
 
 <template>
     <div ref="reasoningSection"
-        class="flex flex-col gap-8 p-8 md:p-10 rounded-4xl bg-[#0a0a0a] text-white border border-neutral-800 shadow-2xl animate-fade-in relative overflow-hidden scroll-mt-24">
+        class="flex flex-col gap-8 p-8 md:p-10 rounded-4xl bg-neutral-800 dark:bg-neutral-950/50 text-white border border-neutral-800 shadow-2xl animate-fade-in relative overflow-hidden scroll-mt-24">
         <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50"></div>
 
-        <div class="flex items-center gap-2 text-[10px] tracking-[0.2em] font-bold uppercase text-primary relative z-10">
+        <div
+            class="flex items-center gap-2 text-[10px] tracking-[0.2em] font-bold uppercase text-primary relative z-10">
             <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
             <span>Acumen AI</span>
             <span class="text-neutral-600">·</span>
@@ -50,14 +51,15 @@ const handleSubmit = () => {
         </div>
 
         <div class="text-xl md:text-2xl leading-relaxed text-neutral-200 relative z-10 italic">
-            Good choice. But explain it to me — why <span class="text-primary not-italic font-bold">{{ selectedOptionLabel
+            Good choice. But explain it to me — why <span class="text-primary not-italic font-bold">{{
+                selectedOptionLabel
                 }}</span>?
         </div>
 
         <div class="relative z-10">
             <UTextarea v-model="reasoningText" placeholder="Type your reasoning here..." :rows="4"
                 :disabled="isReasoningSubmitted || isEvaluating" class="w-full relative z-10" :ui="{
-                    base: 'bg-neutral-900/50 dark:bg-neutral-950 border-neutral-800 focus:border-primary/50 transition-all duration-300 text-lg py-4 px-6 rounded-2xl placeholder:text-neutral-700 ring-accented/20 dark:ring-accented focus:ring-primary/20 text-white'
+                    base: 'bg-neutral-900/50 dark:bg-neutral-950/50 border-neutral-800 focus:border-primary/50 transition-all duration-300 text-lg py-4 px-6 rounded-2xl placeholder:text-neutral-700 ring-accented/20 dark:ring-accented focus:ring-primary/20 text-white'
                 }" />
 
             <div v-if="!isReasoningSubmitted" class="flex justify-end mt-6">
@@ -98,6 +100,7 @@ const handleSubmit = () => {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -119,4 +122,3 @@ const handleSubmit = () => {
     transform: translateY(15px);
 }
 </style>
-

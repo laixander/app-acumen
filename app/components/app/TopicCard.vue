@@ -12,23 +12,70 @@ const props = withDefaults(defineProps<{
     isHero: false
 })
 
-const { togglePin } = useTopics()
+const { togglePin, archiveTopic, deleteTopic, renameTopic } = useTopics()
+const toast = useToast()
 
+const isRenameOpen = ref(false)
+const isArchiveOpen = ref(false)
+const isDeleteOpen = ref(false)
+const newTitle = ref(props.topic.title)
 
-const actions = [
+const handleRename = () => {
+    if (newTitle.value && newTitle.value !== props.topic.title) {
+        renameTopic(props.topic.id, newTitle.value)
+        isRenameOpen.value = false
+        toast.add({
+            title: 'Topic Renamed',
+            description: `Successfully renamed to ${newTitle.value}`,
+            color: 'success'
+        })
+    }
+}
+
+const handleArchive = () => {
+    archiveTopic(props.topic.id)
+    isArchiveOpen.value = false
+    toast.add({
+        title: 'Topic Archived',
+        description: 'This topic has been moved to archives.',
+        color: 'neutral'
+    })
+}
+
+const handleDelete = () => {
+    deleteTopic(props.topic.id)
+    isDeleteOpen.value = false
+    toast.add({
+        title: 'Topic Deleted',
+        description: 'The topic has been removed from your library.',
+        color: 'success'
+    })
+}
+
+const actions = computed(() => [
     [{
         label: 'Rename',
-        icon: 'i-lucide-pencil'
+        icon: 'i-lucide-pencil',
+        onSelect: () => {
+            newTitle.value = props.topic.title
+            isRenameOpen.value = true
+        }
     }, {
         label: 'Archive',
-        icon: 'i-lucide-archive'
+        icon: 'i-lucide-archive',
+        onSelect: () => {
+            isArchiveOpen.value = true
+        }
     }],
     [{
         label: 'Delete',
         icon: 'i-lucide-trash',
-        color: 'red' as const
+        color: 'red' as const,
+        onSelect: () => {
+            isDeleteOpen.value = true
+        }
     }]
-]
+])
 </script>
 
 <template>
@@ -74,8 +121,11 @@ const actions = [
             <div class="flex items-center gap-4 w-full">
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between w-fit gap-2">
-                        <span class="font-semibold truncate">{{ topic.title }}</span>
-                        <UBadge :label="topic.tag" variant="soft" size="sm" class="shrink-0" />
+                        <span class="font-semibold truncate" :class="{ 'text-neutral-400': topic.status === 'Archived' }">{{ topic.title }}</span>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <UBadge v-if="topic.status === 'Archived'" label="Archived" color="neutral" variant="subtle" size="sm" />
+                            <UBadge :label="topic.tag" variant="soft" size="sm" />
+                        </div>
                     </div>
                     <!-- <div class="flex items-center gap-3">
                         <UProgress :model-value="topic.progress" size="xs" color="primary" class="flex-1" />
@@ -132,4 +182,82 @@ const actions = [
             </div>
         </div>
     </UCard>
+    
+    <!-- Rename Modal -->
+    <UModal v-model:open="isRenameOpen">
+        <template #content>
+            <div class="p-6 flex flex-col gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-primary-50 dark:bg-primary-950/30 text-primary-600">
+                        <UIcon name="i-lucide-pencil" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold leading-tight">Rename Topic</h3>
+                        <p class="text-sm text-neutral-500 mt-1">Change the display name of your study topic.</p>
+                    </div>
+                </div>
+
+                <UFormField label="New Title" name="title">
+                    <UInput v-model="newTitle" placeholder="e.g. Advanced Vue.js Patterns" class="w-full" size="lg" autofocus @keyup.enter="handleRename" />
+                </UFormField>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <UButton label="Cancel" variant="ghost" color="neutral" @click="isRenameOpen = false" />
+                    <UButton label="Save Changes" color="primary" @click="handleRename" />
+                </div>
+            </div>
+        </template>
+    </UModal>
+
+    <!-- Archive Confirmation Modal -->
+    <UModal v-model:open="isArchiveOpen">
+        <template #content>
+            <div class="p-6 flex flex-col gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-warning-50 dark:bg-warning-950/30 text-warning-600">
+                        <UIcon name="i-lucide-archive" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold leading-tight">Archive Topic?</h3>
+                        <p class="text-sm text-neutral-500 mt-1">This will hide it from your active dashboard.</p>
+                    </div>
+                </div>
+
+                <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    Are you sure you want to archive <span class="font-bold text-neutral-900 dark:text-white">"{{ topic.title }}"</span>? You can still find it later in the Archived tab.
+                </p>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <UButton label="Cancel" variant="ghost" color="neutral" @click="isArchiveOpen = false" />
+                    <UButton label="Archive Topic" color="warning" @click="handleArchive" />
+                </div>
+            </div>
+        </template>
+    </UModal>
+
+    <!-- Delete Confirmation Modal -->
+    <UModal v-model:open="isDeleteOpen">
+        <template #content>
+            <div class="p-6 flex flex-col gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-error-50 dark:bg-error-950/30 text-error-600">
+                        <UIcon name="i-lucide-alert-triangle" class="text-2xl" />
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold leading-tight">Delete Topic?</h3>
+                        <p class="text-sm text-neutral-500 mt-1">This action cannot be undone.</p>
+                    </div>
+                </div>
+
+                <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
+                    Are you sure you want to delete <span class="font-bold text-neutral-900 dark:text-white">"{{ topic.title }}"</span>? All associated lessons and progress will be permanently removed.
+                </p>
+
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <UButton label="Cancel" variant="ghost" color="neutral" @click="isDeleteOpen = false" />
+                    <UButton label="Delete Topic" color="error" @click="handleDelete" />
+                </div>
+            </div>
+        </template>
+    </UModal>
 </template>

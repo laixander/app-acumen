@@ -24,6 +24,12 @@ const title = computed(() => {
 
 const adjacent = computed(() => getAdjacentLessons(route.params.id as string))
 
+const topic = computed(() => {
+    const topicId = lessonData.value?.topicId
+    if (!topicId) return null
+    return topics.value.find(t => t.id === topicId)
+})
+
 const handlePrevious = () => {
     if (adjacent.value.prev) {
         router.push(`/app/topics/lesson/${adjacent.value.prev.id}`)
@@ -64,13 +70,28 @@ const handleAskAboutLine = (payload: ChatQuote) => {
 
 <template>
     <UContainer class="py-6">
-        <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" class="mb-6" />
+        <!-- Breadcrumbs -->
+        <nav class="flex items-center gap-2 text-sm text-neutral-500">
+            <ULink to="/app/topics/collection" class="hover:text-primary transition-colors">Collection</ULink>
+            <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
+            <template v-if="topic">
+                <ULink :to="`/app/topics/${topic.id}`" class="hover:text-primary transition-colors">{{ topic.title }}
+                </ULink>
+                <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
+            </template>
+            <ULink :to="`/app/topics/lessons/${lessonData?.topicId}`" class="hover:text-primary transition-colors">
+                Lessons</ULink>
+            <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
+            <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ lessonData?.title }}</span>
+        </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" class="mt-6" />
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
             <!-- Left Side: Lesson Details -->
             <div class="flex flex-col gap-6">
                 <!-- Media Player Placeholder -->
-                <UCard class="overflow-hidden aspect-video relative group" :ui="{ body: 'p-0 w-full h-full' }">
+                <!-- <UCard class="overflow-hidden aspect-video relative group" :ui="{ body: 'p-0 w-full h-full' }">
                     <div
                         class="absolute inset-0 bg-neutral-900/10 dark:bg-neutral-900/50 flex flex-col items-center justify-center">
                         <UButton icon="i-lucide-play" color="neutral" variant="solid" size="xl"
@@ -80,7 +101,7 @@ const handleAskAboutLine = (payload: ChatQuote) => {
                     <img src="https://images.unsplash.com/photo-1610484826967-09c5720778c7?q=80&w=2000&auto=format&fit=crop"
                         class="w-full h-full object-cover mix-blend-overlay opacity-60 dark:opacity-40"
                         alt="Video Placeholder" />
-                </UCard>
+                </UCard> -->
 
                 <!-- Lesson Transcript / Reading -->
                 <UCard>
@@ -94,9 +115,14 @@ const handleAskAboutLine = (payload: ChatQuote) => {
 
                         <div class="flex items-center gap-3">
                             <template v-if="lessonData?.assessmentId">
-                                <UButton label="Take Assessment to Progress" icon="i-lucide-clipboard-check"
-                                    color="primary" size="lg" class="shadow-lg shadow-primary-500/20"
-                                    :to="`/app/assessment/${lessonData.assessmentId}`" />
+                                <UButton 
+                                    label="Start Checkpoint Assessment" 
+                                    icon="i-lucide-zap"
+                                    color="primary" 
+                                    size="lg" 
+                                    class="rounded-full px-8 shadow-lg shadow-primary-500/20 uppercase text-xs font-bold tracking-widest hover:scale-105 transition-transform"
+                                    :to="`/app/assessment/${lessonData.assessmentId}`" 
+                                />
                             </template>
                             <template v-else>
                                 <UButton label="Complete & Continue" icon="i-lucide-check-circle" color="neutral"
@@ -108,7 +134,7 @@ const handleAskAboutLine = (payload: ChatQuote) => {
             </div>
 
             <!-- Right Side: AI Chat Panel -->
-            <AiChatPanel v-model:pendingQuote="pendingQuote" />
+            <AppAiChatPanel v-model:pendingQuote="pendingQuote" />
         </div>
     </UContainer>
 </template>

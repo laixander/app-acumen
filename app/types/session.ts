@@ -7,6 +7,10 @@ export interface SessionProcessingLine {
     delay: number
 }
 
+export interface SessionProcessingProps {
+    lines: SessionProcessingLine[]
+}
+
 export interface SessionCompleteData {
     moduleTitle: string
     whatYouDidWell: string
@@ -14,6 +18,24 @@ export interface SessionCompleteData {
     passProbBefore: string
     passProbAfter: string
     aiFinalComment: string
+}
+
+export interface SessionReadyProps {
+    topicName: string
+    moduleTitle: string
+    difficulty: string
+    duration: string
+}
+
+export interface SessionActiveProps {
+    questions: AssessmentQuestion[]
+    moduleTitle: string
+}
+
+export interface ReadyCardProps {
+    label: string
+    value: string
+    icon?: string
 }
 
 export interface SessionReadinessPlanProps {

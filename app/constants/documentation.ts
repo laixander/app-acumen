@@ -109,6 +109,19 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 15, 2026",
+        version: "v2.2.0",
+        title: "Personalized Learning Pathways & UI Accessibility Sync",
+        changes: [
+            "Optimized 'Topic Door Selection' UI and 'Begin Session' workflow with robust data fallback logic",
+            "Integrated Assessments directly into Lesson timelines for a more seamless adaptive learning experience",
+            "Implemented dynamic AI Chat Panel height with sticky behavior to optimize sidebar real estate",
+            "Enhanced source material accessibility with new downloadable card actions and status indicators",
+            "Refactored component type definitions across the core topic module for 100% TypeScript stability",
+            "Improved session lifecycle state transitions (Ready, Processing, Active) with synchronized UI feedback",
+        ],
+    },
+    {
         date: "May 14, 2026",
         version: "v2.1.0",
         title: "Immersive Session Architecture & Advanced Topic Onboarding",
