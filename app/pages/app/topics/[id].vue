@@ -52,7 +52,6 @@ const recommendedLesson = computed(() => {
 })
 
 const sessionState = ref<SessionState>('idle')
-const isLessonListOpen = ref(false)
 
 const startSession = () => {
     sessionState.value = 'processing'
@@ -140,7 +139,7 @@ useHead({
             
             <div class="flex items-center gap-4">
                 <UTooltip text="Open Lessons">
-                    <UButton icon="i-lucide-book-open" square class="p-4 rounded-xl" :ui="{ leadingIcon: 'size-7' }" @click="isLessonListOpen = true" />
+                    <UButton icon="i-lucide-book-open" square class="p-4 rounded-xl" :ui="{ leadingIcon: 'size-7' }" :to="`/app/topics/lessons/${route.params.id}`" />
                 </UTooltip>
                 <div class="flex flex-col items-end gap-1 text-right border-l-2 border-primary/20 pl-4">
                     <span class="text-xs font-semibold tracking-wider text-muted uppercase">
@@ -286,94 +285,6 @@ useHead({
         <UButton label="Back to Dashboard" color="primary" variant="subtle" to="/app/dashboard" class="mt-6" />
     </div>
 
-    <!-- Course Curriculum Slideover -->
-    <USlideover v-model:open="isLessonListOpen" title="Curriculum Roadmap">
-        <template #content>
-            <div class="p-6 h-full overflow-y-auto">
-                <!-- Timeline Component -->
-                <div class="relative pl-6 ml-2 mt-4 space-y-8">
-                    <!-- Vertical Line -->
-                    <div class="absolute left-[-1px] top-0 bottom-0 w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 rounded-full" />
-
-                    <div v-for="(lesson, index) in lessons" :key="index" class="relative group">
-                        <!-- Timeline Dot / Icon -->
-                        <div class="absolute -left-[37px] w-7 h-7 rounded-full flex items-center justify-center border-[3px] border-white dark:border-neutral-900 z-10 transition-colors duration-300"
-                            :class="{
-                                'bg-green-500 text-white': lesson.status === 'completed',
-                                'shadow-[0_0_15px_rgba(var(--color-primary-500),0.5)]': lesson.status === 'current',
-                                'bg-primary-500 text-white': lesson.status === 'current' && lesson.color === 'primary',
-                                'bg-orange-500 text-white': lesson.status === 'current' && lesson.color === 'orange',
-                                'bg-purple-500 text-white': lesson.status === 'current' && lesson.color === 'purple',
-                                'bg-neutral-200 dark:bg-neutral-800 text-dimmed': lesson.status === 'locked'
-                            }">
-                            <UIcon v-if="lesson.status === 'completed'" name="i-lucide-check" class="text-sm" />
-                            <div v-else-if="lesson.status === 'current'"
-                                class="w-2 h-2 rounded-full bg-white animate-ping" />
-                            <div v-else class="w-1.5 h-1.5 rounded-full bg-neutral-400 dark:bg-neutral-600" />
-                        </div>
-
-                        <!-- Content Card -->
-                        <UCard variant="subtle" class="transition-all duration-300 transform" :class="{
-                            'opacity-70 grayscale-[0.3] hover:grayscale-0 hover:opacity-100 cursor-pointer'
-                                : lesson.status === 'completed',
-                            'ring-2 shadow-md transform -translate-y-1 relative overflow-hidden'
-                                : lesson.status === 'current',
-                            'ring-primary-500': lesson.status === 'current' && lesson.color === 'primary',
-                            'ring-orange-500': lesson.status === 'current' && lesson.color === 'orange',
-                            'ring-purple-500': lesson.status === 'current' && lesson.color === 'purple',
-                            'opacity-50 pointer-events-none'
-                                : lesson.status === 'locked',
-                            'hover:-translate-y-1 hover:shadow-md cursor-pointer'
-                                : lesson.status !== 'locked' && lesson.status !== 'current'
-                        }" :ui="{ body: 'flex items-start gap-4 p-4 sm:p-5' }">
-                            <template v-if="lesson.status === 'current'">
-                                <div v-if="lesson.color === 'primary'"
-                                    class="absolute inset-0 bg-primary-500/5 pointer-events-none" />
-                                <div v-if="lesson.color === 'orange'"
-                                    class="absolute inset-0 bg-orange-500/5 pointer-events-none" />
-                                <div v-if="lesson.color === 'purple'"
-                                    class="absolute inset-0 bg-purple-500/5 pointer-events-none" />
-                            </template>
-                            <div class="bg-neutral-100 dark:bg-neutral-800 p-2.5 rounded-lg shrink-0" :class="{
-                                'text-primary-500 dark:text-primary-400 bg-primary-100 dark:bg-primary-500/10': lesson.status === 'current' && lesson.color === 'primary',
-                                'text-orange-500 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/10': lesson.status === 'current' && lesson.color === 'orange',
-                                'text-purple-500 dark:text-purple-400 bg-purple-100 dark:bg-purple-500/10': lesson.status === 'current' && lesson.color === 'purple'
-                            }">
-                                <UIcon :name="lesson.icon" class="text-lg flex" />
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-2">
-                                    <h3 class="font-bold text-base truncate" :class="{
-                                        'text-primary-600 dark:text-primary-400': lesson.status === 'current' && lesson.color === 'primary',
-                                        'text-orange-600 dark:text-orange-400': lesson.status === 'current' && lesson.color === 'orange',
-                                        'text-purple-600 dark:text-purple-400': lesson.status === 'current' && lesson.color === 'purple'
-                                    }">
-                                        {{ lesson.title }}
-                                    </h3>
-                                    <UBadge variant="subtle" size="sm"
-                                        :color="lesson.status === 'current' ? 'primary' : 'neutral'"
-                                        class="shrink-0 font-medium font-mono">
-                                        {{ lesson.duration }}
-                                    </UBadge>
-                                </div>
-                                <p class="text-sm text-muted mt-1.5 leading-relaxed truncate">{{ lesson.summary }}</p>
-                                <div class="flex items-center gap-3 mt-4" v-if="lesson.status !== 'locked'">
-                                    <UButton v-if="lesson.status === 'current'"
-                                        :label="lesson.type === 'Assessment' ? 'Start Assessment' : 'Start Lesson'"
-                                        icon="i-lucide-play-circle" color="primary" size="sm"
-                                        :to="`/app/lesson/${lesson.id}`" />
-                                    <UButton v-else
-                                        :label="lesson.type === 'Assessment' ? 'Review Results' : 'Review'"
-                                        icon="i-lucide-rotate-ccw" color="neutral" variant="soft" size="sm"
-                                        :to="`/app/lesson/${lesson.id}`" />
-                                </div>
-                            </div>
-                        </UCard>
-                    </div>
-                </div>
-            </div>
-        </template>
-    </USlideover>
 </template>
 
 <style scoped>

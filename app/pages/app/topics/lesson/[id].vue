@@ -26,7 +26,7 @@ const adjacent = computed(() => getAdjacentLessons(route.params.id as string))
 
 const handlePrevious = () => {
     if (adjacent.value.prev) {
-        router.push(`/app/lesson/${adjacent.value.prev.id}`)
+        router.push(`/app/topics/lesson/${adjacent.value.prev.id}`)
     }
 }
 
@@ -45,9 +45,9 @@ const handleContinue = () => {
     }
 
     if (adjacent.value.next) {
-        router.push(`/app/lesson/${adjacent.value.next.id}`)
+        router.push(`/app/topics/lesson/${adjacent.value.next.id}`)
     } else {
-        router.push(topicId ? `/app/topics/${topicId}` : '/app/dashboard')
+        router.push(topicId ? `/app/topics/lessons/${topicId}` : '/app/dashboard')
     }
 }
 

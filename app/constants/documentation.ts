@@ -109,6 +109,21 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 14, 2026",
+        version: "v2.1.0",
+        title: "Immersive Session Architecture & Advanced Topic Onboarding",
+        changes: [
+            "Launched the 'Probing Your Reasoning' AI layer with real-time justification prompts and evaluative feedback",
+            "Implemented the 'Session Readiness' and 'Readiness Plan' modules to streamline the transition into active learning",
+            "Redesigned the Topic Creation Wizard with a dedicated 'Subject Picker' and 'Door Selection' interactive UI",
+            "Enhanced the 'Session Processing' state with high-fidelity animations and improved AI-path visualization",
+            "Refactored Topic Detail pages to support the new modular session architecture",
+            "Implemented granular diagnostic scoring and feedback loops within the pre-assessment flow",
+            "Standardized session types and interfaces for better maintainability and 100% type safety",
+            "Optimized the 'New Topic' wizard with improved state persistence and breadcrumb navigation",
+        ],
+    },
+    {
         date: "May 13, 2026",
         version: "v2.0.0",
         title: "Diagnostic Mastery & AI-Probing Session Architecture",
