@@ -46,16 +46,17 @@ onMounted(() => {
 
 <template>
     <div class="relative overflow-x-hidden">
+        <div class="absolute -top-20 inset-x-0 h-64 bg-primary-500/10 blur-[120px] rounded-full pointer-events-none" />
         <div
             class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]">
         </div>
         <!-- Hero Section -->
         <UPageHero class="reveal-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out"
             description="Upload your study materials, let AI identify your knowledge gaps, and get a personalized lesson plan that adapts to your confidence level."
-            :links="[
-                { label: 'Get Started Free', to: '/signup', size: 'xl', color: 'primary' },
-                { label: 'Watch Demo', to: '#demo', size: 'xl', color: 'neutral', variant: 'outline', icon: 'i-lucide-play-circle' }
-            ]" orientation="horizontal">
+            orientation="horizontal">
+            <template #links>
+                <LandingOnboardingTeaser />
+            </template>
             <template #headline>
                 <div class="mb-4">
                     <UBadge label="AI-Powered Learning" icon="i-lucide-sparkles" color="primary" variant="subtle"
@@ -72,7 +73,7 @@ onMounted(() => {
                     Upload your study materials, let AI identify your knowledge gaps, and get a personalized lesson plan
                     that adapts to your confidence level.
                 </p>
-                <div class="flex items-center gap-x-6">
+                <!-- <div class="flex items-center gap-x-6">
                     <UAvatarGroup>
                         <UAvatar v-for="i in 4" :key="i" :src="`https://i.pravatar.cc/128?u=${i}`"
                             icon="i-lucide-user" />
@@ -80,7 +81,7 @@ onMounted(() => {
                     <p class="text-sm text-toned font-medium">
                         Join 50,000+ learners studying smarter
                     </p>
-                </div>
+                </div> -->
             </template>
 
             <template #default>

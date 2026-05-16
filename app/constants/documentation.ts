@@ -109,6 +109,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 16, 2026",
+        version: "v2.3.0",
+        title: "Immersive Guest Onboarding & Authentic Topic Creation Flow",
+        changes: [
+            "Launched a dedicated, full-screen Guest Onboarding experience at /start with high-fidelity transitions",
+            "Integrated the authentic AppTopicDoorSelection and full topic creation flow from the main app into the guest experience",
+            "Implemented useOnboardingDraft persistence layer using localStorage to bridge guest sessions with post-registration setup",
+            "Developed a seamless registration integration that automatically consumes onboarding drafts to pre-fill the first user topic",
+            "Simplified the landing page OnboardingTeaser into a unified, high-conversion entry point linking directly to the guest flow",
+            "Optimized the onboarding UI with always-visible stepper navigation, ambient glows, and responsive layout refinements",
+            "Synchronized the guest flow state machine with the core application's topic creation logic for consistent UX",
+        ],
+    },
+    {
         date: "May 15, 2026",
         version: "v2.2.0",
         title: "Personalized Learning Pathways & UI Accessibility Sync",

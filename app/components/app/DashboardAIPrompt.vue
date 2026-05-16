@@ -109,9 +109,8 @@ const handleSubjectSelect = (subject: string) => {
                     <!-- PROMPT -->
                     <UTextarea v-if="inputMode === 'prompt'" v-model="prompt"
                         placeholder="e.g., I want to learn advanced Quantum Computing with a focus on Cryptography..."
-                        :ui="{ root: 'w-full', base: `ring-0 ${isHero ? 'rounded-t-2xl' : 'rounded-t-xl'} rounded-b-none p-6` }"
-                        autoresize :rows="isHero ? 8 : 5" @keydown.meta.enter="generate"
-                        @keydown.ctrl.enter="generate" />
+                        :ui="{ root: 'w-full', base: 'ring-0 rounded-t-2xl rounded-b-none p-6' }" autoresize
+                        :rows="isHero ? 8 : 5" @keydown.meta.enter="generate" @keydown.ctrl.enter="generate" />
 
                     <!-- UPLOAD -->
                     <div v-else-if="inputMode === 'upload'" class="flex flex-col">
@@ -144,7 +143,7 @@ const handleSubjectSelect = (subject: string) => {
                                         === 'error').length}} failed
                                 </span>
                             </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                                 <div v-for="(file, i) in files" :key="i"
                                     class="group/f flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-300"
                                     :class="file.status === 'error' ? 'border-red-300 dark:border-red-800/60 bg-red-50/50 dark:bg-red-950/10 ring-1 ring-red-200 dark:ring-red-900/40' : 'border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-primary-500/30'">
@@ -223,7 +222,7 @@ const handleSubjectSelect = (subject: string) => {
                                     @click="selectedCategory = cat.name">{{ cat.name }}</button>
                             </div>
                         </div>
-                        <div class="px-5 py-3 overflow-y-auto max-h-44">
+                        <div class="px-5 py-3 overflow-y-auto max-h-44 custom-scrollbar">
                             <div v-if="!filteredSubjects.length" class="text-center py-4 text-xs text-neutral-400">No
                                 subjects found</div>
                             <div v-else class="flex flex-wrap gap-2">

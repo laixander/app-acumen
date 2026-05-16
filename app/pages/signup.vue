@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 
 definePageMeta({
     layout: false
@@ -11,6 +12,7 @@ const route = useRoute()
 const toast = useToast()
 const step = ref(1)
 const loading = ref(false)
+const { exists: hasDraft } = useOnboardingDraft()
 
 const planInfo = computed(() => {
     const planId = (route.query.plan as string) || 'free'
@@ -75,8 +77,12 @@ const nextStep = () => {
             if (shouldShowPayment.value) {
                 step.value = 4
             } else {
-                toast.add({ title: 'Account created!', description: 'Welcome to LearnFast! You can now log in.' })
-                navigateTo('/login')
+                toast.add({ title: 'Account created!', description: 'Welcome to Acumen! Setting up your first topic...' })
+                if (hasDraft()) {
+                    navigateTo('/app/topics/new?from=onboarding')
+                } else {
+                    navigateTo('/app/dashboard')
+                }
             }
         }, 800)
     } else if (step.value === 4) {
@@ -87,8 +93,12 @@ const nextStep = () => {
         loading.value = true
         setTimeout(() => {
             loading.value = false
-            toast.add({ title: 'Account created!', description: 'Welcome to LearnFast! Your subscription is now active.' })
-            navigateTo('/login')
+            toast.add({ title: 'Account created!', description: 'Welcome to Acumen! Your subscription is now active.' })
+            if (hasDraft()) {
+                navigateTo('/app/topics/new?from=onboarding')
+            } else {
+                navigateTo('/app/dashboard')
+            }
         }, 1500)
     }
 }

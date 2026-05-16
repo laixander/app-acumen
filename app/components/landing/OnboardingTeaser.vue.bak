@@ -1,0 +1,299 @@
+<script setup lang="ts">
+type Mode = 'upload' | 'explore' | 'prompt' | null
+type Step = 'mode' | 'quiz' | 'plan' | 'cta'
+
+const step = ref<Step>('mode')
+const selectedMode = ref<Mode>(null)
+const promptText = ref('')
+const currentQuestion = ref(0)
+const answers = ref<string[]>([])
+const score = ref(0)
+
+const modes = [
+    {
+        id: 'upload' as const,
+        icon: 'i-lucide-upload-cloud',
+        label: 'Materials',
+        subtitle: 'Upload your reviewer',
+        color: 'primary',
+        colorClass: 'text-primary-500 bg-primary-50 dark:bg-primary-950/40 border-primary-200/60 dark:border-primary-800/40 hover:border-primary-400/60 dark:hover:border-primary-600/60',
+        glowClass: 'bg-primary-500',
+        topic: 'Your Uploaded Material',
+    },
+    {
+        id: 'explore' as const,
+        icon: 'i-lucide-compass',
+        label: 'Subject',
+        subtitle: 'Pick what to master',
+        color: 'emerald',
+        colorClass: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200/60 dark:border-emerald-800/40 hover:border-emerald-400/60 dark:hover:border-emerald-600/60',
+        glowClass: 'bg-emerald-500',
+        topic: 'Calculus — Advanced Track',
+    },
+    {
+        id: 'prompt' as const,
+        icon: 'i-lucide-sparkles',
+        label: 'AI Prompt',
+        subtitle: 'Just describe your goal',
+        color: 'violet',
+        colorClass: 'text-violet-500 bg-violet-50 dark:bg-violet-950/40 border-violet-200/60 dark:border-violet-800/40 hover:border-violet-400/60 dark:hover:border-violet-600/60',
+        glowClass: 'bg-violet-500',
+        topic: 'Machine Learning for Interviews',
+    },
+] as const
+
+const questions = [
+    {
+        text: 'How do you learn best?',
+        options: [
+            { id: 'a', label: 'Reading & summarizing' },
+            { id: 'b', label: 'Practice problems & quizzes' },
+            { id: 'c', label: 'Watching explanations' },
+            { id: 'd', label: 'Teaching others' },
+        ],
+        correct: 'b',
+    },
+    {
+        text: 'What\'s your goal with this topic?',
+        options: [
+            { id: 'a', label: 'Pass an upcoming exam' },
+            { id: 'b', label: 'Deep understanding & mastery' },
+            { id: 'c', label: 'Quick overview / refresher' },
+            { id: 'd', label: 'Professional certification' },
+        ],
+        correct: 'b',
+    },
+]
+
+const activeMode = computed(() => modes.find(m => m.id === selectedMode.value))
+
+const steps = ['Mode', 'Quiz', 'Plan', 'Sign Up']
+const stepIndex = computed(() => (['mode', 'quiz', 'plan', 'cta'] as Step[]).indexOf(step.value))
+
+const selectMode = (id: Mode) => {
+    selectedMode.value = id
+    if (id === 'prompt') return // wait for prompt input
+    advance()
+}
+
+const advance = () => {
+    if (step.value === 'mode') step.value = 'quiz'
+    else if (step.value === 'quiz') step.value = 'plan'
+    else if (step.value === 'plan') step.value = 'cta'
+}
+
+const answerQuestion = (optionId: string) => {
+    answers.value.push(optionId)
+    if (optionId === questions[currentQuestion.value]?.correct) score.value++
+
+    if (currentQuestion.value < questions.length - 1) {
+        currentQuestion.value++
+    } else {
+        setTimeout(advance, 400)
+    }
+}
+
+const reset = () => {
+    step.value = 'mode'
+    selectedMode.value = null
+    promptText.value = ''
+    currentQuestion.value = 0
+    answers.value = []
+    score.value = 0
+}
+</script>
+
+<template>
+    <div class="w-full max-w-lg">
+        <!-- Progress dots -->
+        <div class="flex items-center gap-2 mb-4">
+            <div v-for="(s, i) in steps" :key="s" class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
+                    <div class="size-1.5 rounded-full transition-all duration-500"
+                        :class="i <= stepIndex ? 'bg-primary w-4' : 'bg-neutral-300 dark:bg-neutral-700'" />
+                    <span v-if="i <= stepIndex"
+                        class="text-[10px] font-bold uppercase tracking-widest text-primary transition-all duration-300">{{
+                            s }}</span>
+                </div>
+                <div v-if="i < steps.length - 1"
+                    class="w-6 h-px bg-neutral-200 dark:bg-neutral-700 transition-colors duration-300"
+                    :class="i < stepIndex ? 'bg-primary/40' : ''" />
+            </div>
+        </div>
+
+        <!-- Card -->
+        <div
+            class="relative rounded-2xl border border-neutral-200/60 dark:border-neutral-800/60 bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl shadow-xl overflow-hidden">
+
+            <!-- Ambient glow based on mode -->
+            <div v-if="activeMode"
+                class="pointer-events-none absolute -top-20 -right-20 w-48 h-48 blur-[60px] opacity-20 transition-all duration-700 rounded-full"
+                :class="activeMode.glowClass" />
+
+            <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
+                enter-from-class="opacity-0 translate-y-3" enter-to-class="opacity-100 translate-y-0"
+                leave-active-class="transition-all duration-200 ease-in" leave-from-class="opacity-100 translate-y-0"
+                leave-to-class="opacity-0 -translate-y-3">
+
+                <!-- Step 1: Mode Selection -->
+                <div v-if="step === 'mode'" key="mode" class="p-5 flex flex-col gap-4">
+                    <div>
+                        <p class="text-xs font-bold uppercase tracking-widest text-muted mb-0.5">Step 1 of 3</p>
+                        <h3 class="text-lg font-bold">How do you want to learn?</h3>
+                    </div>
+
+                    <!-- 3 mode cards -->
+                    <div class="grid grid-cols-3 gap-2.5">
+                        <button v-for="mode in modes" :key="mode.id" @click="selectMode(mode.id)"
+                            class="group relative flex flex-col items-center gap-2.5 p-4 rounded-xl border transition-all duration-300 text-center cursor-pointer"
+                            :class="mode.colorClass">
+                            <div class="p-2 rounded-lg" :class="mode.colorClass">
+                                <UIcon :name="mode.icon" class="size-5 flex shrink-0" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold leading-tight">{{ mode.label }}</p>
+                                <p class="text-[10px] text-muted leading-tight mt-0.5">{{ mode.subtitle }}</p>
+                            </div>
+                            <UIcon name="i-lucide-arrow-right"
+                                class="size-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all duration-300" />
+                        </button>
+                    </div>
+
+                    <!-- AI Prompt input (shown when prompt mode is tapped) -->
+                    <Transition enter-active-class="transition-all duration-300 ease-out"
+                        enter-from-class="opacity-0 max-h-0" enter-to-class="opacity-100 max-h-40"
+                        leave-active-class="transition-all duration-200 ease-in"
+                        leave-from-class="opacity-100 max-h-40" leave-to-class="opacity-0 max-h-0">
+                        <div v-if="selectedMode === 'prompt'" class="flex flex-col gap-2 overflow-hidden">
+                            <textarea v-model="promptText" rows="2" placeholder="e.g. I want to learn Python for data science interviews..."
+                                class="w-full resize-none rounded-xl border border-violet-200 dark:border-violet-800/50 bg-violet-50/50 dark:bg-violet-950/20 px-3 py-2 text-sm placeholder-neutral-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 transition-all duration-300" />
+                            <UButton label="Continue" trailing-icon="i-lucide-arrow-right" color="primary" size="sm"
+                                :disabled="!promptText.trim()" class="self-end rounded-full px-5"
+                                @click="advance" />
+                        </div>
+                    </Transition>
+
+                    <p class="text-[10px] text-muted text-center">
+                        This is a live preview — no account needed yet.
+                    </p>
+                </div>
+
+                <!-- Step 2: Mini Quiz -->
+                <div v-else-if="step === 'quiz'" key="quiz" class="p-5 flex flex-col gap-4">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-widest text-muted mb-0.5">Step 2 of 3 · Pre-Assessment</p>
+                            <h3 class="text-base font-bold leading-snug">{{ questions[currentQuestion]?.text }}</h3>
+                        </div>
+                        <div class="shrink-0 text-xs font-bold text-muted bg-neutral-100 dark:bg-neutral-800 px-2.5 py-1 rounded-full">
+                            {{ currentQuestion + 1 }} / {{ questions.length }}
+                        </div>
+                    </div>
+
+                    <!-- Quiz progress bar -->
+                    <div class="h-1 rounded-full bg-neutral-100 dark:bg-neutral-800 overflow-hidden">
+                        <div class="h-full bg-primary rounded-full transition-all duration-500"
+                            :style="{ width: `${(currentQuestion / questions.length) * 100}%` }" />
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2">
+                        <button v-for="opt in questions[currentQuestion]?.options" :key="opt.id"
+                            class="group flex items-center gap-3 px-4 py-3 rounded-xl border text-sm text-left transition-all duration-200 cursor-pointer"
+                            :class="answers[currentQuestion] === opt.id
+                                ? 'border-primary/50 bg-primary-50 dark:bg-primary-950/30 text-primary font-semibold'
+                                : 'border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800/50'"
+                            @click="answerQuestion(opt.id)">
+                            <div class="size-4 shrink-0 rounded-full border-2 transition-all duration-200 flex items-center justify-center"
+                                :class="answers[currentQuestion] === opt.id ? 'border-primary bg-primary' : 'border-neutral-300 dark:border-neutral-600'">
+                                <div v-if="answers[currentQuestion] === opt.id" class="size-1.5 rounded-full bg-white" />
+                            </div>
+                            {{ opt.label }}
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Mock Plan -->
+                <div v-else-if="step === 'plan'" key="plan" class="p-5 flex flex-col gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-primary-50 dark:bg-primary-950/40">
+                            <UIcon name="i-lucide-sparkles" class="size-5 text-primary flex shrink-0" />
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold uppercase tracking-widest text-muted">Step 3 of 3 · Your Plan</p>
+                            <h3 class="text-base font-bold">Personalized plan ready</h3>
+                        </div>
+                    </div>
+
+                    <!-- Topic card -->
+                    <div class="rounded-xl border border-neutral-100 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-800/40 p-4 flex flex-col gap-3">
+                        <div class="flex items-start justify-between gap-2">
+                            <p class="font-bold text-sm leading-snug">{{ activeMode?.topic ?? 'Your Learning Path' }}</p>
+                            <UBadge :label="`${score}/${questions.length} correct`"
+                                :color="score === questions.length ? 'primary' : 'neutral'" variant="soft"
+                                class="shrink-0 text-[10px]" />
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <div v-for="stat in [
+                                { icon: 'i-lucide-book-open', value: '12', label: 'Lessons' },
+                                { icon: 'i-lucide-clock', value: '2 wks', label: 'Duration' },
+                                { icon: 'i-lucide-brain-circuit', value: '4', label: 'Quizzes' },
+                            ]" :key="stat.label"
+                                class="flex flex-col items-center gap-1 rounded-lg bg-white dark:bg-neutral-800 border border-neutral-100 dark:border-neutral-700/50 py-2.5">
+                                <UIcon :name="stat.icon" class="size-3.5 text-primary" />
+                                <p class="text-sm font-bold leading-none">{{ stat.value }}</p>
+                                <p class="text-[9px] uppercase tracking-widest text-muted font-bold">{{ stat.label }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-muted">
+                            <UIcon name="i-lucide-zap" class="size-3.5 text-amber-400" />
+                            AI-adapted to your pre-assessment result
+                        </div>
+                    </div>
+
+                    <UButton label="See the full experience →" color="primary" block class="rounded-xl font-semibold"
+                        @click="advance" />
+                </div>
+
+                <!-- Step 4: CTA -->
+                <div v-else-if="step === 'cta'" key="cta" class="p-5 flex flex-col gap-5">
+                    <div class="text-center flex flex-col gap-2">
+                        <div class="mx-auto p-3 rounded-2xl bg-primary-50 dark:bg-primary-950/40 w-fit">
+                            <UIcon name="i-lucide-party-popper" class="size-7 text-primary flex" />
+                        </div>
+                        <h3 class="text-lg font-bold">Your plan is waiting.</h3>
+                        <p class="text-sm text-muted max-w-xs mx-auto">
+                            Sign up free and Acumen will generate your full personalized curriculum — lessons, quizzes, and all.
+                        </p>
+                    </div>
+
+                    <!-- Trust signals -->
+                    <div class="flex flex-wrap justify-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted">
+                        <div class="flex items-center gap-1">
+                            <UIcon name="i-lucide-shield-check" class="size-3 text-primary" /> No credit card
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <UIcon name="i-lucide-clock" class="size-3 text-primary" /> Ready in 60s
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <UIcon name="i-lucide-lock" class="size-3 text-primary" /> Private & secure
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2.5">
+                        <UButton label="Create My Plan — Sign Up Free" to="/signup" color="primary" size="lg" block
+                            trailing-icon="i-lucide-arrow-right"
+                            class="rounded-xl font-semibold shadow-lg shadow-primary/20" />
+                        <UButton label="I already have an account" to="/login" color="neutral" variant="ghost" size="sm"
+                            block class="rounded-xl" />
+                    </div>
+
+                    <button @click="reset"
+                        class="text-center text-[11px] text-muted hover:text-primary transition-colors cursor-pointer">
+                        ← Try a different mode
+                    </button>
+                </div>
+
+            </Transition>
+        </div>
+    </div>
+</template>

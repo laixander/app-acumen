@@ -249,7 +249,7 @@ const dynamicHeight = computed(() => {
                     <UIcon name="i-ph-quotes-duotone" class="text-primary-500 mt-0.5 shrink-0" />
                     <p class="text-xs text-primary-700 dark:text-primary-300 line-clamp-2 m-0 flex-1">{{
                         pendingQuote.text
-                        }}</p>
+                    }}</p>
                     <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="xs"
                         @click="emit('update:pendingQuote', null)" class="absolute top-1 right-1" />
                 </div>
@@ -298,23 +298,3 @@ const dynamicHeight = computed(() => {
         </div>
     </div>
 </template>
-
-<style scoped>
-/* Optional styling to make scrollbars sleeker */
-.custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(156, 163, 175, 0.5);
-    border-radius: 20px;
-}
-
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(75, 85, 99, 0.5);
-}
-</style>

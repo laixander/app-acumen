@@ -4,7 +4,7 @@
             <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
             <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
             <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
-            <span class="ml-2 text-xs font-medium text-dimmed">Learn Fast Dashboard</span>
+            <span class="ml-2 text-xs font-medium text-dimmed">Acumen Dashboard</span>
         </div>
         <h3 class="text-sm font-semibold mb-3 uppercase tracking-wider">Course Progress</h3>
         <UAlert :ui="{ root: 'p-4 sm:p-6' }">

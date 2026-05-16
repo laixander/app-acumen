@@ -4,6 +4,7 @@ import { useLessons } from '~/composables/useLessons'
 import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/utils/seeder'
 import { slugify } from '~/utils/format'
 import type { LearningGoal } from '~/types/topic'
+import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 
 const { user } = useUser()
 const { addTopic } = useTopics()
@@ -35,6 +36,33 @@ onMounted(() => {
     const promptParam = route.query.prompt as string | undefined
     const subjectParam = route.query.subject as string | undefined
 
+    // Consume onboarding draft from guest /start flow
+    if (route.query.from === 'onboarding') {
+        const { read, clear } = useOnboardingDraft()
+        const draft = read()
+        if (draft) {
+            const mode = draft.mode ?? 'prompt'
+            creationMode.value = mode
+
+            if (mode === 'upload') {
+                formData.title = draft.files[0] ?? 'Uploaded Material'
+                formData.description = `Curriculum built from: ${draft.files.join(', ')}`
+                flowState.value = 'review'
+            } else if (mode === 'explore') {
+                formData.title = draft.topic
+                formData.description = `Universal curriculum for ${draft.topic}`
+                flowState.value = 'review'
+            } else {
+                formData.title = draft.topic
+                formData.description = `AI-generated curriculum for: ${draft.topic}`
+                flowState.value = 'review'
+            }
+
+            clear()
+            return
+        }
+    }
+
     if (_qMode === 'prompt' && promptParam) {
         formData.title = promptParam
         formData.description = `AI-generated curriculum for: ${promptParam}`
@@ -48,12 +76,12 @@ onMounted(() => {
 
 const steps = computed(() => {
     if (creationMode.value === 'explore') {
-        return ['Mode', 'Subject', 'Pre-Assessment', 'Review']
+        return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
     }
     if (creationMode.value === 'prompt') {
-        return ['Mode', 'Pre-Assessment', 'Review']
+        return ['Mode', 'Pre-Assessment', 'Plan']
     }
-    return ['Mode', 'Materials', 'Pre-Assessment', 'Review']
+    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
 })
 
 const currentStepIndex = computed(() => {
