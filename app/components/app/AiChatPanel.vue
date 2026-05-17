@@ -220,7 +220,7 @@ const dynamicHeight = computed(() => {
 
             <!-- Chat Messages Area -->
             <div ref="chatContainer"
-                class="flex-1 overflow-y-auto p-4 flex flex-col gap-6 bg-neutral-50/50 dark:bg-neutral-900/50 custom-scrollbar">
+                class="flex-1 overflow-y-auto p-4 flex flex-col gap-6 bg-neutral-50/50 dark:bg-neutral-900/50">
 
                 <AppAiChatBubble v-for="(msg, idx) in chatMessages" :key="idx" :msg="msg" @scroll-to-line="scrollToLine"
                     @toggle-pin="togglePin(idx)" />
@@ -249,7 +249,7 @@ const dynamicHeight = computed(() => {
                     <UIcon name="i-ph-quotes-duotone" class="text-primary-500 mt-0.5 shrink-0" />
                     <p class="text-xs text-primary-700 dark:text-primary-300 line-clamp-2 m-0 flex-1">{{
                         pendingQuote.text
-                    }}</p>
+                        }}</p>
                     <UButton icon="i-lucide-x" color="neutral" variant="ghost" size="xs"
                         @click="emit('update:pendingQuote', null)" class="absolute top-1 right-1" />
                 </div>

@@ -127,87 +127,66 @@ const confirmFinish = () => {
 <template>
     <div class="fixed inset-0 grid grid-cols-1 lg:grid-cols-[340px_1fr] bg-background overflow-hidden">
 
-        <!-- Left Panel — Premium Dark -->
-        <div class="hidden lg:flex flex-col p-10 text-white h-full relative overflow-hidden st-panel">
-
-            <!-- Layered gradient background -->
-            <div class="absolute inset-0 z-0 st-panel-bg" />
-
-            <!-- Animated floating orbs -->
-            <div class="absolute inset-0 z-0 pointer-events-none">
-                <div class="st-orb st-orb-1" />
-                <div class="st-orb st-orb-2" />
-                <div class="st-orb st-orb-3" />
+        <!-- Left Panel -->
+        <div class="hidden lg:flex flex-col bg-primary p-10 text-white relative overflow-hidden">
+            <div class="absolute inset-0 pointer-events-none">
+                <div class="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-white/10" />
+                <div class="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-black/10" />
             </div>
 
-            <!-- Grid overlay -->
-            <div
-                class="pointer-events-none absolute inset-0 z-[2] bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_70%_75%_at_50%_0%,black_40%,transparent_100%)]">
-            </div>
-
-            <!-- Logo -->
             <div class="relative z-10 mb-auto">
-                <NuxtLink to="/" class="opacity-90 hover:opacity-100 transition-opacity">
+                <NuxtLink to="/" class="opacity-80 hover:opacity-100 transition-opacity">
                     <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" naked />
                 </NuxtLink>
             </div>
 
-            <!-- Body -->
-            <div class="relative z-10 flex-1 flex flex-col justify-center gap-8">
-
-                <!-- Mode badge + headline -->
-                <div class="space-y-4">
-                    <UBadge color="primary" variant="outline"
-                        class="inline-flex items-center gap-2 w-fit px-3 py-1.5 text-xs font-medium tracking-wide uppercase">
-                        <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
-                        <Transition mode="out-in" enter-active-class="transition-all duration-300"
-                            enter-from-class="opacity-0" enter-to-class="opacity-100"
-                            leave-active-class="transition-all duration-200" leave-to-class="opacity-0">
-                            <span :key="modeLabel">{{ modeLabel }}</span>
-                        </Transition>
-                    </UBadge>
-
+            <div class="relative z-10 flex-1 flex flex-col justify-center max-w-xs gap-6">
+                <div class="p-3 w-fit rounded-2xl bg-white/15">
+                    <UIcon name="i-lucide-brain-circuit" class="size-7 flex" />
+                </div>
+                <div>
                     <Transition mode="out-in" enter-active-class="transition-all duration-300"
                         enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0"
                         leave-active-class="transition-all duration-200" leave-from-class="opacity-100"
                         leave-to-class="opacity-0">
                         <div :key="modeLabel">
-                            <h1 class="text-3xl font-bold leading-tight mb-3">
-                                Experience the <span class="text-primary">real thing.</span>
-                            </h1>
-                            <p class="text-sm font-light leading-relaxed text-white/60">
+                            <p class="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">{{ modeLabel }}</p>
+                            <h1 class="text-3xl font-bold leading-tight mb-3">Experience the real thing.</h1>
+                            <p class="text-sm font-light leading-relaxed opacity-75">
                                 This is the actual Acumen topic creator. Sign up to save your plan and start learning.
                             </p>
                         </div>
                     </Transition>
                 </div>
-
-                <!-- Feature checklist -->
                 <div class="space-y-2.5">
                     <div v-for="item in ['Full topic creation flow', 'AI-powered pre-assessment', 'Personalized lesson plan']"
-                        :key="item" class="flex items-center gap-3 text-sm font-light text-white/80">
-                        <div class="size-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
-                            <UIcon name="i-lucide-check" class="size-3 text-primary-300" />
+                        :key="item" class="flex items-center gap-2.5 text-sm font-light">
+                        <div class="size-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                            <UIcon name="i-lucide-check" class="size-3" />
                         </div>
                         {{ item }}
                     </div>
                 </div>
-
-                <!-- Guest CTA (appears after door selection) -->
-                <Transition enter-active-class="transition-all duration-500" enter-from-class="opacity-0 translate-y-4"
-                    enter-to-class="opacity-100 translate-y-0">
-                    <UCard v-if="flowState !== 'entry'" variant="outline"
-                        class="bg-white/5 ring-white/10 rounded-2xl">
-                        <p class="text-sm font-semibold text-white mb-1">Like what you see?</p>
-                        <p class="text-xs text-white/55 leading-relaxed mb-3">Sign up free to save this plan and start learning.</p>
-                        <UButton label="Sign Up Free" to="/signup" color="primary" variant="solid" size="sm"
-                            trailing-icon="i-lucide-arrow-right" class="rounded-full" />
-                    </UCard>
-                </Transition>
             </div>
 
+            <!-- Guest CTA -->
+            <Transition enter-active-class="transition-all duration-500" enter-from-class="opacity-0 translate-y-4"
+                enter-to-class="opacity-100 translate-y-0">
+                <div v-if="flowState !== 'entry'" class="relative z-10 mb-4">
+                    <div class="flex flex-col gap-3 px-4 py-4 rounded-2xl bg-white/10 border border-white/20">
+                        <div>
+                            <p class="text-sm font-semibold">Like what you see?</p>
+                            <p class="text-xs opacity-70 leading-relaxed mt-0.5">Sign up free to save this plan and
+                                start learning.</p>
+                        </div>
+                        <UButton label="Sign Up Free" to="/signup" color="neutral" variant="solid" size="sm"
+                            trailing-icon="i-lucide-arrow-right" class="rounded-full w-fit" />
+                    </div>
+                </div>
+            </Transition>
+
             <!-- Guest badge -->
-            <div class="relative z-10 flex items-center gap-2 text-xs font-medium text-white/40">
+            <div class="relative z-10 flex items-center gap-2 text-xs font-medium opacity-70">
                 <UIcon name="i-lucide-eye" class="size-3.5" />
                 Guest preview — no account needed yet
             </div>
@@ -331,113 +310,3 @@ const confirmFinish = () => {
         </div>
     </div>
 </template>
-
-<style scoped>
-/* ═══════════════════════════════════════════
-   Left Panel — theme-aware (start.vue)
-   Uses Nuxt UI tokens: --color-primary-*, --color-neutral-*
-   ═══════════════════════════════════════════ */
-
-.st-panel {
-    background: var(--color-neutral-950);
-}
-
-:root:not(.dark) .st-panel {
-    background: color-mix(in srgb, var(--color-neutral-900) 90%, var(--color-primary-950, var(--color-primary-900)) 10%);
-}
-
-.st-panel-bg {
-    background:
-        radial-gradient(ellipse 80% 60% at 15% 5%,
-            color-mix(in srgb, var(--color-primary-500) 28%, transparent) 0%,
-            transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 95%,
-            color-mix(in srgb, var(--color-primary-600) 22%, transparent) 0%,
-            transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%,
-            color-mix(in srgb, var(--color-primary-400) 8%, transparent) 0%,
-            transparent 70%),
-        linear-gradient(160deg,
-            color-mix(in srgb, var(--color-neutral-950) 85%, var(--color-primary-950, var(--color-primary-900)) 15%) 0%,
-            var(--color-neutral-950) 50%,
-            color-mix(in srgb, var(--color-neutral-950) 92%, var(--color-primary-950, var(--color-primary-900)) 8%) 100%);
-}
-
-:root:not(.dark) .st-panel-bg {
-    background:
-        radial-gradient(ellipse 80% 60% at 15% 5%,
-            color-mix(in srgb, var(--color-primary-500) 22%, transparent) 0%,
-            transparent 60%),
-        radial-gradient(ellipse 60% 50% at 80% 95%,
-            color-mix(in srgb, var(--color-primary-700) 18%, transparent) 0%,
-            transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 50%,
-            color-mix(in srgb, var(--color-primary-400) 6%, transparent) 0%,
-            transparent 70%),
-        linear-gradient(160deg,
-            color-mix(in srgb, var(--color-neutral-900) 80%, var(--color-primary-900) 20%) 0%,
-            var(--color-neutral-900) 50%,
-            color-mix(in srgb, var(--color-neutral-900) 88%, var(--color-primary-900) 12%) 100%);
-}
-
-.st-orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.4;
-    animation: st-float linear infinite;
-}
-
-:root:not(.dark) .st-orb {
-    opacity: 0.3;
-}
-
-/* Orb positions deliberately different from login & signup */
-.st-orb-1 {
-    width: 320px;
-    height: 320px;
-    top: -80px;
-    left: -60px;
-    background: radial-gradient(circle, var(--color-primary-500) 0%, transparent 70%);
-    animation-duration: 22s;
-    animation-delay: 0s;
-}
-
-.st-orb-2 {
-    width: 260px;
-    height: 260px;
-    bottom: 80px;
-    right: -50px;
-    background: radial-gradient(circle, var(--color-primary-600) 0%, transparent 70%);
-    animation-duration: 28s;
-    animation-delay: -12s;
-    opacity: 0.25;
-}
-
-:root:not(.dark) .st-orb-2 {
-    opacity: 0.2;
-}
-
-.st-orb-3 {
-    width: 160px;
-    height: 160px;
-    top: 55%;
-    left: 35%;
-    background: radial-gradient(circle, var(--color-primary-400) 0%, transparent 70%);
-    animation-duration: 19s;
-    animation-delay: -7s;
-    opacity: 0.16;
-}
-
-:root:not(.dark) .st-orb-3 {
-    opacity: 0.12;
-}
-
-@keyframes st-float {
-    0%   { transform: translate(0, 0) scale(1); }
-    25%  { transform: translate(14px, -18px) scale(1.03); }
-    50%  { transform: translate(-10px, 14px) scale(0.97); }
-    75%  { transform: translate(18px, 8px) scale(1.02); }
-    100% { transform: translate(0, 0) scale(1); }
-}
-</style>

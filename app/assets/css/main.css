@@ -195,20 +195,26 @@ html.brand-font-black {
     }
 }
 
-/* Optional styling to make scrollbars sleeker */
-.custom-scrollbar::-webkit-scrollbar {
+/* Apply custom scrollbar to all scrollable elements */
+*::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
+    /* for horizontal scrollbars */
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+*::-webkit-scrollbar-track {
+    background: rgba(156, 163, 175, 0.08);
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
+.dark *::-webkit-scrollbar-track {
+    background: rgba(75, 85, 99, 0.12);
+}
+
+*::-webkit-scrollbar-thumb {
     background-color: rgba(156, 163, 175, 0.5);
     border-radius: 20px;
 }
 
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+.dark *::-webkit-scrollbar-thumb {
     background-color: rgba(75, 85, 99, 0.5);
 }

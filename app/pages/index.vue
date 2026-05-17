@@ -55,7 +55,23 @@ onMounted(() => {
             description="Upload your study materials, let AI identify your knowledge gaps, and get a personalized lesson plan that adapts to your confidence level."
             orientation="horizontal">
             <template #links>
-                <LandingOnboardingTeaser />
+                <div class="flex flex-wrap items-center gap-3 mt-2">
+                    <!-- Primary CTA -->
+                    <div class="relative group">
+                        <span
+                            class="absolute inset-0 rounded-full bg-primary-500/40 blur-sm scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                        <UButton to="/start" size="xl" color="primary" icon="i-lucide-zap"
+                            class="px-6 py-4 relative font-semibold tracking-wide rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:scale-[1.03]">
+                            Start Learning Free
+                        </UButton>
+                    </div>
+                    <!-- Secondary CTA -->
+                    <UButton to="#how-it-works" size="xl" color="neutral" variant="ghost"
+                        trailingIcon="i-lucide-chevron-down"
+                        class="px-6 py-4 rounded-xl font-medium text-muted hover:text-default transition-colors duration-200">
+                        See how it works
+                    </UButton>
+                </div>
             </template>
             <template #headline>
                 <div class="mb-4">
@@ -146,6 +162,17 @@ onMounted(() => {
                 <template #description>
                     Join thousands of students who are learning faster, retaining more, and spending less time stressing
                     over exams.
+                </template>
+                <template #links>
+                    <!-- Primary CTA -->
+                    <div class="relative group">
+                        <span
+                            class="absolute inset-0 rounded-full bg-primary-500/40 blur-sm scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300" />
+                        <UButton to="/start" size="xl" color="primary" icon="i-lucide-zap"
+                            class="px-6 py-4 relative font-semibold tracking-wide rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:scale-[1.03]">
+                            Start Learning Free
+                        </UButton>
+                    </div>
                 </template>
             </UPageCTA>
         </UPageSection>

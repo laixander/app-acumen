@@ -58,8 +58,8 @@ export const useTheme = () => {
 
     const theme = useState<ThemeSettings>('theme', () => ({
         font: 'font-saira',
-        brandFont: 'font-racing',
-        brandWeight: 'font-normal',
+        brandFont: 'font-saira',
+        brandWeight: 'font-bold',
         primary: appConfig.ui.colors?.primary || 'sky',
         neutral: appConfig.ui.colors?.neutral || 'slate'
     }))
