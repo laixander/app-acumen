@@ -30,17 +30,34 @@ const visibleCategories = computed(() => filteredCategories.value.slice(0, displ
 const hasMore = computed(() => displayLimit.value < filteredCategories.value.length)
 const canShowLess = computed(() => !hasMore.value && displayLimit.value > 4 && !searchQuery.value)
 
+const getScrollParent = (el: HTMLElement | null): HTMLElement | Window => {
+    if (!el) return window
+    let parent = el.parentElement
+    while (parent) {
+        const { overflowY } = getComputedStyle(parent)
+        if (overflowY === 'auto' || overflowY === 'scroll') return parent
+        parent = parent.parentElement
+    }
+    return window
+}
+
+const scrollTo = (target: HTMLElement | Window, top: number) => {
+    target.scrollTo({ top, behavior: 'smooth' })
+}
+
 const showMore = async () => {
     const prevLimit = displayLimit.value
     displayLimit.value = Math.min(prevLimit + 4, filteredCategories.value.length)
     await nextTick()
-    // Scroll to the first newly visible card
     if (rootEl.value) {
+        const scroller = getScrollParent(rootEl.value)
         const cards = rootEl.value.querySelectorAll<HTMLElement>('.subject-card')
         const firstNewCard = cards[prevLimit]
         if (firstNewCard) {
-            const top = firstNewCard.getBoundingClientRect().top + window.scrollY - 120
-            window.scrollTo({ top, behavior: 'smooth' })
+            const scrollerTop = scroller === window ? 0 : (scroller as HTMLElement).getBoundingClientRect().top
+            const cardTop = firstNewCard.getBoundingClientRect().top
+            const currentScroll = scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop
+            scrollTo(scroller, currentScroll + (cardTop - scrollerTop) - 120)
         }
     }
 }
@@ -48,12 +65,14 @@ const showMore = async () => {
 const showLess = async () => {
     displayLimit.value = 4
     await nextTick()
-    // Scroll to the first card with a 60px gap from the top
     if (rootEl.value) {
+        const scroller = getScrollParent(rootEl.value)
         const firstCard = rootEl.value.querySelector<HTMLElement>('.subject-card')
         if (firstCard) {
-            const top = firstCard.getBoundingClientRect().top + window.scrollY - 90
-            window.scrollTo({ top, behavior: 'smooth' })
+            const scrollerTop = scroller === window ? 0 : (scroller as HTMLElement).getBoundingClientRect().top
+            const cardTop = firstCard.getBoundingClientRect().top
+            const currentScroll = scroller === window ? window.scrollY : (scroller as HTMLElement).scrollTop
+            scrollTo(scroller, currentScroll + (cardTop - scrollerTop) - 90)
         }
     }
 }

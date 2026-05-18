@@ -109,6 +109,20 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 18, 2026",
+        version: "v2.4.0",
+        title: "Premium Auth Redesign, AI Processing Overlays & UX Persistence",
+        changes: [
+            "Finalized a cohesive, high-fidelity premium redesign across login, signup, and onboarding pages with theme-aware dark mode visuals and dynamic CSS custom properties",
+            "Optimized UI layering with precision masking for dot-grid overlays and standardized UCard containers and stat rows for a professional brand experience",
+            "Refined the topic creation interface in DashboardAIPrompt and guest onboarding (/start) with visual feedback, loading spinners, and completion check icons for subject selection",
+            "Introduced a standardized pre-assessment processing overlay across all creation modes (Upload, Explore, Prompt) to bridge the gap between initial selection and diagnostic testing",
+            "Implemented persistent dev mode query parameter (?dev=true) across navigation in the app.vue layout to maintain active development controls (SeederFab, DemoFab)",
+            "Enhanced layout consistency on the /start onboarding page by relocating the 'Sign Up Free' guest CTA from the main content area to the fixed left-side panel above the footer",
+            "Applied custom sleek scrollbar styling (.custom-scrollbar) to the primary layout container for consistent visual aesthetics across the application",
+        ],
+    },
+    {
         date: "May 16, 2026",
         version: "v2.3.0",
         title: "Immersive Guest Onboarding & Authentic Topic Creation Flow",

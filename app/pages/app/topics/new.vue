@@ -12,7 +12,7 @@ const { addLessons, addLessonContents, addAssessments } = useLessons()
 const router = useRouter()
 
 // Flow States
-type FlowState = 'entry' | 'setup' | 'indexing' | 'details' | 'schedule' | 'assessment' | 'review'
+type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'details' | 'schedule' | 'assessment' | 'review'
 
 // Bootstrap from dashboard redirect — read query synchronously to avoid flash on first render
 const route = useRoute()
@@ -21,8 +21,8 @@ const _qStep = route.query.step as string | undefined
 
 const flowState = ref<FlowState>(
     _qMode === 'upload' && _qStep === 'indexing' ? 'indexing'
-    : _qMode === 'prompt' ? 'assessment'
-    : _qMode === 'explore' ? 'assessment'
+    : _qMode === 'prompt' ? 'processing'
+    : _qMode === 'explore' ? 'processing'
     : 'entry'
 )
 const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(
@@ -66,9 +66,11 @@ onMounted(() => {
     if (_qMode === 'prompt' && promptParam) {
         formData.title = promptParam
         formData.description = `AI-generated curriculum for: ${promptParam}`
+        setTimeout(() => { flowState.value = 'assessment' }, 3500)
     } else if (_qMode === 'explore' && subjectParam) {
         formData.title = subjectParam
         formData.description = `Universal curriculum for ${subjectParam}`
+        setTimeout(() => { flowState.value = 'assessment' }, 3500)
     } else if (_qMode === 'upload' && _qStep === 'indexing') {
         setTimeout(() => { flowState.value = 'assessment' }, 3500)
     }
@@ -87,7 +89,7 @@ const steps = computed(() => {
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
+    if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
     if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
     return 0
 })
@@ -125,14 +127,16 @@ const handleUploadComplete = () => {
 const handleSubjectSelect = (subject: string) => {
     formData.title = subject
     formData.description = `Universal curriculum for ${subject}`
-    flowState.value = 'assessment'
+    flowState.value = 'processing'
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handlePromptSelect = (prompt: string) => {
     formData.title = prompt
     formData.description = `AI-generated curriculum for: ${prompt}`
     creationMode.value = 'prompt'
-    flowState.value = 'assessment'
+    flowState.value = 'processing'
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleAssessmentComplete = () => {
@@ -227,7 +231,7 @@ const confirmFinish = () => {
 </script>
 
 <template>
-    <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
+    <UContainer class="lg:max-w-4xl py-10 flex flex-col grow min-h-full gap-10">
         <!-- Breadcrumbs -->
         <nav v-if="flowState !== 'entry'" class="flex items-center gap-2 text-sm text-neutral-500">
             <button @click="resetFlow" class="hover:text-primary transition-colors cursor-pointer">Create</button>
@@ -250,6 +254,11 @@ const confirmFinish = () => {
             <!-- Indexing Overlay (Upload Mode Only) -->
             <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center grow">
                 <AppTopicAnalyzing />
+            </div>
+
+            <!-- Processing Overlay (Explore & Prompt Modes) -->
+            <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center grow">
+                <AppTopicProcessing :mode="creationMode" />
             </div>
 
             <!-- Main Flow -->

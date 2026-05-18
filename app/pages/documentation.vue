@@ -166,7 +166,7 @@ onMounted(() => {
                                 :ui="{ body: 'sm:p-4' }">
                                 <div class="flex items-center gap-3 mb-1">
                                     <UBadge color="primary" variant="subtle" size="sm" class="font-mono">{{ api.method
-                                    }}
+                                        }}
                                     </UBadge>
                                     <span class="font-mono font-bold">{{ api.path }}</span>
                                 </div>
@@ -225,7 +225,7 @@ onMounted(() => {
                                     <div :class="index > 0 ? 'opacity-60' : ''">
                                         <span class="text-xs font-mono text-neutral-500">{{
                                             item.date
-                                        }}</span>
+                                            }}</span>
                                         <h5 class="font-bold mt-1">
                                             {{ item.version }} - {{ item.title }}
                                         </h5>
@@ -244,7 +244,8 @@ onMounted(() => {
                                     Show More
                                     <UBadge :label="'+' + (
                                         Math.min(5, changelogItems.length - displayedCount)
-                                    )" variant="soft" size="sm" class="bg-primary/20" />
+                                    ) + ' / ' + (changelogItems.length - displayedCount)" variant="soft" size="sm"
+                                        class="bg-primary/20" />
                                 </UButton>
                             </div>
                             <div v-else-if="changelogItems.length > 5" class="flex justify-start pt-4">

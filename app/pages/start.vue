@@ -8,7 +8,7 @@ definePageMeta({ layout: false })
 const { write } = useOnboardingDraft()
 
 // Mirror new.vue's FlowState exactly
-type FlowState = 'entry' | 'setup' | 'indexing' | 'assessment' | 'review'
+type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'assessment' | 'review'
 
 const flowState = ref<FlowState>('entry')
 const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(null)
@@ -39,7 +39,7 @@ const steps = computed(() => {
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
+    if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
     if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
     return 0
 })
@@ -62,7 +62,8 @@ const handlePromptSelect = (prompt: string) => {
     formData.title = prompt
     formData.description = `AI-generated curriculum for: ${prompt}`
     creationMode.value = 'prompt'
-    flowState.value = 'assessment'
+    flowState.value = 'processing'
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleUploadComplete = () => {
@@ -73,7 +74,8 @@ const handleUploadComplete = () => {
 const handleSubjectSelect = (subject: string) => {
     formData.title = subject
     formData.description = `Universal curriculum for ${subject}`
-    flowState.value = 'assessment'
+    flowState.value = 'processing'
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleAssessmentComplete = () => {
@@ -253,7 +255,7 @@ const confirmFinish = () => {
             </div>
 
             <!-- Main content area -->
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto flex flex-col">
                 <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
 
                     <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
@@ -269,6 +271,11 @@ const confirmFinish = () => {
                         <!-- Indexing Overlay (Upload only) -->
                         <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center grow">
                             <AppTopicAnalyzing />
+                        </div>
+
+                        <!-- Processing Overlay (Explore & Prompt Modes) -->
+                        <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center grow">
+                            <AppTopicProcessing :mode="creationMode" />
                         </div>
 
                         <!-- Main Flow -->

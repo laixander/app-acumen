@@ -3,7 +3,21 @@ import { APP_NAVIGATION_ITEMS } from '~/constants/navigation'
 
 const route = useRoute()
 
-const isDevMode = computed(() => route.query.dev !== undefined)
+const isDevMode = computed(() => {
+    if (import.meta.server) return false
+    // ?nodev explicitly disables dev mode
+    if (route.query.nodev !== undefined) {
+        sessionStorage.removeItem('devMode')
+        return false
+    }
+    // ?dev explicitly enables dev mode
+    if (route.query.dev !== undefined) {
+        sessionStorage.setItem('devMode', '1')
+        return true
+    }
+    // Fall back to persisted session value
+    return sessionStorage.getItem('devMode') === '1'
+})
 
 const links = computed(() =>
     APP_NAVIGATION_ITEMS.map(item => ({

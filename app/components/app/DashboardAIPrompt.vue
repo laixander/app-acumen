@@ -24,6 +24,8 @@ const canProceed = computed(() => successCount.value > 0 && !hasErrors.value && 
 // Subject picker state
 const subjectSearch = ref('')
 const selectedCategory = ref<string | null>(null)
+const loadingSubject = ref<string | null>(null)
+const selectedSubject = ref<string | null>(null)
 const filteredSubjects = computed(() => {
     const cats = selectedCategory.value
         ? CURRICULUM_CATEGORIES.filter(c => c.name === selectedCategory.value)
@@ -62,7 +64,14 @@ const startIndexing = () => {
     if (!canProceed.value) return
     router.push({ path: '/app/topics/new', query: { mode: 'upload', step: 'indexing' } })
 }
-const handleSubjectSelect = (subject: string) => {
+const handleSubjectSelect = async (subject: string) => {
+    if (loadingSubject.value) return
+    loadingSubject.value = subject
+    selectedSubject.value = null
+    await new Promise(resolve => setTimeout(resolve, 900))
+    loadingSubject.value = null       // clear spinner first
+    selectedSubject.value = subject   // now check icon can render
+    await new Promise(resolve => setTimeout(resolve, 900))
     router.push({ path: '/app/topics/new', query: { mode: 'explore', subject } })
 }
 </script>
@@ -227,8 +236,20 @@ const handleSubjectSelect = (subject: string) => {
                                 subjects found</div>
                             <div v-else class="flex flex-wrap gap-2">
                                 <button v-for="subject in filteredSubjects" :key="subject"
-                                    class="text-xs font-medium px-3 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/20 transition-all duration-200"
-                                    @click="handleSubjectSelect(subject)">{{ subject }}</button>
+                                    class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-200 disabled:cursor-not-allowed"
+                                    :class="[
+                                        selectedSubject === subject
+                                            ? 'border-emerald-400 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20'
+                                            : loadingSubject === subject
+                                                ? 'border-primary-400 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/20'
+                                                : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/20'
+                                    ]" :disabled="loadingSubject !== null" @click="handleSubjectSelect(subject)">
+                                    <UIcon v-if="loadingSubject === subject" name="i-lucide-loader-2"
+                                        class="w-3 h-3 animate-spin shrink-0" />
+                                    <UIcon v-else-if="selectedSubject === subject" name="i-lucide-check"
+                                        class="w-3 h-3 shrink-0 text-emerald-500" />
+                                    {{ subject }}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -243,8 +264,8 @@ const handleSubjectSelect = (subject: string) => {
                             <span class="hidden sm:inline">Upload Materials</span>
                         </UButton>
                         <div class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
-                        <UButton label="Explore Subject" variant="ghost" color="emerald" class="rounded-full"
-                            icon="i-lucide-compass" @click="enterSubjectMode" />
+                        <UButton label="Explore Subject" variant="ghost" class="rounded-full" icon="i-lucide-compass"
+                            @click="enterSubjectMode" />
                     </div>
                     <div class="flex items-center gap-3">
                         <Transition enter-active-class="transition-all duration-300 ease-out"
@@ -257,8 +278,8 @@ const handleSubjectSelect = (subject: string) => {
                                 first
                             </span>
                         </Transition>
-                        <UButton v-if="inputMode === 'prompt'" label="Begin Assessment" color="violet" size="lg"
-                            class="rounded-full px-4 shadow-lg shadow-violet-500/20" :disabled="!prompt.trim()"
+                        <UButton v-if="inputMode === 'prompt'" label="Begin Assessment" size="lg"
+                            class="rounded-full px-4 shadow-lg shadow-primary-500/20" :disabled="!prompt.trim()"
                             @click="generate">
                             <template #leading>
                                 <UIcon name="i-lucide-sparkles" class="animate-pulse" />

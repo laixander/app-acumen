@@ -4,7 +4,18 @@ import { ADMIN_NAVIGATION_ITEMS } from '~/constants/navigation'
 const links = ref(ADMIN_NAVIGATION_ITEMS)
 const { uiNavigation, uiDashboardSidebar } = useUiConfig()
 const route = useRoute()
-const isDevMode = computed(() => route.query.dev !== undefined)
+const isDevMode = computed(() => {
+    if (import.meta.server) return false
+    if (route.query.nodev !== undefined) {
+        sessionStorage.removeItem('devMode')
+        return false
+    }
+    if (route.query.dev !== undefined) {
+        sessionStorage.setItem('devMode', '1')
+        return true
+    }
+    return sessionStorage.getItem('devMode') === '1'
+})
 </script>
 <template>
     <UDashboardGroup>
