@@ -27,7 +27,7 @@ const isDevMode = computed(() => {
 
         <template #right>
             <UButton to="/login" label="Login" color="primary" variant="ghost" />
-            <UColorModeButton />
+            <!-- <UColorModeButton /> -->
             <!-- <UserMenu /> -->
         </template>
 

@@ -19,7 +19,7 @@ withDefaults(defineProps<{
                 :class="[
                     'w-14 h-14 rounded-2xl flex items-center justify-center mb-6 z-10 transition-transform hover:scale-105',
                     item.variant === 'solid'
-                        ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30 ring-4 ring-white dark:ring-neutral-900'
+                        ? 'bg-primary-500 dark:bg-primary-600 text-white shadow-lg shadow-primary-500/30 ring-4 ring-white dark:ring-primary-500/20'
                         : 'bg-white dark:bg-neutral-900 border-2 border-primary-100 dark:border-primary-900/50 text-primary'
                 ]">
                 <UIcon :name="item.icon" class="w-6 h-6" />

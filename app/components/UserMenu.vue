@@ -19,99 +19,99 @@ const items = computed<DropdownMenuItem[][]>(() => [
             icon: 'i-lucide-settings',
             to: '/app/settings'
         },
-        {
-            label: 'Theme',
-            icon: 'i-lucide-palette',
-            children: [
-                [{
-                    label: isDark.value ? 'Light mode' : 'Dark mode',
-                    icon: isDark.value ? 'i-lucide-sun' : 'i-lucide-moon',
-                    onSelect(e: Event) {
-                        e.preventDefault()
-                        colorMode.preference = isDark.value ? 'light' : 'dark'
-                    }
-                },
-                {
-                    label: 'Primary',
-                    slot: 'chip',
-                    chip: theme.value.primary,
-                    content: {
-                        align: 'center',
-                        collisionPadding: 16
-                    },
-                    children: colors.map(color => ({
-                        label: color,
-                        chip: color,
-                        slot: 'chip',
-                        checked: theme.value.primary === color,
-                        type: 'checkbox',
-                        onSelect: (e) => {
-                            e.preventDefault()
-                            setPrimary(color)
-                        }
-                    }))
-                },
-                {
-                    label: 'Neutral',
-                    slot: 'chip',
-                    chip: theme.value.neutral === 'neutral' ? 'old-neutral' : theme.value.neutral,
-                    content: {
-                        align: 'end',
-                        collisionPadding: 16
-                    },
-                    children: neutrals.map(color => ({
-                        label: color,
-                        chip: color === 'neutral' ? 'old-neutral' : color,
-                        slot: 'chip',
-                        type: 'checkbox',
-                        checked: theme.value.neutral === color,
-                        onSelect: (e) => {
-                            e.preventDefault()
-                            setNeutral(color)
-                        }
-                    }))
-                }],
-                [{
-                    label: 'Font',
-                    icon: 'i-lucide-type',
-                    children: fontOptions.map(font => ({
-                        label: font.label,
-                        type: 'checkbox',
-                        checked: theme.value.font === font.value,
-                        onSelect: (e) => {
-                            e.preventDefault()
-                            setFont(font.value as any)
-                        }
-                    }))
-                },
-                {
-                    label: 'Brand Logo',
-                    icon: 'i-lucide-award',
-                    children: fontOptions.map(brandFont => ({
-                        label: brandFont.label,
-                        type: 'checkbox',
-                        checked: theme.value.brandFont === brandFont.value,
-                        onSelect: (e) => {
-                            e.preventDefault()
-                            setBrandFont(brandFont.value as any)
-                        }
-                    }))
-                },
-                {
-                    label: 'Brand Weight',
-                    icon: 'i-lucide-weight',
-                    children: fontWeightOptions.map(brandWeight => ({
-                        label: brandWeight.label,
-                        type: 'checkbox',
-                        checked: theme.value.brandWeight === brandWeight.value,
-                        onSelect: (e) => {
-                            e.preventDefault()
-                            setBrandWeight(brandWeight.value as any)
-                        }
-                    }))
-                }]
-            ]
-        }
+        // {
+        //     label: 'Theme',
+        //     icon: 'i-lucide-palette',
+        //     children: [
+        //         [{
+        //             label: isDark.value ? 'Light mode' : 'Dark mode',
+        //             icon: isDark.value ? 'i-lucide-sun' : 'i-lucide-moon',
+        //             onSelect(e: Event) {
+        //                 e.preventDefault()
+        //                 colorMode.preference = isDark.value ? 'light' : 'dark'
+        //             }
+        //         },
+        //         {
+        //             label: 'Primary',
+        //             slot: 'chip',
+        //             chip: theme.value.primary,
+        //             content: {
+        //                 align: 'center',
+        //                 collisionPadding: 16
+        //             },
+        //             children: colors.map(color => ({
+        //                 label: color,
+        //                 chip: color,
+        //                 slot: 'chip',
+        //                 checked: theme.value.primary === color,
+        //                 type: 'checkbox',
+        //                 onSelect: (e) => {
+        //                     e.preventDefault()
+        //                     setPrimary(color)
+        //                 }
+        //             }))
+        //         },
+        //         {
+        //             label: 'Neutral',
+        //             slot: 'chip',
+        //             chip: theme.value.neutral === 'neutral' ? 'old-neutral' : theme.value.neutral,
+        //             content: {
+        //                 align: 'end',
+        //                 collisionPadding: 16
+        //             },
+        //             children: neutrals.map(color => ({
+        //                 label: color,
+        //                 chip: color === 'neutral' ? 'old-neutral' : color,
+        //                 slot: 'chip',
+        //                 type: 'checkbox',
+        //                 checked: theme.value.neutral === color,
+        //                 onSelect: (e) => {
+        //                     e.preventDefault()
+        //                     setNeutral(color)
+        //                 }
+        //             }))
+        //         }],
+        //         [{
+        //             label: 'Font',
+        //             icon: 'i-lucide-type',
+        //             children: fontOptions.map(font => ({
+        //                 label: font.label,
+        //                 type: 'checkbox',
+        //                 checked: theme.value.font === font.value,
+        //                 onSelect: (e) => {
+        //                     e.preventDefault()
+        //                     setFont(font.value as any)
+        //                 }
+        //             }))
+        //         },
+        //         {
+        //             label: 'Brand Logo',
+        //             icon: 'i-lucide-award',
+        //             children: fontOptions.map(brandFont => ({
+        //                 label: brandFont.label,
+        //                 type: 'checkbox',
+        //                 checked: theme.value.brandFont === brandFont.value,
+        //                 onSelect: (e) => {
+        //                     e.preventDefault()
+        //                     setBrandFont(brandFont.value as any)
+        //                 }
+        //             }))
+        //         },
+        //         {
+        //             label: 'Brand Weight',
+        //             icon: 'i-lucide-weight',
+        //             children: fontWeightOptions.map(brandWeight => ({
+        //                 label: brandWeight.label,
+        //                 type: 'checkbox',
+        //                 checked: theme.value.brandWeight === brandWeight.value,
+        //                 onSelect: (e) => {
+        //                     e.preventDefault()
+        //                     setBrandWeight(brandWeight.value as any)
+        //                 }
+        //             }))
+        //         }]
+        //     ]
+        // }
     ],
     [
         {
