@@ -45,16 +45,22 @@ defineEmits(['close'])
         </div>
 
         <!-- Roadmap Steps -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div :class="isOnboarding ? 'flex flex-col gap-6' : 'grid grid-cols-1 md:grid-cols-3 gap-8'">
             <!-- Step 1 -->
-            <div class="rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500 flex flex-col gap-8 p-10 hover:scale-[1.02]">
-                <div class="rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20 shrink-0 absolute -top-4 -left-4 w-12 h-12">1</div>
+            <div :class="[
+                'rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500',
+                isOnboarding ? 'flex flex-col md:flex-row md:items-center gap-8 p-10' : 'flex flex-col gap-8 p-10 hover:scale-[1.02]'
+            ]">
+                <div :class="[
+                    'rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20 shrink-0 w-12 h-12',
+                    isOnboarding ? 'absolute -top-4 -left-4 md:relative md:top-0 md:left-0' : 'absolute -top-4 -left-4'
+                ]">1</div>
 
-                <div class="flex gap-4 items-center flex-col mt-2 items-start">
-                    <UIcon name="i-lucide-layers" class="text-primary shrink-0 text-4xl" />
-                    <div class="flex flex-col gap-8">
+                <div :class="['flex gap-4 items-start md:items-center', isOnboarding ? 'flex-1 flex-col md:flex-row' : 'flex-col mt-2']">
+                    <UIcon name="i-lucide-layers" :class="['text-primary shrink-0', isOnboarding ? 'text-3xl md:text-4xl' : 'text-4xl']" />
+                    <div :class="['flex flex-col', isOnboarding ? 'gap-8 md:gap-1' : 'gap-8']">
                         <h3 class="font-bold tracking-tight text-2xl">Core Concept Consolidation</h3>
-                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed md:max-w-xl">
                             Deep dive into fundamentals. Focus on the interplay between mechanics and outcomes.
                         </p>
                     </div>
@@ -65,21 +71,30 @@ defineEmits(['close'])
                         || 'this topic' }}</span> fundamentals. Focus on the interplay between mechanics and outcomes.
                 </p>
 
-                <div class="border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0 mt-auto pt-6 border-t">
+                <div :class="[
+                    'border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0',
+                    isOnboarding ? 'flex-row md:flex-col items-center md:items-end gap-1 w-full md:w-auto md:ml-auto border-t md:border-t-0 pt-6 md:pt-0' : 'mt-auto pt-6 border-t'
+                ]">
                     <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Recommended</span>
                     <span class="text-xs text-neutral-400 font-mono">90 Min</span>
                 </div>
             </div>
 
             <!-- Step 2 -->
-            <div class="rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500 flex flex-col gap-8 p-10 hover:scale-[1.02]">
-                <div class="rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xl shadow-lg shrink-0 absolute -top-4 -left-4 w-12 h-12">2</div>
+            <div :class="[
+                'rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500',
+                isOnboarding ? 'flex flex-col md:flex-row md:items-center gap-8 p-10' : 'flex flex-col gap-8 p-10 hover:scale-[1.02]'
+            ]">
+                <div :class="[
+                    'rounded-2xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 flex items-center justify-center font-bold text-xl shadow-lg shrink-0 w-12 h-12',
+                    isOnboarding ? 'absolute -top-4 -left-4 md:relative md:top-0 md:left-0' : 'absolute -top-4 -left-4'
+                ]">2</div>
 
-                <div class="flex gap-4 items-center flex-col mt-2 items-start">
-                    <UIcon name="i-lucide-activity" class="text-neutral-900 dark:text-white shrink-0 text-4xl" />
-                    <div class="flex flex-col gap-8">
+                <div :class="['flex gap-4 items-start md:items-center', isOnboarding ? 'flex-1 flex-col md:flex-row' : 'flex-col mt-2']">
+                    <UIcon name="i-lucide-activity" :class="['text-neutral-900 dark:text-white shrink-0', isOnboarding ? 'text-3xl md:text-4xl' : 'text-4xl']" />
+                    <div :class="['flex flex-col', isOnboarding ? 'gap-8 md:gap-1' : 'gap-8']">
                         <h3 class="font-bold tracking-tight text-2xl">Advanced Simulations</h3>
-                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed md:max-w-xl">
                             Engage with 15 complex scenarios designed to challenge your decision-making speed.
                         </p>
                     </div>
@@ -90,21 +105,30 @@ defineEmits(['close'])
                     under pressure.
                 </p>
 
-                <div class="border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0 mt-auto pt-6 border-t">
+                <div :class="[
+                    'border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0',
+                    isOnboarding ? 'flex-row md:flex-col items-center md:items-end gap-1 w-full md:w-auto md:ml-auto border-t md:border-t-0 pt-6 md:pt-0' : 'mt-auto pt-6 border-t'
+                ]">
                     <span class="text-[10px] font-bold text-neutral-900 dark:text-white uppercase tracking-widest">Crucial</span>
                     <span class="text-xs text-neutral-400 font-mono">120 Min</span>
                 </div>
             </div>
 
             <!-- Step 3 -->
-            <div class="rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500 flex flex-col gap-8 p-10 hover:scale-[1.02]">
-                <div class="rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20 shrink-0 absolute -top-4 -left-4 w-12 h-12">3</div>
+            <div :class="[
+                'rounded-[2.5rem] bg-neutral-50 dark:bg-neutral-800/30 border border-neutral-100 dark:border-neutral-800 relative group transition-all duration-500',
+                isOnboarding ? 'flex flex-col md:flex-row md:items-center gap-8 p-10' : 'flex flex-col gap-8 p-10 hover:scale-[1.02]'
+            ]">
+                <div :class="[
+                    'rounded-2xl bg-primary text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-primary/20 shrink-0 w-12 h-12',
+                    isOnboarding ? 'absolute -top-4 -left-4 md:relative md:top-0 md:left-0' : 'absolute -top-4 -left-4'
+                ]">3</div>
 
-                <div class="flex gap-4 items-center flex-col mt-2 items-start">
-                    <UIcon name="i-lucide-check-check" class="text-primary shrink-0 text-4xl" />
-                    <div class="flex flex-col gap-8">
+                <div :class="['flex gap-4 items-start md:items-center', isOnboarding ? 'flex-1 flex-col md:flex-row' : 'flex-col mt-2']">
+                    <UIcon name="i-lucide-check-check" :class="['text-primary shrink-0', isOnboarding ? 'text-3xl md:text-4xl' : 'text-4xl']" />
+                    <div :class="['flex flex-col', isOnboarding ? 'gap-8 md:gap-1' : 'gap-8']">
                         <h3 class="font-bold tracking-tight text-2xl">Final Certification Run</h3>
-                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                        <p v-if="isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed md:max-w-xl">
                             A full-length assessment covering the entire topic scope to ensure your passing.
                         </p>
                     </div>
@@ -115,7 +139,10 @@ defineEmits(['close'])
                     reaches <span class="text-primary font-bold">95%+</span>.
                 </p>
 
-                <div class="border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0 mt-auto pt-6 border-t">
+                <div :class="[
+                    'border-neutral-200 dark:border-neutral-700/50 flex items-center justify-between shrink-0',
+                    isOnboarding ? 'flex-row md:flex-col items-center md:items-end gap-1 w-full md:w-auto md:ml-auto border-t md:border-t-0 pt-6 md:pt-0' : 'mt-auto pt-6 border-t'
+                ]">
                     <span class="text-[10px] font-bold text-primary uppercase tracking-widest">Final Step</span>
                     <span class="text-xs text-neutral-400 font-mono">60 Min</span>
                 </div>
