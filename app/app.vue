@@ -53,3 +53,11 @@ onMounted(() => {
         </NuxtLayout>
     </UApp>
 </template>
+
+<style>
+@media (min-width: 768px) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+</style>

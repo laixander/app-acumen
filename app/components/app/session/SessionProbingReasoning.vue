@@ -39,15 +39,15 @@ const handleSubmit = () => {
 
 <template>
     <div ref="reasoningSection"
-        class="flex flex-col gap-8 p-8 md:p-10 rounded-4xl bg-neutral-800 dark:bg-neutral-950/50 text-white border border-neutral-800 shadow-2xl animate-fade-in relative overflow-hidden scroll-mt-24">
+        class="flex flex-col gap-6 sm:gap-8 p-6 sm:p-10 rounded-4xl bg-neutral-800 dark:bg-neutral-950/50 text-white border border-neutral-800 shadow-2xl animate-fade-in relative overflow-hidden scroll-mt-24">
         <div class="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50"></div>
 
         <div
-            class="flex items-center gap-2 text-[10px] tracking-[0.2em] font-bold uppercase text-primary relative z-10">
-            <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
-            <span>Acumen AI</span>
-            <span class="text-neutral-600">·</span>
-            <span class="text-neutral-400">Probing Your Reasoning</span>
+            class="flex items-center gap-2 text-[10px] tracking-[0.2em] font-bold uppercase text-primary relative z-10 whitespace-nowrap overflow-hidden">
+            <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse flex-shrink-0"></div>
+            <span class="flex-shrink-0">Acumen AI</span>
+            <span class="text-neutral-600 flex-shrink-0">·</span>
+            <span class="text-neutral-400 truncate">Probing Your Reasoning</span>
         </div>
 
         <div class="text-xl md:text-2xl leading-relaxed text-neutral-200 relative z-10 italic">
@@ -62,9 +62,9 @@ const handleSubmit = () => {
                     base: 'bg-neutral-900/50 dark:bg-neutral-950/50 border-neutral-800 focus:border-primary/50 transition-all duration-300 text-lg py-4 px-6 rounded-2xl placeholder:text-neutral-700 ring-accented/20 dark:ring-accented focus:ring-primary/20 text-white'
                 }" />
 
-            <div v-if="!isReasoningSubmitted" class="flex justify-end mt-6">
+            <div v-if="!isReasoningSubmitted" class="flex justify-center sm:justify-end mt-6">
                 <UButton label="Submit Reasoning" color="primary" size="xl"
-                    class="rounded-full px-12 py-4 uppercase text-xs font-bold tracking-widest hover:scale-105 active:scale-95 transition-all"
+                    class="rounded-full px-12 py-4 uppercase text-xs font-bold tracking-widest hover:scale-105 active:scale-95 transition-all justify-center w-full sm:w-auto"
                     :loading="isEvaluating" @click="handleSubmit" />
             </div>
         </div>
@@ -85,7 +85,7 @@ const handleSubmit = () => {
 
                 <div class="flex justify-end pt-4">
                     <UButton :label="nextButtonLabel" trailing-icon="i-lucide-arrow-right" size="xl" color="primary"
-                        class="rounded-full px-10 py-4 uppercase text-xs font-bold tracking-widest hover:scale-105 active:scale-95 transition-all"
+                        class="rounded-full px-10 py-4 uppercase text-xs font-bold tracking-widest hover:scale-105 active:scale-95 transition-all justify-center w-full sm:w-auto"
                         @click="$emit('next')" />
                 </div>
             </div>

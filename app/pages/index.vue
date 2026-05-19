@@ -10,7 +10,8 @@ import {
 } from '~/constants/landing'
 
 definePageMeta({
-    layout: 'guest'
+    layout: 'guest',
+    showDocsMenu: false
 })
 
 const isContactModalOpen = ref(false)

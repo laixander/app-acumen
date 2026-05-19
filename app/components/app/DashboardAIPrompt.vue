@@ -264,8 +264,10 @@ const handleSubjectSelect = async (subject: string) => {
                             <span class="hidden sm:inline">Upload Materials</span>
                         </UButton>
                         <div class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
-                        <UButton label="Explore Subject" variant="ghost" class="rounded-full" icon="i-lucide-compass"
-                            @click="enterSubjectMode" />
+                        <UButton icon="i-lucide-compass" variant="ghost" class="rounded-full"
+                            @click="enterSubjectMode">
+                            <span class="hidden sm:inline">Explore Subject</span>
+                        </UButton>
                     </div>
                     <div class="flex items-center gap-3">
                         <Transition enter-active-class="transition-all duration-300 ease-out"

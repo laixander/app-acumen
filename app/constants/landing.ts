@@ -1,3 +1,22 @@
+export const landingMenu = [
+    {
+        label: 'Features',
+        to: '#features'
+    },
+    {
+        label: 'How it Works',
+        to: '#how-it-works'
+    },
+    {
+        label: 'Pricing',
+        to: '#pricing'
+    },
+    {
+        label: 'FAQ',
+        to: '#faq'
+    }
+]
+
 export const features = [
     {
         icon: 'i-heroicons-cpu-chip',
