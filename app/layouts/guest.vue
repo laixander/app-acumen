@@ -46,7 +46,8 @@ const landingMenu = computed(() => {
         <UNavigationMenu v-if="$route.name === 'index'" :items="landingMenu" />
 
         <template #right>
-            <UButton to="/login" label="Login" color="primary" variant="ghost" />
+            <UButton to="#pricing" label="Sign Up" color="primary" variant="ghost" />
+            <UButton to="/login" label="Login" color="primary" />
             <!-- <UColorModeButton /> -->
             <!-- <UserMenu /> -->
         </template>

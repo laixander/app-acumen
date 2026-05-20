@@ -8,11 +8,25 @@ definePageMeta({ layout: false })
 const { write } = useOnboardingDraft()
 
 // Mirror new.vue's FlowState exactly
-type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'assessment' | 'review'
+type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'assessment' | 'review' | 'pricing'
 
 const flowState = ref<FlowState>('entry')
 const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(null)
 const isGenerating = ref(false)
+const isContactModalOpen = ref(false)
+
+const rightPanelRef = ref<HTMLElement | null>(null)
+const mainContentRef = ref<HTMLElement | null>(null)
+
+const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (rightPanelRef.value) {
+        rightPanelRef.value.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+    if (mainContentRef.value) {
+        mainContentRef.value.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+}
 
 const formData = reactive({
     title: '',
@@ -31,9 +45,9 @@ const formData = reactive({
 
 // Mirror new.vue's steps/stepper
 const steps = computed(() => {
-    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
-    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan']
-    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan', 'Pricing']
+    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan', 'Pricing']
+    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan', 'Pricing']
 })
 
 const currentStepIndex = computed(() => {
@@ -41,6 +55,7 @@ const currentStepIndex = computed(() => {
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
     if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
     if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
+    if (flowState.value === 'pricing') return creationMode.value === 'prompt' ? 3 : 4
     return 0
 })
 
@@ -80,7 +95,7 @@ const handleSubjectSelect = (subject: string) => {
 
 const handleAssessmentComplete = () => {
     flowState.value = 'review'
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToTop()
 }
 
 const prevStep = () => {
@@ -96,6 +111,8 @@ const prevStep = () => {
         }
     } else if (flowState.value === 'review') {
         flowState.value = 'assessment'
+    } else if (flowState.value === 'pricing') {
+        flowState.value = 'review'
     } else if (flowState.value === 'entry') {
         navigateTo('/')
     }
@@ -109,21 +126,67 @@ const resetFlow = () => {
     formData.files = []
 }
 
-// Guest override: save draft → navigate to signup
+// Guest override: save draft → show pricing
 const handleFinish = () => {
-    isGenerating.value = true
+    flowState.value = 'pricing'
+    scrollToTop()
 }
 
-const confirmFinish = () => {
+const { plans } = usePlans()
+const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+
+const selectPlan = (planId: string) => {
+    // Find the plan to check its name/type
+    const plan = plans.value.find(p => p.id === planId)
+    const planName = plan ? plan.name.toLowerCase() : planId.toLowerCase()
+    
+    // Enterprise opens contact modal instead of navigating
+    if (planName === 'enterprise') {
+        isContactModalOpen.value = true
+        return
+    }
     write({
         mode: creationMode.value,
         topic: formData.title,
         files: formData.files.map((f: any) => f.name ?? String(f)),
         quizComplete: true,
+        plan: planName,
         createdAt: Date.now(),
     })
-    navigateTo('/signup')
+    // Match landing page pricing redirect params
+    if (planName === 'pro') {
+        navigateTo('/signup?plan=pro')
+    } else {
+        navigateTo('/signup')
+    }
 }
+
+const pricingPlans = computed(() => {
+    return activePlans.value.map((plan) => {
+        const nameLower = plan.name.toLowerCase()
+        const isPro = nameLower === 'pro'
+        const isFree = nameLower === 'free' || plan.price === 0
+        const isEnterprise = nameLower === 'enterprise' || (!isPro && !isFree && plan.price >= 99)
+
+        let color = 'neutral'
+        if (isPro) color = 'primary'
+        else if (isEnterprise) color = 'purple'
+
+        return {
+            id: plan.id,
+            name: plan.name,
+            price: `$${plan.price}`,
+            period: plan.interval === 'monthly' ? 'per month' : 'per year',
+            description: plan.description,
+            badge: isPro ? 'Most Popular' : null,
+            color,
+            features: plan.features,
+            cta: isFree ? 'Start Free' : isPro ? 'Get Pro' : 'Contact Sales',
+            highlighted: isPro,
+        }
+    })
+})
+
 </script>
 
 <template>
@@ -216,7 +279,7 @@ const confirmFinish = () => {
         </div>
 
         <!-- Right Panel -->
-        <div class="flex flex-col overflow-y-auto">
+        <div ref="rightPanelRef" class="flex flex-col overflow-y-auto">
             <!-- Top Bar -->
             <div
                 class="flex items-center justify-between px-8 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
@@ -255,7 +318,7 @@ const confirmFinish = () => {
             </div>
 
             <!-- Main content area -->
-            <div class="flex-1 overflow-y-auto flex flex-col">
+            <div ref="mainContentRef" class="flex-1 overflow-y-auto flex flex-col">
                 <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
 
                     <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
@@ -263,9 +326,101 @@ const confirmFinish = () => {
                         leave-active-class="transition-all duration-200 ease-in"
                         leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
 
-                        <!-- Generation Overlay -->
-                        <div v-if="isGenerating" class="flex flex-col justify-center grow">
-                            <AppTopicGenerating @finish="confirmFinish" />
+                        <!-- Pricing Step -->
+                        <div v-if="flowState === 'pricing'" class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <!-- Header -->
+                            <div class="text-center space-y-3">
+                                <UBadge color="primary" variant="subtle" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest">
+                                    <UIcon name="i-lucide-sparkles" class="size-3" />
+                                    Your plan is ready
+                                </UBadge>
+                                <h2 class="text-3xl font-bold tracking-tight">
+                                    Choose how you want to learn
+                                </h2>
+                                <p class="text-sm text-muted max-w-md mx-auto leading-relaxed">
+                                    Your personalised topic <strong class="text-foreground">{{ formData.title || 'is ready' }}</strong>. Pick a plan to unlock it and start learning.
+                                </p>
+                            </div>
+
+                            <!-- Pricing Cards -->
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div v-for="plan in pricingPlans" :key="plan.id"
+                                    class="pricing-card relative flex flex-col rounded-2xl overflow-hidden cursor-pointer group"
+                                    :class="plan.highlighted ? 'pricing-card--highlighted' : 'pricing-card--default'"
+                                    @click="selectPlan(plan.id)">
+
+                                    <!-- Popular badge -->
+                                    <div v-if="plan.badge" class="pricing-badge">
+                                        <UIcon name="i-lucide-zap" class="size-3" />
+                                        {{ plan.badge }}
+                                    </div>
+
+                                    <!-- Card body -->
+                                    <div class="flex flex-col flex-1 p-6 gap-5">
+                                        <!-- Plan name & price -->
+                                        <div class="space-y-1">
+                                            <p class="text-xs font-semibold uppercase tracking-widest"
+                                                :class="plan.highlighted ? 'text-primary-300' : 'text-muted'">{{ plan.name }}</p>
+                                            <div class="flex items-end gap-1">
+                                                <span class="text-4xl font-bold tracking-tight"
+                                                    :class="plan.highlighted ? 'text-white' : ''">
+                                                    {{ plan.price }}
+                                                </span>
+                                                <span class="text-sm pb-1"
+                                                    :class="plan.highlighted ? 'text-white/50' : 'text-muted'">
+                                                    / {{ plan.period }}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs leading-relaxed"
+                                                :class="plan.highlighted ? 'text-white/60' : 'text-muted'">
+                                                {{ plan.description }}
+                                            </p>
+                                        </div>
+
+                                        <!-- Divider -->
+                                        <div class="h-px" :class="plan.highlighted ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-800'" />
+
+                                        <!-- Features -->
+                                        <ul class="space-y-2 flex-1">
+                                            <li v-for="feat in plan.features" :key="feat"
+                                                class="flex items-start gap-2.5 text-sm"
+                                                :class="plan.highlighted ? 'text-white/80' : ''">
+                                                <div class="mt-0.5 size-4 rounded-full flex items-center justify-center shrink-0"
+                                                    :class="plan.highlighted ? 'bg-primary-500/20' : 'bg-primary/10'">
+                                                    <UIcon name="i-lucide-check" class="size-2.5"
+                                                        :class="plan.highlighted ? 'text-primary-300' : 'text-primary'" />
+                                                </div>
+                                                {{ feat }}
+                                            </li>
+                                        </ul>
+
+                                        <!-- CTA button -->
+                                        <UButton :label="plan.cta"
+                                            :color="plan.highlighted ? 'neutral' : 'primary'"
+                                            :variant="plan.highlighted ? 'solid' : 'outline'"
+                                            trailing-icon="i-lucide-arrow-right"
+                                            class="w-full justify-center rounded-xl mt-auto transition-transform group-hover:scale-[1.02]"
+                                            @click.stop="selectPlan(plan.id)" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skip / social proof row -->
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="flex items-center gap-5 text-xs text-muted">
+                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-shield-check" class="size-3.5 text-primary" /> No credit card required</span>
+                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-refresh-ccw" class="size-3.5 text-primary" /> Cancel anytime</span>
+                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-lock" class="size-3.5 text-primary" /> Secure checkout</span>
+                                </div>
+                                <button class="text-xs text-muted hover:text-primary transition-colors" @click="selectPlan('free')">
+                                    Skip for now — continue with Free
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Generation Overlay (legacy – kept for safety) -->
+                        <div v-else-if="isGenerating" class="flex flex-col justify-center grow">
+                            <AppTopicGenerating @finish="selectPlan('free')" />
                         </div>
 
                         <!-- Indexing Overlay (Upload only) -->
@@ -336,6 +491,8 @@ const confirmFinish = () => {
                 </UContainer>
             </div>
         </div>
+
+        <ContactSalesModal v-model:open="isContactModalOpen" />
     </div>
 </template>
 
@@ -438,6 +595,66 @@ const confirmFinish = () => {
 
 :root:not(.dark) .st-orb-3 {
     opacity: 0.12;
+}
+
+/* ═══════════════════════════════════════════
+   Pricing cards
+   ═══════════════════════════════════════════ */
+
+.pricing-card--default {
+    background: var(--color-background);
+    border: 1px solid color-mix(in srgb, var(--color-neutral-200) 100%, transparent);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+}
+
+.dark .pricing-card--default {
+    border-color: color-mix(in srgb, var(--color-neutral-700) 100%, transparent);
+}
+
+.pricing-card--default:hover {
+    box-shadow: 0 8px 32px -4px color-mix(in srgb, var(--color-primary-500) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-primary-400) 40%, transparent);
+    transform: translateY(-3px);
+}
+
+.pricing-card--highlighted {
+    background:
+        radial-gradient(ellipse 80% 50% at 20% 10%,
+            color-mix(in srgb, var(--color-primary-500) 30%, transparent) 0%,
+            transparent 60%),
+        linear-gradient(160deg,
+            color-mix(in srgb, var(--color-primary-700) 95%, var(--color-neutral-950) 5%) 0%,
+            color-mix(in srgb, var(--color-primary-900) 90%, var(--color-neutral-950) 10%) 100%);
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-primary-500) 40%, transparent),
+        0 20px 60px -10px color-mix(in srgb, var(--color-primary-600) 35%, transparent);
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.pricing-card--highlighted:hover {
+    box-shadow:
+        0 0 0 1px color-mix(in srgb, var(--color-primary-400) 60%, transparent),
+        0 28px 72px -10px color-mix(in srgb, var(--color-primary-500) 45%, transparent);
+    transform: translateY(-4px);
+}
+
+.pricing-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    border-radius: 0 0 10px 10px;
+    background: color-mix(in srgb, var(--color-primary-400) 100%, transparent);
+    color: white;
+    white-space: nowrap;
 }
 
 @keyframes st-float {

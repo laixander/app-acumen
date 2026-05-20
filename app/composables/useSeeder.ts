@@ -8,7 +8,10 @@ import {
     generateInitialWorkspaces,
     MOCK_RECEIVED_INVITATIONS,
     generateMockOrganizations,
-    generateMockAdminAccounts
+    generateMockAdminAccounts,
+    generateMockPlans,
+    generateMockAdminDashboardData,
+    generateEmptyAdminDashboardData
 } from '~/utils/seeder'
 import { MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
 import { useTopics } from '~/composables/useTopics'
@@ -16,6 +19,8 @@ import { useDashboard } from '~/composables/useDashboard'
 import { useLessons } from '~/composables/useLessons'
 import { useOrganizations } from '~/composables/useOrganizations'
 import { useAdminAccounts } from '~/composables/useAdminAccounts'
+import { usePlans } from '~/composables/usePlans'
+import { useAdminDashboard } from '~/composables/useAdminDashboard'
 import { useToast } from '#ui/composables/useToast'
 import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
 
@@ -70,6 +75,30 @@ export const useSeeder = () => {
         saveAdminAccounts()
     }
 
+    const seedPlans = () => {
+        const { plans, savePlans } = usePlans()
+        plans.value = generateMockPlans()
+        savePlans()
+    }
+
+    const clearPlans = () => {
+        const { plans, savePlans } = usePlans()
+        plans.value = []
+        savePlans()
+    }
+
+    const seedAdminDashboard = () => {
+        const { adminDashboardData, saveAdminDashboard } = useAdminDashboard()
+        adminDashboardData.value = generateMockAdminDashboardData()
+        saveAdminDashboard()
+    }
+
+    const clearAdminDashboard = () => {
+        const { adminDashboardData, saveAdminDashboard } = useAdminDashboard()
+        adminDashboardData.value = generateEmptyAdminDashboardData()
+        saveAdminDashboard()
+    }
+
     const seedTopics = () => {
         topics.value = [...MOCK_TOPICS]
         logs.value = [...MOCK_ACTIVITY_LOGS]
@@ -79,6 +108,8 @@ export const useSeeder = () => {
         seedWorkspaces()
         seedOrganizations()
         seedAdminAccounts()
+        seedPlans()
+        seedAdminDashboard()
         
         const allLessons: LessonOverview[] = []
         const allContents: LessonContent[] = []
@@ -157,6 +188,8 @@ export const useSeeder = () => {
         clearWorkspaces()
         clearOrganizations()
         clearAdminAccounts()
+        clearPlans()
+        clearAdminDashboard()
         toast.add({ title: 'Test data cleared!', color: 'info' })
     }
 
@@ -168,6 +201,10 @@ export const useSeeder = () => {
         seedOrganizations,
         clearOrganizations,
         seedAdminAccounts,
-        clearAdminAccounts
+        clearAdminAccounts,
+        seedPlans,
+        clearPlans,
+        seedAdminDashboard,
+        clearAdminDashboard
     }
 }

@@ -8,6 +8,7 @@ export interface OnboardingDraft {
     assessmentAnswers: string[]
     score: number
     quizComplete: boolean
+    plan?: string           // chosen pricing tier: 'free' | 'pro' | 'team'
     createdAt: number
 }
 

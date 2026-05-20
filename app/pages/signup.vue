@@ -6,7 +6,8 @@ definePageMeta({
     layout: false
 })
 
-import { PLANS } from '~/constants/billing'
+const { plans } = usePlans()
+const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
 
 const route = useRoute()
 const toast = useToast()
@@ -16,13 +17,26 @@ const { exists: hasDraft } = useOnboardingDraft()
 
 const planInfo = computed(() => {
     const planId = (route.query.plan as string) || 'free'
-    // If enterprise is requested, we could either redirect or default to free.
-    // For now, let's treat any non-pro paid plan as free signup since Enterprise is handled via modal.
-    const plan = PLANS.find(p => p.id === planId.toLowerCase() && p.id !== 'enterprise')
-    return (plan || PLANS[0]) as typeof PLANS[0] & { id: string, name: string, price: number }
+    const plan = activePlans.value.find(p => (p.id === planId.toLowerCase() || p.name.toLowerCase() === planId.toLowerCase()) && p.name.toLowerCase() !== 'enterprise')
+    
+    if (plan) {
+        return {
+            id: plan.id,
+            name: plan.name,
+            price: plan.price
+        }
+    }
+    
+    const freePlan = activePlans.value.find(p => p.name.toLowerCase() === 'free' || p.price === 0)
+    return {
+        id: freePlan ? freePlan.id : 'free',
+        name: freePlan ? freePlan.name : 'Free',
+        price: freePlan ? freePlan.price : 0
+    }
 })
 
-const shouldShowPayment = computed(() => planInfo.value.id === 'pro')
+const shouldShowPayment = computed(() => planInfo.value.name.toLowerCase() === 'pro')
+
 
 const form = reactive({
     email: '',

@@ -16,19 +16,53 @@ definePageMeta({
 
 const isContactModalOpen = ref(false)
 
-const displayPricings = computed(() => pricings.map((plan: any) => {
-    if (plan.title === 'Enterprise') {
-        return {
-            ...plan,
-            button: {
-                ...plan.button,
-                to: undefined,
-                onClick: () => { isContactModalOpen.value = true }
-            }
+const { plans } = usePlans()
+const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+
+const displayPricings = computed(() => {
+    return activePlans.value.map((plan) => {
+        const nameLower = plan.name.toLowerCase()
+        const isPro = nameLower === 'pro'
+        const isFree = nameLower === 'free' || plan.price === 0
+        const isEnterprise = nameLower === 'enterprise' || (!isPro && !isFree && plan.price >= 99)
+
+        const button = isFree ? {
+            label: 'Start for Free',
+            to: '/signup',
+            variant: 'outline' as const,
+            color: 'neutral' as const
+        } : isPro ? {
+            label: 'Subscribe',
+            to: '/signup?plan=pro'
+        } : {
+            label: 'Contact Sales',
+            to: undefined,
+            variant: 'outline' as const,
+            color: 'neutral' as const,
+            onClick: () => { isContactModalOpen.value = true }
         }
-    }
-    return plan
-}))
+
+        const ui = {
+            title: `text-lg sm:text-xl font-extrabold ${isPro ? 'text-primary' : 'text-default'} uppercase tracking-wider`,
+            price: 'text-3xl sm:text-5xl font-extrabold',
+            billingCycle: 'text-lg text-muted'
+        }
+
+        return {
+            title: plan.name,
+            price: `$${plan.price}`,
+            billingCycle: `/${plan.interval === 'monthly' ? 'month' : 'year'}`,
+            description: plan.description,
+            badge: isPro ? 'Most Popular' : undefined,
+            features: plan.features,
+            button,
+            scale: isPro,
+            class: isPro ? 'ring-2 ring-primary' : '',
+            ui
+        }
+    })
+})
+
 
 onMounted(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -63,7 +97,7 @@ onMounted(() => {
                             class="absolute inset-0 rounded-full bg-primary-500/40 blur-sm scale-110 opacity-0 group-hover:opacity-100 transition-all duration-300" />
                         <UButton to="/start" size="xl" color="primary" icon="i-lucide-zap"
                             class="px-6 py-4 relative font-semibold tracking-wide rounded-xl shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 transition-all duration-300 hover:scale-[1.03]">
-                            Start Learning Free
+                            Start Learning
                         </UButton>
                     </div>
                     <!-- Secondary CTA -->
