@@ -25,6 +25,8 @@ ChartJS.register(
     Filler
 )
 
+const { adminDashboardData } = useAdminDashboard()
+
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -68,8 +70,8 @@ const chartOptions = {
     },
 }
 
-const activityData = {
-    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+const activityData = computed(() => ({
+    labels: adminDashboardData.value.activityLabels,
     datasets: [
         {
             label: 'Active Learners',
@@ -81,26 +83,26 @@ const activityData = {
             pointBorderWidth: 2,
             pointRadius: 4,
             pointHoverRadius: 6,
-            data: [350, 480, 620, 510, 750, 890, 780],
+            data: adminDashboardData.value.activityData,
             fill: true,
             tension: 0.4
         }
     ]
-}
+}))
 
-const completionData = {
-    labels: ['Tech', 'Design', 'Business', 'Languages', 'Science', 'Math'],
+const completionData = computed(() => ({
+    labels: adminDashboardData.value.categoryLabels,
     datasets: [
         {
             label: 'Topics Completed',
             backgroundColor: 'rgba(139, 92, 246, 0.85)', // violet transparent
             hoverBackgroundColor: 'rgba(139, 92, 246, 1)',
             borderRadius: 6,
-            data: [320, 150, 90, 210, 180, 250],
+            data: adminDashboardData.value.categoryData,
             maxBarThickness: 48
         }
     ]
-}
+}))
 </script>
 <template>
     <ContentPanel title="Dashboard">
@@ -113,10 +115,10 @@ const completionData = {
                     <div class="text-sm font-medium">Total Learners</div>
                     <UIcon name="i-lucide-users" class="text-primary w-5 h-5 opacity-50" />
                 </div>
-                <div class="text-3xl font-bold mt-2">1,248</div>
+                <div class="text-3xl font-bold mt-2">{{ adminDashboardData.totalLearners.toLocaleString() }}</div>
                 <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
                     <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                    <span>12% from last month</span>
+                    <span>{{ adminDashboardData.totalLearnersTrend }}</span>
                 </div>
             </UCard>
 
@@ -125,10 +127,10 @@ const completionData = {
                     <div class="text-sm font-medium">Topics Mastered</div>
                     <UIcon name="i-lucide-book-open-check" class="text-primary w-5 h-5 opacity-50" />
                 </div>
-                <div class="text-3xl font-bold mt-2">84</div>
+                <div class="text-3xl font-bold mt-2">{{ adminDashboardData.topicsMastered.toLocaleString() }}</div>
                 <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
                     <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                    <span>5% from last week</span>
+                    <span>{{ adminDashboardData.topicsMasteredTrend }}</span>
                 </div>
             </UCard>
 
@@ -137,10 +139,10 @@ const completionData = {
                     <div class="text-sm font-medium">Avg. Generation Time</div>
                     <UIcon name="i-lucide-clock" class="text-primary w-5 h-5 opacity-50" />
                 </div>
-                <div class="text-3xl font-bold mt-2">2.4s</div>
+                <div class="text-3xl font-bold mt-2">{{ adminDashboardData.avgGenerationTime }}</div>
                 <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
                     <UIcon name="i-lucide-arrow-down-right" class="w-3 h-3" />
-                    <span>0.3s from last month</span>
+                    <span>{{ adminDashboardData.avgGenerationTimeTrend }}</span>
                 </div>
             </UCard>
         </div>

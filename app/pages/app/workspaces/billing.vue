@@ -1,31 +1,58 @@
 <script setup lang="ts">
-import { PLANS } from '~/constants/billing'
-
 const { currentWorkspace: workspace, updateWorkspace, canManageBilling } = useWorkspaces()
 const toast = useToast()
 
+const { plans } = usePlans()
+const PLANS = computed(() => {
+    return plans.value
+        .filter(p => p.status === 'Active')
+        .map(p => {
+            const nameLower = p.name.toLowerCase()
+            let color = 'neutral'
+            if (nameLower === 'pro') color = 'primary'
+            else if (nameLower === 'enterprise') color = 'purple'
+            
+            return {
+                id: p.id,
+                name: p.name,
+                price: p.price,
+                tokens: p.tokenLimit,
+                features: p.features,
+                color
+            }
+        })
+})
+
+const isCurrentPlan = (plan: any) => {
+    if (!workspace.value) return false
+    return workspace.value.plan.toLowerCase() === plan.name.toLowerCase() || workspace.value.plan.toLowerCase() === plan.id.toLowerCase()
+}
+
 const updatePlan = (planId: string) => {
-    if (planId === 'enterprise') {
+    const plan = PLANS.value.find(p => p.id === planId || p.name.toLowerCase() === planId.toLowerCase())
+    if (!plan) return
+
+    const planNameLower = plan.name.toLowerCase()
+
+    if (planNameLower === 'enterprise') {
         isContactModalOpen.value = true
         return
     }
 
-    const plan = PLANS.find(p => p.id === planId.toLowerCase())
-    if (!plan) return
-
     // If upgrading from Free to Pro, show Checkout Modal
-    if (isFree.value && planId === 'pro') {
+    const isUpgradingToPro = planNameLower === 'pro'
+    if (isFree.value && isUpgradingToPro) {
         selectedPlanData.value = plan
         isCheckoutModalOpen.value = true
         return
     }
 
-    finalizePlanUpdate(planId)
+    finalizePlanUpdate(plan.id)
 }
 
 const finalizePlanUpdate = (planId: string) => {
     if (workspace.value) {
-        const plan = PLANS.find(p => p.id === planId.toLowerCase())
+        const plan = PLANS.value.find(p => p.id === planId || p.name.toLowerCase() === planId.toLowerCase())
         if (plan) {
             updateWorkspace(workspace.value.id, {
                 plan: plan.name,
@@ -38,8 +65,8 @@ const finalizePlanUpdate = (planId: string) => {
 }
 
 const handleUpdateCard = () => {
-    const currentPlan = PLANS.find(p => p.name === workspace.value?.plan)
-    selectedPlanData.value = currentPlan || PLANS[1]
+    const currentPlan = PLANS.value.find(p => p.name.toLowerCase() === workspace.value?.plan?.toLowerCase())
+    selectedPlanData.value = currentPlan || PLANS.value[1] || PLANS.value[0]
     checkoutMode.value = 'update'
     isCheckoutModalOpen.value = true
 }
@@ -49,7 +76,8 @@ const cancelSubscription = () => {
 }
 
 const handleConfirmCancel = () => {
-    finalizePlanUpdate('free')
+    const freePlan = PLANS.value.find(p => p.name.toLowerCase() === 'free' || p.price === 0)
+    finalizePlanUpdate(freePlan ? freePlan.id : 'free')
     isCancelModalOpen.value = false
     toast.add({ title: 'Subscription Cancelled', description: 'Your plan has been set to downgrade to Free.', color: 'warning' })
 }
@@ -89,7 +117,15 @@ const isSupportModalOpen = ref(false)
 const isCheckoutModalOpen = ref(false)
 const isCancelModalOpen = ref(false)
 const checkoutMode = ref<'purchase' | 'update'>('purchase')
-const selectedPlanData = ref<any>(PLANS[1])
+const selectedPlanData = ref<any>(null)
+
+onMounted(() => {
+    if (PLANS.value.length > 1) {
+        selectedPlanData.value = PLANS.value[1]
+    } else if (PLANS.value.length > 0) {
+        selectedPlanData.value = PLANS.value[0]
+    }
+})
 
 const scrollToPlans = () => {
     const el = document.getElementById('plans-grid')
@@ -297,12 +333,12 @@ const scrollToPlans = () => {
                 <div v-for="plan in PLANS" :key="plan.id"
                     class="flex flex-col gap-8 p-8 rounded-[2rem] border-2 transition-all duration-500 relative group bg-white dark:bg-neutral-900"
                     :class="[
-                        workspace.plan.toLowerCase() === plan.id
+                        isCurrentPlan(plan)
                             ? 'border-primary-500 ring-8 ring-primary-500/5 shadow-2xl shadow-primary-500/10'
                             : 'border-neutral-100 dark:border-neutral-800 hover:border-neutral-200 dark:hover:border-neutral-700 hover:shadow-2xl'
                     ]">
 
-                    <div v-if="workspace.plan.toLowerCase() === plan.id"
+                    <div v-if="isCurrentPlan(plan)"
                         class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-primary-500 text-white text-[11px] font-bold uppercase tracking-[0.2em] rounded-full shadow-xl z-20">
                         Current
                     </div>
@@ -342,10 +378,10 @@ const scrollToPlans = () => {
                         </ul>
                     </div>
 
-                    <UButton :label="workspace.plan.toLowerCase() === plan.id ? 'Current Plan' : 'Select Plan'"
-                        :color="workspace.plan.toLowerCase() === plan.id ? 'primary' : 'neutral'"
-                        :variant="workspace.plan.toLowerCase() === plan.id ? 'solid' : 'soft'"
-                        :disabled="workspace.plan.toLowerCase() === plan.id || !canManageBilling" size="xl" block
+                    <UButton :label="isCurrentPlan(plan) ? 'Current Plan' : 'Select Plan'"
+                        :color="isCurrentPlan(plan) ? 'primary' : 'neutral'"
+                        :variant="isCurrentPlan(plan) ? 'solid' : 'soft'"
+                        :disabled="isCurrentPlan(plan) || !canManageBilling" size="xl" block
                         class="rounded-[1.25rem] font-bold py-5 text-base transition-transform group-hover:scale-[1.02] active:scale-[0.98]"
                         @click="updatePlan(plan.id)" />
                 </div>
