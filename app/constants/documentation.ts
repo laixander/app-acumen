@@ -109,6 +109,18 @@ export const workflowSteps = [
 
 export const changelogItems = [
     {
+        date: "May 19, 2026",
+        version: "v2.5.0",
+        title: "Navigation Scroll Tracking & Responsive Layout Refinements",
+        changes: [
+            "Implemented useActiveScroll composable for IntersectionObserver-based scroll tracking and dynamic navigation highlighting",
+            "Updated landing page navigation (guest layout) to support dynamic section tracking and active states",
+            "Added global smooth scrolling behavior to the application for desktop viewports",
+            "Refined SessionReadinessPlan and SessionProbingReasoning components with improved responsive layouts for mobile screens",
+            "Enhanced DashboardAIPrompt and global navigation components (UserMenu, Steps) with minor UI/UX improvements",
+        ],
+    },
+    {
         date: "May 18, 2026",
         version: "v2.4.0",
         title: "Premium Auth Redesign, AI Processing Overlays & UX Persistence",
