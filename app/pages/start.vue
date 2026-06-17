@@ -139,7 +139,7 @@ const selectPlan = (planId: string) => {
     // Find the plan to check its name/type
     const plan = plans.value.find(p => p.id === planId)
     const planName = plan ? plan.name.toLowerCase() : planId.toLowerCase()
-    
+
     // Enterprise opens contact modal instead of navigating
     if (planName === 'enterprise') {
         isContactModalOpen.value = true
@@ -196,13 +196,13 @@ const pricingPlans = computed(() => {
         <div class="hidden lg:flex flex-col p-10 text-white h-full relative overflow-hidden st-panel">
 
             <!-- Layered gradient background -->
-            <div class="absolute inset-0 z-0 st-panel-bg" />
+            <!-- <div class="absolute inset-0 z-0 st-panel-bg" /> -->
 
             <!-- Animated floating orbs -->
             <div class="absolute inset-0 z-0 pointer-events-none">
-                <div class="st-orb st-orb-1" />
-                <div class="st-orb st-orb-2" />
-                <div class="st-orb st-orb-3" />
+                <div class="st-orb st-orb-1"></div>
+                <div class="st-orb st-orb-2"></div>
+                <div class="st-orb st-orb-3"></div>
             </div>
 
             <!-- Grid overlay -->
@@ -251,7 +251,8 @@ const pricingPlans = computed(() => {
                 <div class="space-y-2.5">
                     <div v-for="item in ['Full topic creation flow', 'AI-powered pre-assessment', 'Personalized lesson plan']"
                         :key="item" class="flex items-center gap-3 text-sm font-light text-white/80">
-                        <div class="size-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                        <div
+                            class="size-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
                             <UIcon name="i-lucide-check" class="size-3 text-primary-300" />
                         </div>
                         {{ item }}
@@ -261,10 +262,10 @@ const pricingPlans = computed(() => {
                 <!-- Guest CTA (appears after door selection) -->
                 <Transition enter-active-class="transition-all duration-500" enter-from-class="opacity-0 translate-y-4"
                     enter-to-class="opacity-100 translate-y-0">
-                    <UCard v-if="flowState !== 'entry'" variant="outline"
-                        class="bg-white/5 ring-white/10 rounded-2xl">
+                    <UCard v-if="flowState !== 'entry'" variant="outline" class="bg-white/5 ring-white/10 rounded-2xl">
                         <p class="text-sm font-semibold text-white mb-1">Like what you see?</p>
-                        <p class="text-xs text-white/55 leading-relaxed mb-3">Sign up free to save this plan and start learning.</p>
+                        <p class="text-xs text-white/55 leading-relaxed mb-3">Sign up free to save this plan and start
+                            learning.</p>
                         <UButton label="Sign Up Free" to="/signup" color="primary" variant="solid" size="sm"
                             trailing-icon="i-lucide-arrow-right" class="rounded-full" />
                     </UCard>
@@ -327,10 +328,12 @@ const pricingPlans = computed(() => {
                         leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
 
                         <!-- Pricing Step -->
-                        <div v-if="flowState === 'pricing'" class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div v-if="flowState === 'pricing'"
+                            class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <!-- Header -->
                             <div class="text-center space-y-3">
-                                <UBadge color="primary" variant="subtle" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest">
+                                <UBadge color="primary" variant="subtle"
+                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest">
                                     <UIcon name="i-lucide-sparkles" class="size-3" />
                                     Your plan is ready
                                 </UBadge>
@@ -338,7 +341,11 @@ const pricingPlans = computed(() => {
                                     Choose how you want to learn
                                 </h2>
                                 <p class="text-sm text-muted max-w-md mx-auto leading-relaxed">
-                                    Your personalised topic <strong class="text-foreground">{{ formData.title || 'is ready' }}</strong>. Pick a plan to unlock it and start learning.
+                                    Your personalised topic
+                                    <strong class="text-foreground">
+                                        {{ formData.title || 'is ready' }}
+                                    </strong>.
+                                    Pick a plan to unlock it and start learning.
                                 </p>
                             </div>
 
@@ -360,7 +367,8 @@ const pricingPlans = computed(() => {
                                         <!-- Plan name & price -->
                                         <div class="space-y-1">
                                             <p class="text-xs font-semibold uppercase tracking-widest"
-                                                :class="plan.highlighted ? 'text-primary-300' : 'text-muted'">{{ plan.name }}</p>
+                                                :class="plan.highlighted ? 'text-primary-300' : 'text-muted'">{{
+                                                    plan.name }}</p>
                                             <div class="flex items-end gap-1">
                                                 <span class="text-4xl font-bold tracking-tight"
                                                     :class="plan.highlighted ? 'text-white' : ''">
@@ -378,7 +386,8 @@ const pricingPlans = computed(() => {
                                         </div>
 
                                         <!-- Divider -->
-                                        <div class="h-px" :class="plan.highlighted ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-800'" />
+                                        <div class="h-px"
+                                            :class="plan.highlighted ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-800'" />
 
                                         <!-- Features -->
                                         <ul class="space-y-2 flex-1">
@@ -395,8 +404,7 @@ const pricingPlans = computed(() => {
                                         </ul>
 
                                         <!-- CTA button -->
-                                        <UButton :label="plan.cta"
-                                            :color="plan.highlighted ? 'neutral' : 'primary'"
+                                        <UButton :label="plan.cta" :color="plan.highlighted ? 'neutral' : 'primary'"
                                             :variant="plan.highlighted ? 'solid' : 'outline'"
                                             trailing-icon="i-lucide-arrow-right"
                                             class="w-full justify-center rounded-xl mt-auto transition-transform group-hover:scale-[1.02]"
@@ -408,11 +416,20 @@ const pricingPlans = computed(() => {
                             <!-- Skip / social proof row -->
                             <div class="flex flex-col items-center gap-3">
                                 <div class="flex items-center gap-5 text-xs text-muted">
-                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-shield-check" class="size-3.5 text-primary" /> No credit card required</span>
-                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-refresh-ccw" class="size-3.5 text-primary" /> Cancel anytime</span>
-                                    <span class="flex items-center gap-1.5"><UIcon name="i-lucide-lock" class="size-3.5 text-primary" /> Secure checkout</span>
+                                    <span class="flex items-center gap-1.5">
+                                        <UIcon name="i-lucide-shield-check" class="size-3.5 text-primary" /> No credit
+                                        card required
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <UIcon name="i-lucide-refresh-ccw" class="size-3.5 text-primary" /> Cancel
+                                        anytime
+                                    </span>
+                                    <span class="flex items-center gap-1.5">
+                                        <UIcon name="i-lucide-lock" class="size-3.5 text-primary" /> Secure checkout
+                                    </span>
                                 </div>
-                                <button class="text-xs text-muted hover:text-primary transition-colors" @click="selectPlan('free')">
+                                <button class="text-xs text-muted hover:text-primary transition-colors"
+                                    @click="selectPlan('free')">
                                     Skip for now — continue with Free
                                 </button>
                             </div>
@@ -549,7 +566,9 @@ const pricingPlans = computed(() => {
     border-radius: 50%;
     filter: blur(60px);
     opacity: 0.4;
-    animation: st-float linear infinite;
+    animation-name: st-float;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 
 :root:not(.dark) .st-orb {
@@ -658,10 +677,24 @@ const pricingPlans = computed(() => {
 }
 
 @keyframes st-float {
-    0%   { transform: translate(0, 0) scale(1); }
-    25%  { transform: translate(14px, -18px) scale(1.03); }
-    50%  { transform: translate(-10px, 14px) scale(0.97); }
-    75%  { transform: translate(18px, 8px) scale(1.02); }
-    100% { transform: translate(0, 0) scale(1); }
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+
+    25% {
+        transform: translate(14px, -18px) scale(1.03);
+    }
+
+    50% {
+        transform: translate(-10px, 14px) scale(0.97);
+    }
+
+    75% {
+        transform: translate(18px, 8px) scale(1.02);
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+    }
 }
 </style>
