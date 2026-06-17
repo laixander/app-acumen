@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const props = defineProps<{
+    isOnboarding?: boolean
+}>()
+
 const emit = defineEmits(['select-upload', 'select-explore', 'select-prompt'])
 
 const promptText = ref('')
@@ -83,7 +87,7 @@ const doors = [
             </div>
 
             <!-- AI Prompt Door — spans full width -->
-            <div
+            <div v-if="!isOnboarding"
                 class="group relative md:col-span-2 flex flex-col sm:flex-row rounded-[2rem] border border-violet-200/60 dark:border-violet-800/40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:border-violet-500/50 dark:hover:border-violet-500/40 transition-all duration-700 overflow-hidden">
 
                 <!-- Left: info panel -->

@@ -45,9 +45,9 @@ const formData = reactive({
 
 // Mirror new.vue's steps/stepper
 const steps = computed(() => {
-    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan', 'Pricing']
-    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan', 'Pricing']
-    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan', 'Pricing']
+    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan']
+    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
 })
 
 const currentStepIndex = computed(() => {
@@ -212,9 +212,7 @@ const pricingPlans = computed(() => {
 
             <!-- Logo -->
             <div class="relative z-10 mb-auto">
-                <NuxtLink to="/" class="opacity-90 hover:opacity-100 transition-opacity">
-                    <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" naked />
-                </NuxtLink>
+                <UButton icon="i-lucide-home" variant="soft" to="/" size="sm" />
             </div>
 
             <!-- Body -->
@@ -225,26 +223,16 @@ const pricingPlans = computed(() => {
                     <UBadge color="primary" variant="outline"
                         class="inline-flex items-center gap-2 w-fit px-3 py-1.5 text-xs font-medium tracking-wide uppercase">
                         <span class="w-1.5 h-1.5 rounded-full bg-primary-400 animate-pulse" />
-                        <Transition mode="out-in" enter-active-class="transition-all duration-300"
-                            enter-from-class="opacity-0" enter-to-class="opacity-100"
-                            leave-active-class="transition-all duration-200" leave-to-class="opacity-0">
-                            <span :key="modeLabel">{{ modeLabel }}</span>
-                        </Transition>
+                        <span :key="modeLabel">{{ modeLabel }}</span>
                     </UBadge>
-
-                    <Transition mode="out-in" enter-active-class="transition-all duration-300"
-                        enter-from-class="opacity-0 translate-y-2" enter-to-class="opacity-100 translate-y-0"
-                        leave-active-class="transition-all duration-200" leave-from-class="opacity-100"
-                        leave-to-class="opacity-0">
-                        <div :key="modeLabel">
-                            <h1 class="text-3xl font-bold leading-tight mb-3">
-                                Experience the <span class="text-primary">real thing.</span>
-                            </h1>
-                            <p class="text-sm font-light leading-relaxed text-white/60">
-                                This is the actual Acumen topic creator. Sign up to save your plan and start learning.
-                            </p>
-                        </div>
-                    </Transition>
+                    <div :key="modeLabel">
+                        <h1 class="text-3xl font-bold leading-tight mb-3">
+                            Experience the <span class="text-primary">real thing.</span>
+                        </h1>
+                        <p class="text-sm font-light leading-relaxed text-white/60">
+                            This is the actual Acumen topic creator. Sign up to save your plan and start learning.
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Feature checklist -->
@@ -259,8 +247,11 @@ const pricingPlans = computed(() => {
                     </div>
                 </div>
 
+                <UButton label="Sign Up Free" to="/signup" color="primary" variant="solid" size="lg"
+                    class="w-fit px-4" />
+
                 <!-- Guest CTA (appears after door selection) -->
-                <Transition enter-active-class="transition-all duration-500" enter-from-class="opacity-0 translate-y-4"
+                <!-- <Transition enter-active-class="transition-all duration-500" enter-from-class="opacity-0 translate-y-4"
                     enter-to-class="opacity-100 translate-y-0">
                     <UCard v-if="flowState !== 'entry'" variant="outline" class="bg-white/5 ring-white/10 rounded-2xl">
                         <p class="text-sm font-semibold text-white mb-1">Like what you see?</p>
@@ -269,244 +260,202 @@ const pricingPlans = computed(() => {
                         <UButton label="Sign Up Free" to="/signup" color="primary" variant="solid" size="sm"
                             trailing-icon="i-lucide-arrow-right" class="rounded-full" />
                     </UCard>
-                </Transition>
+                </Transition> -->
             </div>
 
-            <!-- Guest badge -->
+            <!-- copyright -->
             <div class="relative z-10 flex items-center gap-2 text-xs font-medium text-white/40">
-                <UIcon name="i-lucide-eye" class="size-3.5" />
-                Guest preview — no account needed yet
+                &copy; {{ new Date().getFullYear() }} Acumen. All rights reserved.
             </div>
         </div>
 
         <!-- Right Panel -->
-        <div ref="rightPanelRef" class="flex flex-col overflow-y-auto">
-            <!-- Top Bar -->
-            <div
-                class="flex items-center justify-between px-8 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
-                <div class="flex items-center gap-3 flex-1">
-                    <button v-if="flowState !== 'entry'" @click="prevStep"
-                        class="text-xs text-muted hover:text-primary transition-colors flex items-center gap-1">
-                        <UIcon name="i-lucide-arrow-left" class="size-3.5" /> Back
-                    </button>
-                </div>
-                <div class="flex items-center justify-center flex-1 font-semibold">
-                    Onboarding
-                </div>
-                <!-- <div class="flex items-center gap-2">
-                    <div v-for="(label, i) in steps" :key="label" class="flex items-center gap-2">
-                        <div class="flex items-center gap-1.5">
-                            <div class="size-1.5 rounded-full transition-all duration-500"
-                                :class="i <= currentStepIndex ? 'bg-primary w-4' : 'bg-neutral-300 dark:bg-neutral-700'" />
-                            <span v-if="i <= currentStepIndex"
-                                class="text-[10px] font-bold uppercase tracking-widest text-primary">{{ label }}</span>
-                        </div>
-                        <div v-if="i < steps.length - 1" class="w-5 h-px"
-                            :class="i < currentStepIndex ? 'bg-primary/40' : 'bg-neutral-200 dark:bg-neutral-700'" />
-                    </div>
-                </div> -->
-
-                <div class="flex items-center justify-end gap-3 flex-1">
-                    <!-- <button v-if="flowState !== 'entry'" @click="prevStep"
-                        class="text-xs text-muted hover:text-primary transition-colors flex items-center gap-1">
-                        <UIcon name="i-lucide-arrow-left" class="size-3.5" /> Back
-                    </button> -->
-                    <NuxtLink to="/"
-                        class="text-xs text-muted hover:text-primary transition-colors flex items-center gap-1">
-                        <UIcon name="i-lucide-x" class="size-3.5" /> Exit
-                    </NuxtLink>
-                </div>
-            </div>
-
+        <div ref="rightPanelRef" class="overflow-y-auto h-full flex flex-col">
             <!-- Main content area -->
-            <div ref="mainContentRef" class="flex-1 overflow-y-auto flex flex-col">
-                <UContainer class="lg:max-w-4xl py-10 flex flex-col grow gap-10">
+            <UContainer ref="mainContentRef" class="lg:max-w-4xl py-10 w-full flex-1 flex flex-col">
+                <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
+                    leave-active-class="transition-all duration-200 ease-in"
+                    leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
 
-                    <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
-                        enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0"
-                        leave-active-class="transition-all duration-200 ease-in"
-                        leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-4">
+                    <!-- Pricing Step -->
+                    <div v-if="flowState === 'pricing'"
+                        class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500 my-auto w-full">
+                        <!-- Header -->
+                        <div class="text-center space-y-3">
+                            <UBadge color="primary" variant="subtle"
+                                class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest">
+                                <UIcon name="i-lucide-sparkles" class="size-3" />
+                                Your plan is ready
+                            </UBadge>
+                            <h2 class="text-3xl font-bold tracking-tight">
+                                Choose how you want to learn
+                            </h2>
+                            <p class="text-sm text-muted max-w-md mx-auto leading-relaxed">
+                                Your personalised topic
+                                <strong class="text-foreground">
+                                    {{ formData.title || 'is ready' }}
+                                </strong>.
+                                Pick a plan to unlock it and start learning.
+                            </p>
+                        </div>
 
-                        <!-- Pricing Step -->
-                        <div v-if="flowState === 'pricing'"
-                            class="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <!-- Header -->
-                            <div class="text-center space-y-3">
-                                <UBadge color="primary" variant="subtle"
-                                    class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-widest">
-                                    <UIcon name="i-lucide-sparkles" class="size-3" />
-                                    Your plan is ready
-                                </UBadge>
-                                <h2 class="text-3xl font-bold tracking-tight">
-                                    Choose how you want to learn
-                                </h2>
-                                <p class="text-sm text-muted max-w-md mx-auto leading-relaxed">
-                                    Your personalised topic
-                                    <strong class="text-foreground">
-                                        {{ formData.title || 'is ready' }}
-                                    </strong>.
-                                    Pick a plan to unlock it and start learning.
-                                </p>
-                            </div>
+                        <!-- Pricing Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div v-for="plan in pricingPlans" :key="plan.id"
+                                class="pricing-card relative flex flex-col rounded-2xl overflow-hidden cursor-pointer group"
+                                :class="plan.highlighted ? 'pricing-card--highlighted' : 'pricing-card--default'"
+                                @click="selectPlan(plan.id)">
 
-                            <!-- Pricing Cards -->
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                                <div v-for="plan in pricingPlans" :key="plan.id"
-                                    class="pricing-card relative flex flex-col rounded-2xl overflow-hidden cursor-pointer group"
-                                    :class="plan.highlighted ? 'pricing-card--highlighted' : 'pricing-card--default'"
-                                    @click="selectPlan(plan.id)">
+                                <!-- Popular badge -->
+                                <div v-if="plan.badge" class="pricing-badge">
+                                    <UIcon name="i-lucide-zap" class="size-3" />
+                                    {{ plan.badge }}
+                                </div>
 
-                                    <!-- Popular badge -->
-                                    <div v-if="plan.badge" class="pricing-badge">
-                                        <UIcon name="i-lucide-zap" class="size-3" />
-                                        {{ plan.badge }}
+                                <!-- Card body -->
+                                <div class="flex flex-col flex-1 p-6 gap-5">
+                                    <!-- Plan name & price -->
+                                    <div class="space-y-1">
+                                        <p class="text-xs font-semibold uppercase tracking-widest"
+                                            :class="plan.highlighted ? 'text-primary-300' : 'text-muted'">{{
+                                                plan.name }}</p>
+                                        <div class="flex items-end gap-1">
+                                            <span class="text-4xl font-bold tracking-tight"
+                                                :class="plan.highlighted ? 'text-white' : ''">
+                                                {{ plan.price }}
+                                            </span>
+                                            <span class="text-sm pb-1"
+                                                :class="plan.highlighted ? 'text-white/50' : 'text-muted'">
+                                                / {{ plan.period }}
+                                            </span>
+                                        </div>
+                                        <p class="text-xs leading-relaxed"
+                                            :class="plan.highlighted ? 'text-white/60' : 'text-muted'">
+                                            {{ plan.description }}
+                                        </p>
                                     </div>
 
-                                    <!-- Card body -->
-                                    <div class="flex flex-col flex-1 p-6 gap-5">
-                                        <!-- Plan name & price -->
-                                        <div class="space-y-1">
-                                            <p class="text-xs font-semibold uppercase tracking-widest"
-                                                :class="plan.highlighted ? 'text-primary-300' : 'text-muted'">{{
-                                                    plan.name }}</p>
-                                            <div class="flex items-end gap-1">
-                                                <span class="text-4xl font-bold tracking-tight"
-                                                    :class="plan.highlighted ? 'text-white' : ''">
-                                                    {{ plan.price }}
-                                                </span>
-                                                <span class="text-sm pb-1"
-                                                    :class="plan.highlighted ? 'text-white/50' : 'text-muted'">
-                                                    / {{ plan.period }}
-                                                </span>
+                                    <!-- Divider -->
+                                    <div class="h-px"
+                                        :class="plan.highlighted ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-800'" />
+
+                                    <!-- Features -->
+                                    <ul class="space-y-2 flex-1">
+                                        <li v-for="feat in plan.features" :key="feat"
+                                            class="flex items-start gap-2.5 text-sm"
+                                            :class="plan.highlighted ? 'text-white/80' : ''">
+                                            <div class="mt-0.5 size-4 rounded-full flex items-center justify-center shrink-0"
+                                                :class="plan.highlighted ? 'bg-primary-500/20' : 'bg-primary/10'">
+                                                <UIcon name="i-lucide-check" class="size-2.5"
+                                                    :class="plan.highlighted ? 'text-primary-300' : 'text-primary'" />
                                             </div>
-                                            <p class="text-xs leading-relaxed"
-                                                :class="plan.highlighted ? 'text-white/60' : 'text-muted'">
-                                                {{ plan.description }}
-                                            </p>
-                                        </div>
+                                            {{ feat }}
+                                        </li>
+                                    </ul>
 
-                                        <!-- Divider -->
-                                        <div class="h-px"
-                                            :class="plan.highlighted ? 'bg-white/10' : 'bg-neutral-100 dark:bg-neutral-800'" />
+                                    <!-- CTA button -->
+                                    <UButton :label="plan.cta" :color="plan.highlighted ? 'neutral' : 'primary'"
+                                        :variant="plan.highlighted ? 'solid' : 'outline'"
+                                        trailing-icon="i-lucide-arrow-right"
+                                        class="w-full justify-center rounded-xl mt-auto transition-transform group-hover:scale-[1.02]"
+                                        @click.stop="selectPlan(plan.id)" />
+                                </div>
+                            </div>
+                        </div>
 
-                                        <!-- Features -->
-                                        <ul class="space-y-2 flex-1">
-                                            <li v-for="feat in plan.features" :key="feat"
-                                                class="flex items-start gap-2.5 text-sm"
-                                                :class="plan.highlighted ? 'text-white/80' : ''">
-                                                <div class="mt-0.5 size-4 rounded-full flex items-center justify-center shrink-0"
-                                                    :class="plan.highlighted ? 'bg-primary-500/20' : 'bg-primary/10'">
-                                                    <UIcon name="i-lucide-check" class="size-2.5"
-                                                        :class="plan.highlighted ? 'text-primary-300' : 'text-primary'" />
-                                                </div>
-                                                {{ feat }}
-                                            </li>
-                                        </ul>
+                        <!-- Skip / social proof row -->
+                        <div class="flex flex-col items-center gap-3">
+                            <div class="flex items-center gap-5 text-xs text-muted">
+                                <span class="flex items-center gap-1.5">
+                                    <UIcon name="i-lucide-shield-check" class="size-3.5 text-primary" /> No credit
+                                    card required
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <UIcon name="i-lucide-refresh-ccw" class="size-3.5 text-primary" /> Cancel
+                                    anytime
+                                </span>
+                                <span class="flex items-center gap-1.5">
+                                    <UIcon name="i-lucide-lock" class="size-3.5 text-primary" /> Secure checkout
+                                </span>
+                            </div>
+                            <button class="text-xs text-muted hover:text-primary transition-colors"
+                                @click="selectPlan('free')">
+                                Skip for now — continue with Free
+                            </button>
+                        </div>
+                    </div>
 
-                                        <!-- CTA button -->
-                                        <UButton :label="plan.cta" :color="plan.highlighted ? 'neutral' : 'primary'"
-                                            :variant="plan.highlighted ? 'solid' : 'outline'"
-                                            trailing-icon="i-lucide-arrow-right"
-                                            class="w-full justify-center rounded-xl mt-auto transition-transform group-hover:scale-[1.02]"
-                                            @click.stop="selectPlan(plan.id)" />
+                    <!-- Generation Overlay (legacy – kept for safety) -->
+                    <div v-else-if="isGenerating" class="flex flex-col justify-center my-auto w-full">
+                        <AppTopicGenerating @finish="selectPlan('free')" />
+                    </div>
+
+                    <!-- Indexing Overlay (Upload only) -->
+                    <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center my-auto w-full">
+                        <AppTopicAnalyzing />
+                    </div>
+
+                    <!-- Processing Overlay (Explore & Prompt Modes) -->
+                    <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center my-auto w-full">
+                        <AppTopicProcessing :mode="creationMode" />
+                    </div>
+
+                    <!-- Main Flow -->
+                    <div v-else class="flex flex-col gap-8 my-auto w-full">
+
+                        <!-- Stepper heading (shown after door selection) -->
+                        <div v-if="flowState !== 'entry'"
+                            class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                            <!-- <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered /> -->
+                            <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
+                        </div>
+
+                        <!-- Entry (Door Selection) -->
+                        <div v-if="flowState === 'entry'">
+                            <AppTopicDoorSelection is-onboarding @select-upload="selectMode('upload')"
+                                @select-explore="selectMode('explore')" @select-prompt="handlePromptSelect" />
+                        </div>
+
+                        <!-- Step Content Card -->
+                        <UCard v-else
+                            class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden"
+                            :ui="{ body: 'p-0 sm:p-0 relative' }">
+                            <div class="min-h-full">
+                                <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
+                                    enter-from-class="opacity-0 translate-y-4"
+                                    enter-to-class="opacity-100 translate-y-0"
+                                    leave-active-class="transition-all duration-200 ease-in"
+                                    leave-from-class="opacity-100 translate-y-0"
+                                    leave-to-class="opacity-0 -translate-y-4">
+                                    <div :key="flowState">
+
+                                        <!-- Setup Step -->
+                                        <template v-if="flowState === 'setup'">
+                                            <AppTopicFormMaterials v-if="creationMode === 'upload'"
+                                                :model-value="formData"
+                                                @update:model-value="val => Object.assign(formData, val)"
+                                                @upload-ready="handleUploadComplete" />
+                                            <AppTopicSubjectPicker v-else-if="creationMode === 'explore'"
+                                                @select="handleSubjectSelect" />
+                                        </template>
+
+                                        <!-- Assessment Step -->
+                                        <AppTopicFormPreAssessment v-else-if="flowState === 'assessment'"
+                                            v-model="formData" @complete="handleAssessmentComplete" @back="prevStep" />
+
+                                        <!-- Plan / Review Step -->
+                                        <AppSessionReadinessPlan v-else-if="flowState === 'review'"
+                                            :topic-title="formData.title" is-onboarding @close="handleFinish" />
+
                                     </div>
-                                </div>
+                                </Transition>
                             </div>
+                        </UCard>
 
-                            <!-- Skip / social proof row -->
-                            <div class="flex flex-col items-center gap-3">
-                                <div class="flex items-center gap-5 text-xs text-muted">
-                                    <span class="flex items-center gap-1.5">
-                                        <UIcon name="i-lucide-shield-check" class="size-3.5 text-primary" /> No credit
-                                        card required
-                                    </span>
-                                    <span class="flex items-center gap-1.5">
-                                        <UIcon name="i-lucide-refresh-ccw" class="size-3.5 text-primary" /> Cancel
-                                        anytime
-                                    </span>
-                                    <span class="flex items-center gap-1.5">
-                                        <UIcon name="i-lucide-lock" class="size-3.5 text-primary" /> Secure checkout
-                                    </span>
-                                </div>
-                                <button class="text-xs text-muted hover:text-primary transition-colors"
-                                    @click="selectPlan('free')">
-                                    Skip for now — continue with Free
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Generation Overlay (legacy – kept for safety) -->
-                        <div v-else-if="isGenerating" class="flex flex-col justify-center grow">
-                            <AppTopicGenerating @finish="selectPlan('free')" />
-                        </div>
-
-                        <!-- Indexing Overlay (Upload only) -->
-                        <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center grow">
-                            <AppTopicAnalyzing />
-                        </div>
-
-                        <!-- Processing Overlay (Explore & Prompt Modes) -->
-                        <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center grow">
-                            <AppTopicProcessing :mode="creationMode" />
-                        </div>
-
-                        <!-- Main Flow -->
-                        <div v-else class="flex flex-col gap-8">
-
-                            <!-- Stepper heading (shown after door selection) -->
-                            <div v-if="flowState !== 'entry'"
-                                class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                                <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered />
-                                <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
-                            </div>
-
-                            <!-- Entry (Door Selection) -->
-                            <div v-if="flowState === 'entry'">
-                                <AppTopicDoorSelection @select-upload="selectMode('upload')"
-                                    @select-explore="selectMode('explore')" @select-prompt="handlePromptSelect" />
-                            </div>
-
-                            <!-- Step Content Card -->
-                            <UCard v-else
-                                class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden"
-                                :ui="{ body: 'p-0 sm:p-0 relative' }">
-                                <div class="min-h-full">
-                                    <Transition mode="out-in" enter-active-class="transition-all duration-300 ease-out"
-                                        enter-from-class="opacity-0 translate-y-4"
-                                        enter-to-class="opacity-100 translate-y-0"
-                                        leave-active-class="transition-all duration-200 ease-in"
-                                        leave-from-class="opacity-100 translate-y-0"
-                                        leave-to-class="opacity-0 -translate-y-4">
-                                        <div :key="flowState">
-
-                                            <!-- Setup Step -->
-                                            <template v-if="flowState === 'setup'">
-                                                <AppTopicFormMaterials v-if="creationMode === 'upload'"
-                                                    :model-value="formData"
-                                                    @update:model-value="val => Object.assign(formData, val)"
-                                                    @upload-ready="handleUploadComplete" />
-                                                <AppTopicSubjectPicker v-else-if="creationMode === 'explore'"
-                                                    @select="handleSubjectSelect" />
-                                            </template>
-
-                                            <!-- Assessment Step -->
-                                            <AppTopicFormPreAssessment v-else-if="flowState === 'assessment'"
-                                                v-model="formData" @complete="handleAssessmentComplete"
-                                                @back="prevStep" />
-
-                                            <!-- Plan / Review Step -->
-                                            <AppSessionReadinessPlan v-else-if="flowState === 'review'"
-                                                :topic-title="formData.title" is-onboarding @close="handleFinish" />
-
-                                        </div>
-                                    </Transition>
-                                </div>
-                            </UCard>
-
-                        </div>
-                    </Transition>
-                </UContainer>
-            </div>
+                    </div>
+                </Transition>
+            </UContainer>
         </div>
 
         <ContactSalesModal v-model:open="isContactModalOpen" />

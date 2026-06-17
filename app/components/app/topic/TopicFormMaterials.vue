@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type UploadFile = { name: string; size: string; type: string; status?: 'success' | 'error' | 'uploading' }
+type UploadFile = { name: string; size: string; type: string; status?: 'success' | 'error' | 'uploading', file?: File }
 
 const props = defineProps<{
     modelValue: {
@@ -10,24 +10,56 @@ const props = defineProps<{
 const emit = defineEmits(['update:modelValue', 'upload-ready'])
 
 const isUploading = ref(false)
+const isDragging = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
 const hasErrors = computed(() => props.modelValue.files.some(f => f.status === 'error'))
 const successCount = computed(() => props.modelValue.files.filter(f => f.status === 'success').length)
 
-const addMockFile = () => {
+const triggerFileInput = () => {
+    fileInput.value?.click()
+}
+
+const formatSize = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+}
+
+const processFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return
+
     isUploading.value = true
+
+    const newUploads: UploadFile[] = Array.from(files).map(file => ({
+        name: file.name,
+        size: formatSize(file.size),
+        type: file.type || file.name.split('.').pop() || 'unknown',
+        status: 'success',
+        file
+    }))
+
+    // Simulate upload delay for the files
     setTimeout(() => {
-        const isError = Math.random() > 0.8 // 20% chance of error for demo
-        const newFile = {
-            name: `Study_Materials_${props.modelValue.files.length + 1}.pdf`,
-            size: '2.4 MB',
-            type: 'pdf',
-            status: isError ? 'error' : 'success'
-        }
-        const updatedValue = { ...props.modelValue, files: [...props.modelValue.files, newFile] }
+        const updatedValue = { ...props.modelValue, files: [...props.modelValue.files, ...newUploads] }
         emit('update:modelValue', updatedValue)
         isUploading.value = false
     }, 1500)
+}
+
+const handleFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    processFiles(target.files)
+    if (fileInput.value) {
+        fileInput.value.value = '' // Reset input so same file can be uploaded again if needed
+    }
+}
+
+const handleDrop = (event: DragEvent) => {
+    isDragging.value = false
+    processFiles(event.dataTransfer?.files || null)
 }
 
 const removeFile = (index: number) => {
@@ -58,25 +90,36 @@ const retryFile = (index: number) => {
             </div>
             <div>
                 <h2 class="text-xl font-bold text-neutral-900 dark:text-white">Upload Your Materials</h2>
-                <p class="text-sm text-neutral-500 dark:text-neutral-400">Upload your reviewer, your notes, your textbook.</p>
+                <p class="text-sm text-neutral-500 dark:text-neutral-400">Upload your reviewer, your notes, your
+                    textbook.</p>
             </div>
         </div>
 
         <!-- Dropzone -->
-        <div class="group relative border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-3xl py-16 flex flex-col items-center justify-center gap-6 hover:border-primary-500/50 hover:bg-primary-50/10 dark:hover:bg-primary-950/10 transition-all duration-500 cursor-pointer overflow-hidden"
-            @click="addMockFile">
+        <div class="group relative border-2 border-dashed rounded-3xl py-16 flex flex-col items-center justify-center gap-6 hover:border-primary-500/50 hover:bg-primary-50/10 dark:hover:bg-primary-950/10 transition-all duration-500 cursor-pointer overflow-hidden"
+            :class="[
+                isDragging ? 'border-primary-500 bg-primary-50/10 dark:bg-primary-950/10' : 'border-neutral-200 dark:border-neutral-800'
+            ]" @click="triggerFileInput" @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
+            @drop.prevent="handleDrop">
 
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 dark:to-neutral-900/20 pointer-events-none"></div>
+            <input type="file" class="hidden" ref="fileInput" multiple @change="handleFileChange"
+                accept=".pdf,.doc,.docx,.txt" />
 
-            <div class="relative p-5 bg-white dark:bg-neutral-800 rounded-2xl shadow-xl group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-500">
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-transparent to-neutral-50/50 dark:to-neutral-900/20 pointer-events-none">
+            </div>
+
+            <div
+                class="relative p-5 bg-white dark:bg-neutral-800 rounded-2xl shadow-xl group-hover:-translate-y-2 group-hover:rotate-3 transition-all duration-500">
                 <UIcon :name="isUploading ? 'i-lucide-loader-2' : 'i-lucide-file-up'"
                     class="flex shrink-0 text-4xl text-neutral-400 group-hover:text-primary transition-colors duration-500"
                     :class="{ 'animate-spin': isUploading }" />
             </div>
 
-            <div class="relative text-center space-y-2">
+            <div class="relative text-center space-y-2 pointer-events-none">
                 <p class="text-lg font-bold text-neutral-900 dark:text-white">
-                    {{ isUploading ? 'Uploading material...' : 'Click or drag and drop' }}
+                    {{ isUploading ? 'Uploading material...' : isDragging ? 'Drop files here' : 'Click or drag and drop'
+                    }}
                 </p>
                 <p class="text-sm text-neutral-500">PDF, DOCX, TXT up to 50MB</p>
             </div>
@@ -89,7 +132,7 @@ const retryFile = (index: number) => {
                 <h3 class="text-xs font-bold uppercase tracking-widest text-neutral-400">Selected Materials</h3>
                 <span v-if="hasErrors" class="text-xs font-semibold text-red-500 flex items-center gap-1">
                     <UIcon name="i-lucide-alert-circle" class="w-3.5 h-3.5" />
-                    {{ modelValue.files.filter(f => f.status === 'error').length }} failed
+                    {{modelValue.files.filter(f => f.status === 'error').length}} failed
                 </span>
             </div>
 
@@ -126,23 +169,16 @@ const retryFile = (index: number) => {
                         <p class="text-xs text-neutral-500 flex items-center gap-2">
                             {{ file.size }}
                             <span v-if="file.status === 'error'" class="text-red-500 font-medium">• Upload failed</span>
-                            <span v-else-if="file.status === 'uploading'" class="text-primary font-medium">• Retrying...</span>
+                            <span v-else-if="file.status === 'uploading'" class="text-primary font-medium">•
+                                Retrying...</span>
                         </p>
                     </div>
 
                     <div class="flex items-center gap-1 shrink-0">
                         <!-- Retry button for failed files -->
-                        <UButton v-if="file.status === 'error'"
-                            icon="i-lucide-refresh-cw"
-                            variant="ghost"
-                            color="error"
-                            size="xs"
-                            @click.stop="retryFile(index)" />
-                        <UButton
-                            icon="i-lucide-x"
-                            variant="ghost"
-                            color="neutral"
-                            size="xs"
+                        <UButton v-if="file.status === 'error'" icon="i-lucide-refresh-cw" variant="ghost" color="error"
+                            size="xs" @click.stop="retryFile(index)" />
+                        <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs"
                             class="opacity-0 group-hover:opacity-100 transition-opacity"
                             @click.stop="removeFile(index)" />
                     </div>
@@ -175,13 +211,8 @@ const retryFile = (index: number) => {
                         <span>Fix failed uploads before continuing — retry or remove them.</span>
                     </div>
                 </Transition>
-                <UButton
-                    label="Start Indexing"
-                    trailing-icon="i-lucide-arrow-right"
-                    variant="solid"
-                    size="xl"
-                    color="primary"
-                    :disabled="hasErrors || successCount === 0"
+                <UButton label="Start Indexing" trailing-icon="i-lucide-arrow-right" variant="solid" size="xl"
+                    color="primary" :disabled="hasErrors || successCount === 0"
                     class="rounded-full px-12 py-5 uppercase text-sm font-bold tracking-[0.2em] hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     @click="$emit('upload-ready')" />
             </div>

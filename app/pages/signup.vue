@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onUnmounted } from 'vue'
 import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 
 definePageMeta({
@@ -18,7 +18,7 @@ const { exists: hasDraft } = useOnboardingDraft()
 const planInfo = computed(() => {
     const planId = (route.query.plan as string) || 'free'
     const plan = activePlans.value.find(p => (p.id === planId.toLowerCase() || p.name.toLowerCase() === planId.toLowerCase()) && p.name.toLowerCase() !== 'enterprise')
-    
+
     if (plan) {
         return {
             id: plan.id,
@@ -26,7 +26,7 @@ const planInfo = computed(() => {
             price: plan.price
         }
     }
-    
+
     const freePlan = activePlans.value.find(p => p.name.toLowerCase() === 'free' || p.price === 0)
     return {
         id: freePlan ? freePlan.id : 'free',
@@ -52,6 +52,25 @@ const form = reactive({
     }
 })
 
+const resendCountdown = ref(0)
+let countdownTimer: any = null
+
+const startResendCountdown = () => {
+    resendCountdown.value = 60
+    if (countdownTimer) clearInterval(countdownTimer)
+    countdownTimer = setInterval(() => {
+        if (resendCountdown.value > 0) {
+            resendCountdown.value--
+        } else {
+            if (countdownTimer) clearInterval(countdownTimer)
+        }
+    }, 1000)
+}
+
+onUnmounted(() => {
+    if (countdownTimer) clearInterval(countdownTimer)
+})
+
 const nextStep = () => {
     if (step.value === 1) {
         if (!form.email || !/^\S+@\S+\.\S+$/.test(form.email)) {
@@ -63,6 +82,7 @@ const nextStep = () => {
             loading.value = false
             step.value = 2
             toast.add({ title: 'Code sent!', description: 'Please check your email for the verification code.' })
+            startResendCountdown()
         }, 800)
     } else if (step.value === 2) {
         const codeString = form.code.join('')
@@ -118,6 +138,8 @@ const nextStep = () => {
 }
 
 const resendCode = () => {
+    if (resendCountdown.value > 0) return
+    startResendCountdown()
     toast.add({ title: 'Code resent!', description: 'A new verification code has been sent to your email.' })
 }
 
@@ -202,8 +224,9 @@ const suStats = [
             <!-- <div class="absolute inset-0 z-0 su-grid-overlay pointer-events-none" /> -->
 
             <!-- Logo Header -->
-            <div class="relative z-10 flex items-center gap-3">
+            <div class="relative z-10 flex justify-between items-center gap-3">
                 <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
+                <UButton icon="i-lucide-home" variant="soft" to="/" size="sm" />
             </div>
 
             <!-- Body Content -->
@@ -270,13 +293,6 @@ const suStats = [
         <!-- Right Panel — Premium Signup Wizard -->
         <div class="relative flex items-center justify-center px-6 py-12 lg:px-16 overflow-y-auto">
 
-            <!-- Back to home -->
-            <NuxtLink to="/"
-                class="absolute top-6 left-6 lg:top-8 lg:left-10 inline-flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors z-10 group">
-                <UIcon name="i-lucide-arrow-left" class="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
-                Back to home
-            </NuxtLink>
-
             <div class="w-full max-w-sm my-auto">
 
                 <!-- Mobile logo -->
@@ -287,10 +303,10 @@ const suStats = [
                 <!-- Premium Stepper -->
                 <div class="flex items-center gap-2 mb-10">
                     <template v-for="i in (shouldShowPayment ? 4 : 3)" :key="i">
-                        <div class="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all duration-300 ring-2 ring-offset-2 ring-offset-background"
+                        <div class="flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-all duration-300 ring-2"
                             :class="[
                                 step > i
-                                    ? 'bg-primary text-white ring-primary/30'
+                                    ? 'bg-primary text-white ring-primary'
                                     : step === i
                                         ? 'bg-primary/10 text-primary ring-primary/40'
                                         : 'bg-muted/40 text-muted ring-transparent'
@@ -314,7 +330,7 @@ const suStats = [
                             class="text-xs font-medium text-foreground/70 uppercase tracking-wide">Email
                             address</label>
                         <UInput id="su-email" v-model="form.email" type="email" placeholder="you@example.com"
-                            variant="soft" size="lg" class="w-full" autocomplete="email" @keydown.enter="nextStep" />
+                            variant="subtle" size="lg" class="w-full" autocomplete="email" @keydown.enter="nextStep" />
                     </div>
                     <UButton label="Continue" trailing-icon="i-lucide-arrow-right" block size="lg" @click="nextStep"
                         :loading="loading" :ui="{ trailingIcon: 'ms-0' }" />
@@ -330,10 +346,10 @@ const suStats = [
 
                 <!-- Step 02 — Verify email -->
                 <div v-else-if="step === 2" class="space-y-6">
-                    <div
+                    <!-- <div
                         class="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                         <UIcon name="i-lucide-mail" class="size-5" />
-                    </div>
+                    </div> -->
                     <div class="space-y-1">
                         <h2 class="text-2xl font-bold tracking-tight">Check your inbox</h2>
                         <p class="text-sm text-muted">
@@ -344,13 +360,15 @@ const suStats = [
                     <div class="space-y-1.5">
                         <label class="text-xs font-medium text-foreground/70 uppercase tracking-wide">Verification
                             code</label>
-                        <UPinInput v-model="form.code" :length="6" variant="soft" size="xl" class="mt-2"
+                        <UPinInput v-model="form.code" :length="6" variant="subtle" size="xl" class="mt-2"
                             :ui="{ root: 'w-full justify-between', base: 'w-12 h-14 text-center font-bold' }" />
                     </div>
                     <div class="space-y-3">
                         <UButton label="Verify Email" trailing-icon="i-lucide-arrow-right" block size="lg"
                             @click="nextStep" :loading="loading" :ui="{ trailingIcon: 'ms-0' }" />
-                        <UButton label="Resend code" block variant="ghost" color="neutral" size="lg"
+                        <UButton :label="resendCountdown > 0 ? `Resend code in ${resendCountdown}s` : 'Resend code'" 
+                            :disabled="resendCountdown > 0"
+                            block variant="ghost" color="neutral" size="lg"
                             @click="resendCode" />
                     </div>
                 </div>
