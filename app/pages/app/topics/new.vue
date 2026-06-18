@@ -21,15 +21,15 @@ const _qStep = route.query.step as string | undefined
 
 const flowState = ref<FlowState>(
     _qMode === 'upload' && _qStep === 'indexing' ? 'indexing'
-    : _qMode === 'prompt' ? 'processing'
-    : _qMode === 'explore' ? 'processing'
-    : 'entry'
+        : _qMode === 'prompt' ? 'processing'
+            : _qMode === 'explore' ? 'processing'
+                : 'entry'
 )
 const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(
     _qMode === 'upload' ? 'upload'
-    : _qMode === 'explore' ? 'explore'
-    : _qMode === 'prompt' ? 'prompt'
-    : null
+        : _qMode === 'explore' ? 'explore'
+            : _qMode === 'prompt' ? 'prompt'
+                : null
 )
 
 onMounted(() => {
@@ -266,15 +266,13 @@ const confirmFinish = () => {
                 <!-- Stepper (Visible after mode selection) -->
                 <div v-if="flowState !== 'entry'"
                     class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered />
+                    <!-- <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered /> -->
                     <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
                 </div>
 
                 <!-- Entry Point -->
                 <div v-if="flowState === 'entry'">
-                    <AppTopicDoorSelection
-                        @select-upload="selectMode('upload')"
-                        @select-explore="selectMode('explore')"
+                    <AppTopicDoorSelection @select-upload="selectMode('upload')" @select-explore="selectMode('explore')"
                         @select-prompt="handlePromptSelect" />
                 </div>
 

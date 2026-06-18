@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CURRICULUM_CATEGORIES } from '~/constants/topics'
 
-type UploadFile = { name: string; size: string; type: string; status?: 'success' | 'error' | 'uploading' }
+type UploadFile = { name: string; size: string; type: string; status?: 'success' | 'error' | 'uploading', file?: File }
 type InputMode = 'prompt' | 'upload' | 'subject'
 
 withDefaults(defineProps<{ isHero?: boolean }>(), { isHero: false })
@@ -16,6 +16,8 @@ const inputMode = ref<InputMode>('prompt')
 
 // Upload state
 const isUploading = ref(false)
+const isDragging = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 const files = ref<UploadFile[]>([])
 const hasErrors = computed(() => files.value.some(f => f.status === 'error'))
 const successCount = computed(() => files.value.filter(f => f.status === 'success').length)
@@ -24,7 +26,6 @@ const canProceed = computed(() => successCount.value > 0 && !hasErrors.value && 
 // Subject picker state
 const subjectSearch = ref('')
 const selectedCategory = ref<string | null>(null)
-const loadingSubject = ref<string | null>(null)
 const selectedSubject = ref<string | null>(null)
 const filteredSubjects = computed(() => {
     const cats = selectedCategory.value
@@ -36,19 +37,59 @@ const filteredSubjects = computed(() => {
 })
 
 // Mode switching
-const enterUploadMode = () => { inputMode.value = 'upload'; addMockFile() }
+const enterUploadMode = async () => {
+    inputMode.value = 'upload'
+    await nextTick()
+    triggerFileInput()
+}
 const enterSubjectMode = () => { inputMode.value = 'subject'; subjectSearch.value = ''; selectedCategory.value = null }
 const exitMode = () => { inputMode.value = 'prompt'; files.value = [] }
 
 // Upload helpers
-const addMockFile = () => {
-    if (isUploading.value) return
+const triggerFileInput = () => {
+    fileInput.value?.click()
+}
+
+const formatSize = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i]
+}
+
+const processFiles = (uploadedFiles: FileList | null) => {
+    if (!uploadedFiles || uploadedFiles.length === 0) return
+
     isUploading.value = true
+
+    const newUploads: UploadFile[] = Array.from(uploadedFiles).map(file => ({
+        name: file.name,
+        size: formatSize(file.size),
+        type: file.type || file.name.split('.').pop() || 'unknown',
+        status: 'success',
+        file
+    }))
+
     setTimeout(() => {
-        files.value.push({ name: `Study_Materials_${files.value.length + 1}.pdf`, size: '2.4 MB', type: 'pdf', status: Math.random() > 0.8 ? 'error' : 'success' })
+        files.value = [...files.value, ...newUploads]
         isUploading.value = false
     }, 1500)
 }
+
+const handleFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    processFiles(target.files)
+    if (fileInput.value) {
+        fileInput.value.value = ''
+    }
+}
+
+const handleDrop = (event: DragEvent) => {
+    isDragging.value = false
+    processFiles(event.dataTransfer?.files || null)
+}
+
 const removeFile = (i: number) => { files.value.splice(i, 1); if (!files.value.length && !isUploading.value) inputMode.value = 'prompt' }
 const retryFile = (i: number) => {
     files.value[i] = { ...files.value[i], status: 'uploading' } as UploadFile
@@ -64,15 +105,13 @@ const startIndexing = () => {
     if (!canProceed.value) return
     router.push({ path: '/app/topics/new', query: { mode: 'upload', step: 'indexing' } })
 }
-const handleSubjectSelect = async (subject: string) => {
-    if (loadingSubject.value) return
-    loadingSubject.value = subject
-    selectedSubject.value = null
-    await new Promise(resolve => setTimeout(resolve, 900))
-    loadingSubject.value = null       // clear spinner first
-    selectedSubject.value = subject   // now check icon can render
-    await new Promise(resolve => setTimeout(resolve, 900))
-    router.push({ path: '/app/topics/new', query: { mode: 'explore', subject } })
+const handleSubjectSelect = (subject: string) => {
+    selectedSubject.value = subject
+}
+
+const startExplore = () => {
+    if (!selectedSubject.value) return
+    router.push({ path: '/app/topics/new', query: { mode: 'explore', subject: selectedSubject.value } })
 }
 </script>
 
@@ -102,8 +141,12 @@ const handleSubjectSelect = async (subject: string) => {
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider">
                         <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>Create New Topic</span>
                     </div>
-                    <ContentHeading :title="`Welcome back, ${firstName}!`"
-                        description="You're making great progress! Ready to learn something new today?" centered />
+                    <ContentHeading description="You're making great progress! Ready to learn something new today?"
+                        centered>
+                        <template #title>
+                            <span class="text-primary">Welcome back,</span> {{ firstName }}!
+                        </template>
+                    </ContentHeading>
                 </div>
             </Transition>
 
@@ -119,26 +162,33 @@ const handleSubjectSelect = async (subject: string) => {
                     <UTextarea v-if="inputMode === 'prompt'" v-model="prompt"
                         placeholder="e.g., I want to learn advanced Quantum Computing with a focus on Cryptography..."
                         :ui="{ root: 'w-full', base: 'ring-0 rounded-t-2xl rounded-b-none p-6' }" autoresize
-                        :rows="isHero ? 8 : 5" @keydown.meta.enter="generate" @keydown.ctrl.enter="generate" />
+                        :rows="isHero ? 8 : 1" @keydown.meta.enter="generate" @keydown.ctrl.enter="generate" />
 
                     <!-- UPLOAD -->
                     <div v-else-if="inputMode === 'upload'" class="flex flex-col">
+                        <input type="file" class="hidden" ref="fileInput" multiple @change="handleFileChange"
+                            accept=".pdf,.doc,.docx,.txt" />
+
                         <div class="flex items-center justify-between px-5 pt-4 pb-2">
                             <span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Upload
                                 Materials</span>
-                            <UButton icon="i-lucide-arrow-left" variant="ghost" color="neutral" size="xs"
-                                class="rounded-full" @click="exitMode"><span class="text-xs">Back</span></UButton>
+                            <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs" class="rounded-full"
+                                @click="exitMode"><span class="text-xs">Close</span></UButton>
                         </div>
-                        <div class="mx-4 mb-3 border-2 border-dashed border-neutral-200 dark:border-neutral-800 rounded-2xl py-8 flex flex-col items-center gap-3 cursor-pointer hover:border-primary-500/50 hover:bg-primary-50/10 dark:hover:bg-primary-950/10 transition-all duration-500"
-                            @click="addMockFile">
-                            <div class="p-3 bg-white dark:bg-neutral-800 rounded-xl shadow-md">
+                        <div class="mx-4 mb-3 border-2 border-dashed rounded-2xl py-8 flex flex-col items-center gap-3 cursor-pointer hover:border-primary-500/50 hover:bg-primary-50/10 dark:hover:bg-primary-950/10 transition-all duration-500"
+                            :class="[
+                                isDragging ? 'border-primary-500 bg-primary-50/10 dark:bg-primary-950/10' : 'border-neutral-200 dark:border-neutral-800'
+                            ]" @click="triggerFileInput" @dragover.prevent="isDragging = true"
+                            @dragleave.prevent="isDragging = false" @drop.prevent="handleDrop">
+                            <div class="p-3 bg-white dark:bg-neutral-800 rounded-xl shadow-md transition-all duration-500"
+                                :class="{ 'scale-110 -rotate-3': isDragging }">
                                 <UIcon :name="isUploading ? 'i-lucide-loader-2' : 'i-lucide-file-up'"
-                                    class="text-2xl text-neutral-400 flex shrink-0"
-                                    :class="{ 'animate-spin': isUploading }" />
+                                    class="text-2xl text-neutral-400 flex shrink-0 transition-colors duration-500"
+                                    :class="{ 'animate-spin': isUploading, 'text-primary': isDragging }" />
                             </div>
-                            <div class="text-center">
+                            <div class="text-center pointer-events-none">
                                 <p class="text-sm font-semibold text-neutral-900 dark:text-white">{{ isUploading ?
-                                    'Uploading...' : 'Click or drag to upload' }}</p>
+                                    'Uploading...' : isDragging ? 'Drop files here' : 'Click or drag to upload' }}</p>
                                 <p class="text-xs text-neutral-400 mt-0.5">PDF, DOCX, TXT up to 50MB</p>
                             </div>
                         </div>
@@ -212,8 +262,8 @@ const handleSubjectSelect = async (subject: string) => {
                         <div class="flex items-center justify-between px-5 pt-4 pb-3">
                             <span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Select a
                                 Subject</span>
-                            <UButton icon="i-lucide-arrow-left" variant="ghost" color="neutral" size="xs"
-                                class="rounded-full" @click="exitMode"><span class="text-xs">Back</span></UButton>
+                            <UButton icon="i-lucide-x" variant="ghost" color="neutral" size="xs" class="rounded-full"
+                                @click="exitMode"><span class="text-xs">Close</span></UButton>
                         </div>
                         <div class="px-5 pb-3">
                             <UInput v-model="subjectSearch" icon="i-lucide-search" placeholder="Search subjects..."
@@ -236,17 +286,13 @@ const handleSubjectSelect = async (subject: string) => {
                                 subjects found</div>
                             <div v-else class="flex flex-wrap gap-2">
                                 <button v-for="subject in filteredSubjects" :key="subject"
-                                    class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-200 disabled:cursor-not-allowed"
+                                    class="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg border transition-all duration-200"
                                     :class="[
                                         selectedSubject === subject
                                             ? 'border-emerald-400 text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/20'
-                                            : loadingSubject === subject
-                                                ? 'border-primary-400 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/20'
-                                                : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/20'
-                                    ]" :disabled="loadingSubject !== null" @click="handleSubjectSelect(subject)">
-                                    <UIcon v-if="loadingSubject === subject" name="i-lucide-loader-2"
-                                        class="w-3 h-3 animate-spin shrink-0" />
-                                    <UIcon v-else-if="selectedSubject === subject" name="i-lucide-check"
+                                            : 'border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 text-neutral-700 dark:text-neutral-300 hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-950/20'
+                                    ]" @click="handleSubjectSelect(subject)">
+                                    <UIcon v-if="selectedSubject === subject" name="i-lucide-check"
                                         class="w-3 h-3 shrink-0 text-emerald-500" />
                                     {{ subject }}
                                 </button>
@@ -256,16 +302,15 @@ const handleSubjectSelect = async (subject: string) => {
                 </Transition>
 
                 <!-- Action bar -->
-                <div v-if="inputMode !== 'subject'"
+                <div
                     class="flex items-center justify-between p-4 bg-neutral-50/50 dark:bg-neutral-900/50 border-t border-neutral-100 dark:border-neutral-800 gap-3 flex-wrap">
                     <div class="flex items-center gap-2">
                         <UButton icon="i-lucide-upload-cloud" variant="ghost" class="rounded-full"
-                            @click="inputMode === 'upload' ? addMockFile() : enterUploadMode()">
+                            @click="inputMode === 'upload' ? triggerFileInput() : enterUploadMode()">
                             <span class="hidden sm:inline">Upload Materials</span>
                         </UButton>
                         <div class="w-px h-4 bg-neutral-200 dark:bg-neutral-700 mx-1" />
-                        <UButton icon="i-lucide-compass" variant="ghost" class="rounded-full"
-                            @click="enterSubjectMode">
+                        <UButton icon="i-lucide-compass" variant="ghost" class="rounded-full" @click="enterSubjectMode">
                             <span class="hidden sm:inline">Explore Subject</span>
                         </UButton>
                     </div>
@@ -280,9 +325,10 @@ const handleSubjectSelect = async (subject: string) => {
                                 first
                             </span>
                         </Transition>
-                        <UButton v-if="inputMode === 'prompt'" label="Begin Assessment" size="lg"
-                            class="rounded-full px-4 shadow-lg shadow-primary-500/20" :disabled="!prompt.trim()"
-                            @click="generate">
+                        <UButton v-if="inputMode === 'prompt' || inputMode === 'subject'" label="Begin Assessment"
+                            size="lg" class="rounded-full px-4 shadow-lg shadow-primary-500/20"
+                            :disabled="inputMode === 'prompt' ? !prompt.trim() : !selectedSubject"
+                            @click="inputMode === 'prompt' ? generate() : startExplore()">
                             <template #leading>
                                 <UIcon name="i-lucide-sparkles" class="animate-pulse" />
                             </template>

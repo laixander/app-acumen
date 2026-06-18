@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 
 const progress = ref(0)
 const status = ref('READING FILES')
@@ -9,6 +9,10 @@ const steps = ref([
     { id: 2, label: 'Generating topics', status: 'pending', progress: 0, icon: 'i-lucide-brain' },
     { id: 3, label: 'First question ready', status: 'pending', progress: 0, icon: 'i-lucide-message-square' }
 ])
+
+const currentStep = computed(() => {
+    return steps.value.find(s => s.status === 'in-progress') || steps.value[steps.value.length - 1]
+})
 
 onMounted(() => {
     const duration = 3500
@@ -79,33 +83,27 @@ onMounted(() => {
             {{ status }}
         </div>
 
-        <!-- Checklist -->
-        <div class="w-full max-w-sm flex flex-col gap-2 mt-4">
-            <TransitionGroup name="list">
-                <div v-for="(step, index) in steps" :key="step.id"
-                    class="flex items-center gap-4 py-3 transition-all duration-300"
-                    :class="[step.status === 'pending' ? 'opacity-40 grayscale' : '']">
-
+        <!-- Current Step Card -->
+        <div class="w-full max-w-sm relative h-[72px] mt-4">
+            <TransitionGroup name="step-fade">
+                <div v-for="step in (currentStep ? [currentStep] : [])" :key="step.id"
+                    class="absolute inset-0 flex items-center gap-4 px-4 py-3 bg-white dark:bg-neutral-800/50 border border-neutral-200 dark:border-white/10 rounded-2xl shadow-sm backdrop-blur-md">
+                    
                     <!-- Status Icon -->
-                    <div class="w-10 h-10 rounded-xl flex items-center justify-center transition-colors duration-300 border shrink-0"
-                        :class="[
-                            step.status === 'completed' ? 'bg-primary-50 text-primary-600 border-primary-200 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/20' :
-                                step.status === 'in-progress' ? 'bg-neutral-50 text-neutral-900 border-neutral-200 dark:bg-white/5 dark:text-white dark:border-white/10' :
-                                    'bg-transparent text-neutral-400 border-neutral-200 dark:border-white/10 dark:text-neutral-500'
-                        ]">
-                        <UIcon v-if="step.status === 'completed'" name="i-lucide-check-circle-2" class="w-5 h-5" />
-                        <UIcon v-else :name="step.icon" class="w-5 h-5" />
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-primary-50 text-primary-600 border border-primary-200 dark:bg-primary-500/10 dark:text-primary-400 dark:border-primary-500/20 shrink-0">
+                        <UIcon v-if="step.progress === 100" name="i-lucide-check-circle-2" class="w-5 h-5" />
+                        <UIcon v-else :name="step.icon" class="w-5 h-5 animate-pulse" />
                     </div>
 
                     <!-- Label & Progress -->
                     <div class="flex-1 flex flex-col justify-center gap-2">
                         <div class="flex justify-between items-center text-sm w-full">
                             <span class="font-semibold text-neutral-900 dark:text-white">{{ step.label }}</span>
-                            <span class="text-xs font-medium text-neutral-500">{{ Math.round(step.progress) }}%</span>
+                            <span class="text-xs font-bold text-primary-500 tabular-nums">{{ Math.round(step.progress) }}%</span>
                         </div>
                         <!-- Linear Progress Bar -->
-                        <div class="h-1 w-full bg-neutral-100 dark:bg-white/5 rounded-full overflow-hidden">
-                            <div class="h-full bg-primary-500 transition-all duration-200"
+                        <div class="h-1.5 w-full bg-neutral-100 dark:bg-white/5 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary-500 transition-all duration-150 ease-out"
                                 :style="{ width: `${step.progress}%` }" />
                         </div>
                     </div>
@@ -114,3 +112,20 @@ onMounted(() => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.step-fade-enter-active,
+.step-fade-leave-active {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-fade-enter-from {
+    opacity: 0;
+    transform: translateY(15px) scale(0.95);
+}
+
+.step-fade-leave-to {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+}
+</style>

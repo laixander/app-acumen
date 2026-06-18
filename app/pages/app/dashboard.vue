@@ -47,6 +47,28 @@ const recommendedMessage = computed(() => {
             <!-- Sections Layout -->
             <div class="flex flex-col gap-10">
 
+                <!-- Stat Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <UCard v-for="stat in stats" :key="stat.label" variant="soft" :class="`bg-${stat.color}-500/10`"
+                        :ui="{ body: 'flex items-center gap-3 py-3 px-4' }">
+                        <div :class="['p-3 rounded-xl', `bg-${stat.color}-500/10`]">
+                            <UIcon :name="stat.icon" :class="['text-xl flex shrink-0', `text-${stat.color}-500`]" />
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <p class="text-lg font-bold leading-none">{{ stat.value }}</p>
+                                <UIcon v-if="stat.showTrend"
+                                    :name="stat.trend === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+                                    :class="['text-base', stat.trend === 'up' ? 'text-green-500' : 'text-red-500']" />
+                            </div>
+                            <p class="text-xs text-muted mt-0.5">{{ stat.label }}</p>
+                        </div>
+                        <UBadge v-if="stat.showTrend" :label="stat.trendValue"
+                            :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
+                            class="ml-auto" />
+                    </UCard>
+                </div>
+
                 <!-- First Section: 2 Column Layout -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -99,28 +121,6 @@ const recommendedMessage = computed(() => {
 
                     <!-- 2nd Column: Stats & Weekly Activity -->
                     <div class="flex flex-col gap-4">
-                        <!-- Stat Cards -->
-                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Stats</h3>
-
-                        <UCard v-for="stat in stats" :key="stat.label" variant="soft" :class="`bg-${stat.color}-500/10`"
-                            :ui="{ body: 'flex items-center gap-3 py-3 px-4' }">
-                            <div :class="['p-3 rounded-xl', `bg-${stat.color}-500/10`]">
-                                <UIcon :name="stat.icon" :class="['text-xl flex shrink-0', `text-${stat.color}-500`]" />
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <p class="text-lg font-bold leading-none">{{ stat.value }}</p>
-                                    <UIcon v-if="stat.showTrend"
-                                        :name="stat.trend === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
-                                        :class="['text-base', stat.trend === 'up' ? 'text-green-500' : 'text-red-500']" />
-                                </div>
-                                <p class="text-xs text-muted mt-0.5">{{ stat.label }}</p>
-                            </div>
-                            <UBadge v-if="stat.showTrend" :label="stat.trendValue"
-                                :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
-                                class="ml-auto" />
-                        </UCard>
-
                         <!-- Chart Bar -->
                         <UCard variant="subtle" class="grow">
                             <template #header>

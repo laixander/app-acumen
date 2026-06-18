@@ -446,7 +446,7 @@ const pricingPlans = computed(() => {
 
                                         <!-- Plan / Review Step -->
                                         <AppSessionReadinessPlan v-else-if="flowState === 'review'"
-                                            :topic-title="formData.title" is-onboarding @close="handleFinish" />
+                                            :topic-title="formData.title" is-onboarding is-teaser @close="handleFinish" />
 
                                     </div>
                                 </Transition>
