@@ -187,7 +187,7 @@ const dynamicHeight = computed(() => {
                         <p class="text-xs text-dimmed">Always here to help with context</p>
                     </div>
                 </div>
-                <UBadge variant="subtle" color="primary">Online</UBadge>
+                <UBadge variant="subtle" color="primary">20 Token Left</UBadge>
             </div>
 
             <!-- Pinned Messages Bar -->

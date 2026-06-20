@@ -37,7 +37,7 @@ const items = [
 
         <!-- Stats Overview -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <UCard v-for="stat in stats" :key="stat.label" class="shadow-sm border-neutral-200 dark:border-neutral-800">
+            <UCard v-for="stat in stats" :key="stat.label" variant="soft" class="shadow-sm border-neutral-200 dark:border-neutral-800">
                 <div class="flex items-center gap-4">
                     <div :class="[
                         'p-3 rounded-xl',
@@ -58,7 +58,7 @@ const items = [
             <template #study-logs>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                     <div class="lg:col-span-3">
-                        <UCard class="shadow-sm" :ui="{ body: 'p-0 sm:p-0' }">
+                        <UCard variant="soft" class="shadow-sm" :ui="{ body: 'p-0 sm:p-0' }">
                             <!-- <template #header>
                                 <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Study Session Logs
                                 </h3>
@@ -96,7 +96,7 @@ const items = [
 
             <template #session-logs>
                 <!-- Session Logs -->
-                <UCard class="shadow-sm" :ui="{ body: 'p-0 sm:p-0' }">
+                <UCard variant="soft" class="shadow-sm" :ui="{ body: 'p-0 sm:p-0' }">
                     <!-- <template #header>
                         <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Session Logs</h3>
                     </template> -->

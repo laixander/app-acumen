@@ -34,21 +34,11 @@ const filteredTopics = computed(() => {
 
 <template>
     <UContainer class="flex flex-col gap-8 py-12">
-        <header class="flex items-start gap-4">
-            <ContentHeading title="Topics Collection" description="Manage and organize your learning topics." />
-        </header>
-        <div class="flex items-center justify-between w-full gap-4 overflow-x-auto pb-2 sm:pb-0">
-            <div class="flex items-center gap-2">
-                <UInput v-model="searchQuery" icon="i-lucide-search" placeholder="Search topics..." size="sm"
-                    class="w-64" />
-                <USeparator orientation="vertical" class="mx-2 h-6" />
-                <div class="flex items-center gap-1">
-                    <UButton v-for="tag in tags" :key="tag" :label="tag"
-                        :variant="selectedTag === tag ? 'solid' : 'ghost'" color="neutral" size="xs"
-                        @click="selectedTag = tag" />
-                </div>
-            </div>
+        <header class="flex items-end gap-4">
+            <ContentHeading title="Topic Collection" description="Manage and organize your learning topic." />
             <div class="flex items-center gap-2 shrink-0">
+                <UInput v-model="searchQuery" icon="i-lucide-search" placeholder="Search topic..." size="sm"
+                    class="w-64" />
                 <USelect v-model="sortBy" :items="sortOptions" size="sm" class="w-32">
                     <template #leading>
                         <UIcon name="i-lucide-list-filter" class="size-4" />
@@ -57,7 +47,7 @@ const filteredTopics = computed(() => {
                 <USeparator orientation="vertical" class="mx-2 h-6" />
                 <UButton label="New Topic" icon="i-lucide-plus" color="primary" size="sm" to="/app/topics/new" />
             </div>
-        </div>
+        </header>
 
         <div class="flex flex-col gap-6 relative">
             <!-- Status Tabs -->

@@ -24,25 +24,6 @@ const recommendedMessage = computed(() => {
         <AppDashboardAIPrompt :is-hero="topics.length === 0" />
 
         <template v-if="topics.length > 0">
-            <!-- Welcome Card -->
-            <!-- <UCard class="shadow-sm"
-                :ui="{ root: 'relative overflow-hidden', body: 'flex flex-col lg:flex-row justify-between gap-8 relative z-10' }">
-            <div class="absolute inset-0 bg-gradient-to-tr from-primary-500/10 to-transparent pointer-events-none" />
-            <div class="flex-1 flex flex-col justify-center">
-                <ContentHeading :title="`Welcome back, ${firstName}!`"
-                    description="You're making great progress! Ready to learn something new today?" />
-                <div class="flex items-center gap-4 mt-6">
-                    <UButton label="New Topic" icon="i-lucide-plus-circle" color="primary" size="lg"
-                        to="/app/topics/new" />
-                    <UAvatarGroup size="sm">
-                        <UAvatar v-for="i in 4" :key="i" :src="`https://i.pravatar.cc/128?u=${i}`"
-                            icon="i-lucide-user" />
-                    </UAvatarGroup>
-                    <span class="text-xs text-dimmed">Learning alongside others</span>
-                </div>
-            </div>
-            <LearnerInsights />
-            </UCard> -->
 
             <!-- Sections Layout -->
             <div class="flex flex-col gap-10">
@@ -69,70 +50,6 @@ const recommendedMessage = computed(() => {
                     </UCard>
                 </div>
 
-                <!-- First Section: 2 Column Layout -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                    <!-- 1st Column: Continue Learning & Empty State -->
-                    <div class="lg:col-span-2 flex flex-col gap-8">
-                        <ClientOnly>
-                            <template v-if="topics.length > 0">
-                                <!-- Section: Continue Learning (Hero) -->
-                                <div v-if="continueLearningTopic" class="flex flex-col gap-4">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Continue
-                                            Learning</h3>
-                                        <UIcon name="i-lucide-sparkles" class="text-primary animate-pulse" />
-                                    </div>
-                                    <AppTopicCard :topic="continueLearningTopic" is-hero :show-actions="false" />
-                                </div>
-                            </template>
-
-                            <!-- Empty State -->
-                            <!-- <template v-else>
-                            <div
-                                class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-full">
-                                <div class="bg-primary/10 p-4 rounded-full mb-4">
-                                    <UIcon name="i-lucide-database" class="flex text-4xl text-primary" />
-                                </div>
-                                <h3 class="text-lg font-bold">Your dashboard is empty</h3>
-                                <p class="text-dimmed max-w-xs mt-1 text-pretty">
-                                    Get started by adding some topics, or use the seeder button below to generate test
-                                    data.
-                                </p>
-                                <div class="flex items-center gap-3 mt-6">
-                                    <UButton label="Create Topic" color="primary" icon="i-lucide-plus"
-                                        to="/app/topics/new" />
-                                </div>
-                            </div>
-                        </template> -->
-
-                            <template #fallback>
-                                <div
-                                    class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 h-[calc(100%-2rem)]">
-                                    <div class="bg-primary/10 p-4 rounded-full mb-4">
-                                        <UIcon name="i-lucide-loader-2"
-                                            class="flex text-4xl text-primary animate-spin" />
-                                    </div>
-                                    <h3 class="text-lg font-bold">Loading dashboard...</h3>
-                                </div>
-                            </template>
-                        </ClientOnly>
-                    </div>
-
-                    <!-- 2nd Column: Stats & Weekly Activity -->
-                    <div class="flex flex-col gap-4">
-                        <!-- Chart Bar -->
-                        <UCard variant="subtle" class="grow">
-                            <template #header>
-                                <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Weekly Activity
-                                </h3>
-                            </template>
-                            <AppWeeklyActivityChart />
-                        </UCard>
-                    </div>
-
-                </div>
-
                 <!-- Second Section: 2 Column Layout -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
@@ -143,23 +60,12 @@ const recommendedMessage = computed(() => {
                                 <!-- Section: Recent Topics -->
                                 <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
                                     <div class="flex items-center justify-between h-5">
-                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent</h3>
+                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent Topics</h3>
                                         <UButton label="View all" icon="i-lucide-arrow-right" color="primary"
                                             variant="ghost" size="sm" class="uppercase" to="/app/topics/collection" />
                                     </div>
                                     <div class="grid md:grid-cols-2 gap-6">
                                         <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
-                                    </div>
-                                </div>
-
-                                <!-- Section: Pinned Topics -->
-                                <div v-if="pinnedTopics.length > 0" class="flex flex-col gap-4">
-                                    <div class="flex items-center justify-between">
-                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Pinned</h3>
-                                        <UIcon name="i-lucide-pin" class="text-primary opacity-50" />
-                                    </div>
-                                    <div class="grid md:grid-cols-2 gap-6">
-                                        <AppTopicCard v-for="topic in pinnedTopics" :key="topic.title" :topic="topic" />
                                     </div>
                                 </div>
                             </template>
@@ -199,6 +105,18 @@ const recommendedMessage = computed(() => {
                                 </div>
                             </UCard>
                         </div>
+
+                        <!-- 2nd Column: Stats & Weekly Activity -->
+                        <div class="flex flex-col gap-4">
+                            <!-- Chart Bar -->
+                            <UCard variant="subtle" class="grow">
+                                <template #header>
+                                    <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Weekly Activity
+                                    </h3>
+                                </template>
+                            <AppWeeklyActivityChart />
+                        </UCard>
+                    </div>
                     </div>
 
                 </div>

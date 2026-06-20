@@ -71,7 +71,7 @@ defineEmits(['close', 'view-plan'])
             </div>
         </div>
 
-        <div class="flex flex-col items-center gap-6 w-full max-w-2xl px-6 py-10 rounded-[3rem] bg-primary-50/30 dark:bg-primary-900/5 border border-primary-100/50 dark:border-primary-900/10 animate-fade-in [animation-delay:400ms] relative">
+        <!-- <div class="flex flex-col items-center gap-6 w-full max-w-2xl px-6 py-10 rounded-[3rem] bg-primary-50/30 dark:bg-primary-900/5 border border-primary-100/50 dark:border-primary-900/10 animate-fade-in [animation-delay:400ms] relative">
             <div class="flex items-center gap-2 text-[10px] tracking-[0.2em] font-bold uppercase text-primary relative z-10">
                 <UIcon name="i-lucide-sparkles" class="w-3.5 h-3.5" />
                 <span>Acumen Insight</span>
@@ -84,7 +84,7 @@ defineEmits(['close', 'view-plan'])
                 <span class="text-[10px] tracking-[0.2em] font-bold uppercase text-neutral-400">Acumen AI</span>
                 <div class="w-8 h-px bg-primary/30"></div>
             </div>
-        </div>
+        </div> -->
 
         <UButton 
             label="See Your Readiness Plan" 

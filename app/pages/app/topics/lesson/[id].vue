@@ -71,7 +71,8 @@ const handleAskAboutLine = (payload: ChatQuote) => {
 <template>
     <UContainer class="py-6">
         <!-- Breadcrumbs -->
-        <nav class="flex items-center gap-2 text-sm text-neutral-500">
+        <AppBreadcrumb />
+        <!-- <nav class="flex items-center gap-2 text-sm text-neutral-500">
             <ULink to="/app/topics/collection" class="hover:text-primary transition-colors">Collection</ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
             <template v-if="topic">
@@ -83,25 +84,13 @@ const handleAskAboutLine = (payload: ChatQuote) => {
                 Lessons</ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
             <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ lessonData?.title }}</span>
-        </nav>
+        </nav> -->
 
         <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" class="mt-6" />
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
             <!-- Left Side: Lesson Details -->
-            <div class="flex flex-col gap-6">
-                <!-- Media Player Placeholder -->
-                <!-- <UCard class="overflow-hidden aspect-video relative group" :ui="{ body: 'p-0 w-full h-full' }">
-                    <div
-                        class="absolute inset-0 bg-neutral-900/10 dark:bg-neutral-900/50 flex flex-col items-center justify-center">
-                        <UButton icon="i-lucide-play" color="neutral" variant="solid" size="xl"
-                            class="rounded-full w-16 h-16 flex items-center justify-center shadow-lg transform transition-transform group-hover:scale-110" />
-                        <p class="text-sm font-semibold text-white mt-4 drop-shadow-md">AI Generated Breakdown</p>
-                    </div>
-                    <img src="https://images.unsplash.com/photo-1610484826967-09c5720778c7?q=80&w=2000&auto=format&fit=crop"
-                        class="w-full h-full object-cover mix-blend-overlay opacity-60 dark:opacity-40"
-                        alt="Video Placeholder" />
-                </UCard> -->
+            <div class="flex flex-col gap-6 col-span-2">
 
                 <!-- Lesson Transcript / Reading -->
                 <UCard>

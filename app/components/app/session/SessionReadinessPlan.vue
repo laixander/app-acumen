@@ -40,7 +40,7 @@ defineEmits(['close'])
                     Based on your performance, Acumen AI has orchestrated a hyper-personalized roadmap to bridge your
                     knowledge gaps.
                 </p>
-                <UButton v-if="!isTeaser" :label="isOnboarding ? 'Begin Your Journey' : 'Return to Dashboard'" size="xl"
+                <UButton v-if="!isTeaser" :label="isOnboarding ? 'Begin Your Journey' : 'Return to Lessons'" size="xl"
                     :color="isOnboarding ? 'primary' : 'neutral'" :variant="isOnboarding ? 'solid' : 'soft'"
                     @click="$emit('close')"
                     class="rounded-full px-12 py-5 uppercase text-sm font-bold tracking-[0.2em] shadow-xl transition-all duration-300 w-fit"
@@ -218,7 +218,7 @@ defineEmits(['close'])
 
         <!-- Final Action -->
         <div v-if="!isTeaser" class="flex justify-center pt-8">
-            <UButton :label="isOnboarding ? 'Begin Your Journey' : 'Return to Dashboard'" size="xl"
+            <UButton :label="isOnboarding ? 'Begin Your Journey' : 'Return to Lessons'" size="xl"
                 :color="isOnboarding ? 'primary' : 'neutral'" :variant="isOnboarding ? 'solid' : 'soft'"
                 @click="$emit('close')"
                 class="rounded-full px-12 py-5 uppercase text-sm font-bold tracking-[0.2em] shadow-xl transition-all duration-300"
