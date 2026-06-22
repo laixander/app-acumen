@@ -39,10 +39,10 @@ const userColumns = [{
     },
 }]
 
-import type { AdminLearner } from '~/utils/seeder/accounts'
+import type { AdminLearner } from '~/types/admin'
 
-const { adminAccounts } = useAdminAccounts()
-const staticUsers = adminAccounts
+const adminAccountStore = useAdminAccountStore()
+const staticUsers = computed(() => adminAccountStore.adminAccounts)
 
 // Modal state
 const showSubscriptionModal = ref(false)
@@ -51,7 +51,7 @@ const selectedUser = ref<AdminLearner | null>(null)
 
 
 
-const getSubscriptionColor = (sub: string) => {
+const getSubscriptionColor = (sub: string | undefined) => {
     switch (sub) {
         case 'Premium': return 'primary'
         case 'Pro': return 'info'

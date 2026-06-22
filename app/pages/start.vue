@@ -147,12 +147,12 @@ const handleFinish = () => {
     scrollToTop()
 }
 
-const { plans } = usePlans()
-const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+const planStore = usePlanStore()
+const activePlans = computed(() => planStore.plans.filter(p => p.status === 'Active'))
 
 const selectPlan = (planId: string) => {
     // Find the plan to check its name/type
-    const plan = plans.value.find(p => p.id === planId)
+    const plan = planStore.plans.find(p => p.id === planId)
     const planName = plan ? plan.name.toLowerCase() : planId.toLowerCase()
 
     // Enterprise opens contact modal instead of navigating

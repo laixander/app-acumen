@@ -6,10 +6,10 @@ type InputMode = 'prompt' | 'upload' | 'subject'
 
 withDefaults(defineProps<{ isHero?: boolean }>(), { isHero: false })
 
-const { user } = useUser()
+const userStore = useUserStore()
 const router = useRouter()
 
-const firstName = computed(() => user.value.profile.fullName.split(' ')[0])
+const firstName = computed(() => userStore.profile.fullName.split(' ')[0])
 
 const prompt = ref('')
 const inputMode = ref<InputMode>('prompt')

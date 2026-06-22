@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:open'])
 
-const { addPlan, updatePlan } = usePlans()
+const planStore = usePlanStore()
 const toast = useToast()
 
 const isOpen = computed({
@@ -67,16 +67,15 @@ const removeFeature = (index: number) => {
 
 const handleSubmit = () => {
     if (isEdit.value && props.plan) {
-        updatePlan(props.plan.id, { ...form })
+        planStore.updatePlan(props.plan.id, { ...form })
         toast.add({ title: 'Plan updated successfully', color: 'success' })
     } else {
-        const newPlan: Plan = {
-            id: `plan_${Math.random().toString(36).substr(2, 9)}`,
+        planStore.addPlan({
             ...form,
+            id: `plan_${Math.random().toString(36).substr(2, 9)}`,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
-        }
-        addPlan(newPlan)
+        })
         toast.add({ title: 'Plan created successfully', color: 'success' })
     }
     isOpen.value = false

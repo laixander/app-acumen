@@ -1,22 +1,6 @@
 import type { Workspace, WorkspaceMember, WorkspaceInvite } from '~/types/workspace'
 
-export const generateInitialWorkspaces = (userProfile: any): Workspace[] => [
-    {
-        id: '1',
-        name: 'Personal Workspace',
-        icon: 'i-lucide-user',
-        description: 'Start your collaborative journey here.',
-        plan: 'Free',
-        lastActive: 'Just now',
-        color: 'primary',
-        tokens: 500,
-        maxTokens: 1000,
-        members: [
-            { id: '1', name: userProfile.fullName || 'User', email: userProfile.email || '', role: 'Owner', avatar: userProfile.avatar || '', status: 'online' }
-        ],
-        pendingInvites: []
-    }
-]
+
 
 export const MOCK_RECEIVED_INVITATIONS = [
     {
@@ -83,7 +67,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 750,
             maxTokens: 1000,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online' },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(40)
             ],
             pendingInvites: createInvites(4)
@@ -100,7 +84,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 1200,
             maxTokens: 5000,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online' },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(12)
             ],
             pendingInvites: createInvites(2)
@@ -116,7 +100,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 150,
             maxTokens: 500,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online' },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(0)
             ],
             pendingInvites: createInvites(0)
@@ -133,7 +117,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 45000,
             maxTokens: 100000,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Admin', avatar: userProfile.avatar || '', status: 'online' },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Admin', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(25)
             ],
             pendingInvites: createInvites(8)
@@ -150,7 +134,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 250,
             maxTokens: 500,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Member', avatar: userProfile.avatar || '', status: 'online' },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Member', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(5)
             ],
             pendingInvites: createInvites(1)

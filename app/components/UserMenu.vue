@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { useTheme, fontOptions } from '~/composables/useTheme'
-import { useUser } from '~/composables/useUser'
+
 
 const appConfig = useAppConfig()
 const { theme, colorMode, setFont, setBrandFont, setBrandWeight, setPrimary, setNeutral } = useTheme()
-const { user } = useUser()
+const userStore = useUserStore()
 
 const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
 const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
@@ -124,8 +124,8 @@ const items = computed<DropdownMenuItem[][]>(() => [
 ])
 
 const userData = computed(() => ({
-    src: user.value.profile.avatar,
-    alt: user.value.profile.fullName,
+    src: userStore.profile.avatar,
+    alt: userStore.profile.fullName,
     loading: 'lazy' as const,
 }))
 </script>

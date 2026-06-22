@@ -3,8 +3,8 @@ const route = useRoute()
 const router = useRouter()
 const orgId = route.params.id as string
 
-const { organizations, updateOrganization } = useOrganizations()
-const { workspaces } = useWorkspaces()
+const organizationStore = useOrganizationStore()
+
 const toast = useToast()
 
 const isEditModalOpen = ref(false)
@@ -14,8 +14,8 @@ const isPlanConfirmOpen = ref(false)
 const editingWorkspace = ref<any>(null)
 const selectedTargetPlan = ref<string | null>(null)
 
-const { plans } = usePlans()
-const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+const planStore = usePlanStore()
+const activePlans = computed(() => planStore.plans.filter(p => p.status === 'Active'))
 const planOptions = computed(() => activePlans.value.map(p => ({
     label: `${p.name} Plan`,
     value: p.name,
@@ -29,7 +29,7 @@ const preparePlanChange = (plan: string) => {
 
 const handlePlanUpdate = () => {
     if (!organization.value || !selectedTargetPlan.value) return
-    updateOrganization(organization.value.id, { plan: selectedTargetPlan.value as any })
+    workspaceStore.updateWorkspace(organization.value.id, { plan: selectedTargetPlan.value as any })
     toast.add({
         title: 'Plan Updated',
         description: `${organization.value.name} is now on the ${selectedTargetPlan.value} plan.`,
@@ -39,8 +39,8 @@ const handlePlanUpdate = () => {
     selectedTargetPlan.value = null
 }
 
-const organization = computed(() => organizations.value.find(o => o.id === orgId))
-const orgWorkspaces = computed(() => workspaces.value.filter(w => w.organizationId === orgId))
+const organization = computed(() => organizationStore.organizations.find(o => o.id === orgId))
+const orgWorkspaces = computed(() => workspaceStore.workspaces.filter(w => w.organizationId === orgId))
 
 const toggleStatus = () => {
     isConfirmModalOpen.value = true
@@ -50,7 +50,7 @@ const handleToggleStatus = () => {
     if (!organization.value) return
     const newStatus = organization.value.status === 'Suspended' ? 'Active' : 'Suspended'
 
-    updateOrganization(organization.value.id, { status: newStatus })
+    workspaceStore.updateWorkspace(organization.value.id, { status: newStatus } as any)
     toast.add({
         title: `Organization ${newStatus === 'Active' ? 'Activated' : 'Suspended'}`,
         description: `${organization.value.name} has been ${newStatus.toLowerCase()}.`,
@@ -59,7 +59,7 @@ const handleToggleStatus = () => {
     isConfirmModalOpen.value = false
 }
 
-const { deleteWorkspace } = useWorkspaces()
+const workspaceStore = useWorkspaceStore()
 
 const activeTab = computed({
     get: () => route.query.tab as string || 'overview',
@@ -78,7 +78,7 @@ const openEditWorkspaceModal = (ws: any) => {
 
 const confirmDeleteWorkspace = (id: string) => {
     if (confirm('Are you sure you want to delete this workspace? This action cannot be undone.')) {
-        deleteWorkspace(id)
+        workspaceStore.deleteWorkspace(id)
     }
 }
 

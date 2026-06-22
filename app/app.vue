@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import { useTheme } from '~/composables/useTheme'
-import { useUser } from '~/composables/useUser'
-import { useCourses } from '~/composables/useCourses'
-import { useLessons } from '~/composables/useLessons'
-import { useActivityLogs } from '~/composables/useActivityLogs'
-import { useDashboard } from '~/composables/useDashboard'
-import { generateMockOrganizations, generateMockAdminAccounts, generateMockPlans, generateMockAdminDashboardData } from '~/utils/seeder'
+
+
+
+
+
+
 
 const { initTheme } = useTheme()
-const { initUser, user } = useUser()
-const { initCourses } = useCourses()
-const { initLessons } = useLessons()
-const { initActivityLogs } = useActivityLogs()
-const { initDashboard } = useDashboard()
-const { initOrganizations } = useOrganizations()
-const { initWorkspaces } = useWorkspaces()
-const { initAdminAccounts } = useAdminAccounts()
-const { initPlans } = usePlans()
-const { initAdminDashboard } = useAdminDashboard()
+const userStore = useUserStore()
+const courseStore = useCourseStore()
+const lessonStore = useLessonStore()
+const activityLogStore = useActivityLogStore()
+const dashboardStore = useDashboardStore()
+const organizationStore = useOrganizationStore()
+const workspaceStore = useWorkspaceStore()
+const adminAccountStore = useAdminAccountStore()
+const planStore = usePlanStore()
+const adminDashboardStore = useAdminDashboardStore()
 
 useSeoMeta({
     title: 'Acumen - AI-Assisted Learning Platform',
@@ -27,25 +27,14 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
 })
 
-onMounted(() => {
+onMounted(async () => {
     initTheme()
-    initUser()
-    initCourses()
-    initLessons()
-    initActivityLogs()
-    initDashboard()
-
-    // Admin & Org Initialization
-    const mockOrgs = generateMockOrganizations(user.value.profile)
-    const mockAccounts = generateMockAdminAccounts()
-    const mockPlans = generateMockPlans()
-    const mockAdminDashboard = generateMockAdminDashboardData()
-
-    initOrganizations(mockOrgs)
-    initAdminAccounts(mockAccounts)
-    initPlans(mockPlans)
-    initAdminDashboard(mockAdminDashboard)
-    initWorkspaces()
+    
+    if (!courseStore.hasInitializedSeed && courseStore.courses.length === 0) {
+        const { seedCourses } = useSeeder()
+        await seedCourses()
+        courseStore.hasInitializedSeed = true
+    }
 })
 </script>
 

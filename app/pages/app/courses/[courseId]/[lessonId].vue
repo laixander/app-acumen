@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useLessons } from '~/composables/useLessons'
-import { useCourses } from '~/composables/useCourses'
+
+
 import { computed, ref, watchEffect } from 'vue'
 import type { LessonContent } from '~/types/course'
 import type { ChatQuote } from '~/types/chat'
@@ -16,11 +16,11 @@ definePageMeta({
 
 const route = useRoute()
 const router = useRouter()
-const { getLessonContentById, getAdjacentLessons, completeLesson, getLessonsByCourse } = useLessons()
-const { updateCourseProgress, courses } = useCourses()
+const lessonStore = useLessonStore()
+const courseStore = useCourseStore()
 
 const { data: serverLessonData } = await useFetch<LessonContent>(`/api/lesson/${route.params.lessonId}`)
-const localLessonData = computed(() => getLessonContentById(route.params.lessonId as string))
+const localLessonData = computed(() => lessonStore.getLessonContentById(route.params.lessonId as string))
 
 const lessonData = computed(() => {
     return localLessonData.value || serverLessonData.value
@@ -30,12 +30,12 @@ const title = computed(() => {
     return lessonData.value?.title || 'Lesson Viewer'
 })
 
-const adjacent = computed(() => getAdjacentLessons(route.params.lessonId as string))
+const adjacent = computed(() => lessonStore.getAdjacentLessons(route.params.lessonId as string))
 
 const course = computed(() => {
     const courseId = route.params.courseId as string
     if (!courseId) return null
-    return courses.value.find(t => t.id === courseId)
+    return courseStore.getCourseBySlugOrId(courseId)
 })
 
 watchEffect(() => {
@@ -54,17 +54,18 @@ const handlePrevious = () => {
 }
 
 const handleContinue = () => {
-    completeLesson(route.params.lessonId as string)
+    lessonStore.completeLesson(route.params.lessonId as string)
 
     const courseId = route.params.courseId as string
     if (courseId) {
-        const course = courses.value.find(t => t.id === courseId)
-        const courseLessons = getLessonsByCourse(courseId)
+        const course = courseStore.getCourseBySlugOrId(courseId)
+        const actualCourseId = course?.id || courseId
+        const courseLessons = lessonStore.getLessonsByCourse(actualCourseId)
 
         const completedCount = courseLessons.filter(l => l.status === 'completed').length
         const totalCount = courseLessons.length
         const progress = Math.round((completedCount / totalCount) * 100)
-        updateCourseProgress(courseId, completedCount, totalCount, progress)
+        if (course?.id) courseStore.updateCourseProgress(course.id, progress)
     }
 
     if (adjacent.value.next) {

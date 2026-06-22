@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { user, updateProfile, updatePreferences } = useUser()
+const userStore = useUserStore()
 
 const sections = computed(() => [
     {
@@ -7,13 +7,13 @@ const sections = computed(() => [
         items: [
             {
                 label: 'Full Name',
-                value: user.value.profile.fullName,
+                value: userStore.profile.fullName,
                 icon: 'i-lucide-user',
                 color: 'blue'
             },
             {
                 label: 'Email',
-                value: user.value.profile.email,
+                value: userStore.profile.email,
                 icon: 'i-lucide-bell',
                 color: 'blue'
             }
@@ -24,13 +24,13 @@ const sections = computed(() => [
         items: [
             {
                 label: 'Learning Pace',
-                value: user.value.preferences.learningPace,
+                value: userStore.preferences.learningPace,
                 icon: 'i-lucide-trending-up',
                 color: 'blue'
             },
             {
                 label: 'Privacy Mode',
-                value: user.value.preferences.privacyMode ? 'Enabled' : 'Disabled',
+                value: userStore.preferences.privacyMode ? 'Enabled' : 'Disabled',
                 icon: 'i-lucide-shield',
                 color: 'blue'
             }
@@ -41,7 +41,7 @@ const sections = computed(() => [
         items: [
             {
                 label: 'Current Plan',
-                value: `${user.value.billing.plan} - ${user.value.billing.price}`,
+                value: `${userStore.billing.plan} - ${userStore.billing.price}`,
                 icon: 'i-lucide-credit-card',
                 color: 'blue'
             }

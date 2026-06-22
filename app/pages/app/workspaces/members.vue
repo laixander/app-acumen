@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { currentWorkspace: workspace, saveWorkspaces } = useWorkspaces()
+const workspaceStore = useWorkspaceStore()
+const workspace = computed(() => workspaceStore.currentWorkspace)
 
 const searchQuery = ref('')
 const roleFilter = ref('All Roles')
@@ -10,11 +11,11 @@ const filteredMembers = computed(() => {
     if (!workspace.value) return []
     let result = workspace.value.members
     if (roleFilter.value !== 'All Roles') {
-        result = result.filter(m => m.role === roleFilter.value)
+        result = result.filter((m: any) => m.role === roleFilter.value)
     }
     if (searchQuery.value) {
         const q = searchQuery.value.toLowerCase()
-        result = result.filter(m => m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q))
+        result = result.filter((m: any) => m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q))
     }
     return result
 })
@@ -55,13 +56,13 @@ const openTokenModal = (member: any) => {
 const executeTokenDistribution = () => {
     if (!selectedMemberForTokens.value || !workspace.value) return
     
-    const member = workspace.value.members.find(m => m.id === selectedMemberForTokens.value!.id)
+    const member = workspace.value.members.find((m: any) => m.id === selectedMemberForTokens.value!.id)
     if (member) {
         member.tokens = (member.tokens || 0) + tokenAmountToGive.value
         if (workspace.value.tokens !== undefined) {
             workspace.value.tokens = Math.max(0, workspace.value.tokens - tokenAmountToGive.value)
         }
-        saveWorkspaces()
+        
     }
     
     isTokenModalOpen.value = false
@@ -76,11 +77,11 @@ const confirmRemove = (id: string, name: string, type: 'member' | 'invite') => {
 const executeRemove = () => {
     if (!itemToRemove.value || !workspace.value) return
     if (itemToRemove.value.type === 'member') {
-        workspace.value.members = workspace.value.members.filter(m => m.id !== itemToRemove.value!.id)
+        workspace.value.members = workspace.value.members.filter((m: any) => m.id !== itemToRemove.value!.id)
     } else {
         workspace.value.pendingInvites = workspace.value.pendingInvites.filter(i => i.id !== itemToRemove.value!.id)
     }
-    saveWorkspaces()
+    
     isConfirmRemoveModalOpen.value = false
     itemToRemove.value = null
 }
@@ -93,13 +94,13 @@ const confirmTransfer = (id: string, name: string) => {
 const executeTransfer = () => {
     if (!memberToTransferTo.value || !workspace.value) return
 
-    const currentOwner = workspace.value.members.find(m => m.role === 'Owner')
-    const nextOwner = workspace.value.members.find(m => m.id === memberToTransferTo.value!.id)
+    const currentOwner = workspace.value.members.find((m: any) => m.role === 'Owner')
+    const nextOwner = workspace.value.members.find((m: any) => m.id === memberToTransferTo.value!.id)
 
     if (currentOwner && nextOwner) {
         currentOwner.role = 'Admin'
         nextOwner.role = 'Owner'
-        saveWorkspaces()
+        
     }
 
     isTransferModalOpen.value = false
@@ -108,10 +109,10 @@ const executeTransfer = () => {
 
 const updateRole = (id: string, newRole: 'Owner' | 'Admin' | 'Member') => {
     if (!workspace.value) return
-    const member = workspace.value.members.find(m => m.id === id)
+    const member = workspace.value.members.find((m: any) => m.id === id)
     if (member) {
         member.role = newRole
-        saveWorkspaces()
+        
     }
 }
 
@@ -123,7 +124,7 @@ const sendInvitation = () => {
         role: inviteRole.value as 'Admin' | 'Member',
         sentAt: 'Just now'
     })
-    saveWorkspaces()
+    
     inviteEmail.value = ''
     isInviteModalOpen.value = false
 }

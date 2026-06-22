@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useCourses } from '~/composables/useCourses'
+
 import { COURSE_TAGS, COURSE_STATUSES, COURSE_SORT_OPTIONS } from '~/constants/courses'
 
 const searchQuery = ref('')
@@ -12,10 +12,10 @@ const tags = COURSE_TAGS
 const statuses = COURSE_STATUSES
 const sortOptions = COURSE_SORT_OPTIONS
 
-const { courses } = useCourses()
+const courseStore = useCourseStore()
 
 const filteredCourses = computed(() => {
-    return courses.value
+    return courseStore.courses
         .filter(course => {
             const matchesSearch = course.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                 course.tag.toLowerCase().includes(searchQuery.value.toLowerCase())
@@ -72,20 +72,20 @@ const filteredCourses = computed(() => {
             <div v-else
                 class="flex flex-col items-center justify-center py-20 px-4 text-center bg-neutral-50 dark:bg-neutral-900/50 rounded-2xl border-2 border-dashed border-neutral-200 dark:border-neutral-800">
                 <div class="bg-primary/10 p-4 rounded-full mb-4">
-                    <UIcon :name="courses.length === 0 ? 'i-lucide-database' : 'i-lucide-inbox'"
+                    <UIcon :name="courseStore.courses.length === 0 ? 'i-lucide-database' : 'i-lucide-inbox'"
                         class="flex text-4xl text-primary" />
                 </div>
-                <h3 class="text-lg font-bold">{{ courses.length === 0 ? 'You have no courses yet' : 'No courses found' }}
+                <h3 class="text-lg font-bold">{{ courseStore.courses.length === 0 ? 'You have no courses yet' : 'No courses found' }}
                 </h3>
                 <p class="text-dimmed max-w-xs mt-1">
                     {{
-                        courses.length === 0 ?
+                        courseStore.courses.length === 0 ?
                             "It looks empty here. Add a new course or use the seeder button below to test things out!" :
                             "We couldn't find any courses matching your current filters. Try adjusting them!"
                     }}
                 </p>
                 <div class="flex items-center gap-3 mt-6">
-                    <UButton v-if="courses.length > 0" label="Clear Filters" color="neutral" variant="ghost"
+                    <UButton v-if="courseStore.courses.length > 0" label="Clear Filters" color="neutral" variant="ghost"
                         @click="searchQuery = ''; selectedTag = 'All'; currentStatus = 'All'" />
                     <UButton v-else label="Create Course" color="primary" to="/app/courses/new" />
                 </div>

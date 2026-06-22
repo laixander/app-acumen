@@ -4,7 +4,8 @@ import { getPaginationRowModel } from '@tanstack/vue-table'
 
 const table = useTemplateRef('table')
 
-const { sessions } = useActivityLogs()
+const activityLogStore = useActivityLogStore()
+const sessions = computed(() => activityLogStore.sessions)
 
 const columns = [
     { accessorKey: 'action', header: 'Activity' },
@@ -47,32 +48,32 @@ const pagination = ref({
         <template #action-cell="{ row }">
             <div class="flex items-center gap-3">
                 <div class="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                    <UIcon :name="getActionIcon(row.original.action)"
-                        :class="row.original.status === 'Failed' ? 'text-red-500' : 'text-primary'"
+                    <UIcon :name="getActionIcon((row.original as any).action)"
+                        :class="(row.original as any).status === 'Failed' ? 'text-red-500' : 'text-primary'"
                         class="text-lg flex shrink-0" />
                 </div>
                 <div class="flex flex-col">
-                    <span class="font-bold text-sm text-toned">{{ row.original.action }}</span>
-                    <span v-if="row.original.location" class="text-[10px] text-muted uppercase tracking-widest">{{
-                        row.original.location }}</span>
+                    <span class="font-bold text-sm text-toned">{{ (row.original as any).action }}</span>
+                    <span v-if="(row.original as any).location" class="text-[10px] text-muted uppercase tracking-widest">{{
+                        (row.original as any).location }}</span>
                 </div>
             </div>
         </template>
 
         <template #device-cell="{ row }">
-            <span class="text-sm text-dimmed">{{ row.original.device }}</span>
+            <span class="text-sm text-dimmed">{{ (row.original as any).device }}</span>
         </template>
 
         <template #status-cell="{ row }">
-            <UBadge :color="getStatusColor(row.original.status)" variant="soft" size="sm"
+            <UBadge :color="getStatusColor((row.original as any).status)" variant="soft" size="sm"
                 class="font-bold uppercase tracking-wider text-[10px]">
-                {{ row.original.status }}
+                {{ (row.original as any).status }}
             </UBadge>
         </template>
 
         <template #timestamp-cell="{ row }">
             <span class="text-xs text-neutral-500 dark:text-neutral-400 font-medium">
-                {{ formatTime(row.original.timestamp) }}
+                {{ formatTime((row.original as any).timestamp) }}
             </span>
         </template>
 

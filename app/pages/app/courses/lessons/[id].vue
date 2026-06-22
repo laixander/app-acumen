@@ -1,25 +1,25 @@
 <script setup lang="ts">
-import { useCourses } from '~/composables/useCourses'
-import { useLessons } from '~/composables/useLessons'
+
+
 import { computed, onMounted } from 'vue'
-import { COURSE_CONTENT_MAP } from '~/utils/seeder/courses'
-import { injectAssessmentsIntoTimeline } from '~/utils/seeder'
+
 import { GOAL_COLORS } from '~/constants/courses'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
 
 const route = useRoute()
-const { courses, updateCourse } = useCourses()
-const { getLessonsByCourse, addAssessments, addLessonContents, updateLessonsForCourse } = useLessons()
+const courseStore = useCourseStore()
+const lessonStore = useLessonStore()
+
 const toast = useToast()
 
 const course = computed(() => {
-    return courses.value.find(t => t.id === route.params.id)
+    return courseStore.getCourseBySlugOrId(route.params.id as string)
 })
 
 // Dynamically count courses authored by the same user so newly created courses are counted
 const coursesCountForAuthor = computed(() => {
     if (!course.value?.createdBy?.id) return 0
-    return courses.value.filter(t => t.createdBy?.id === course.value!.createdBy!.id).length
+    return courseStore.courses.filter(t => t.createdBy?.id === course.value!.createdBy!.id).length
 })
 
 // Percentage gap left before this course is fully mastered
@@ -27,7 +27,7 @@ const masteryGap = computed(() => Math.max(0, 100 - (course.value?.progress ?? 0
 
 // Passing rate: % of assessment-type lessons that are completed
 const passingRate = computed(() => {
-    const assessments = lessons.value.filter(l => l.type === 'Assessment')
+    const assessments = lessonStore.lessons.filter(l => l.type === 'Assessment')
     if (assessments.length === 0) return 0
     const passed = assessments.filter(l => l.status === 'completed').length
     return Math.round((passed / assessments.length) * 100)
@@ -36,34 +36,12 @@ const passingRate = computed(() => {
 const { data: serverLessons } = await useFetch(`/api/lessons?courseId=${route.params.id}`)
 
 const lessons = computed(() => {
-    const local = getLessonsByCourse(route.params.id as string)
+    const courseId = course.value?.id || (route.params.id as string)
+    const local = lessonStore.getLessonsByCourse(courseId)
     return local.length > 0 ? local : (serverLessons.value || [])
 })
 
-const injectAssessments = () => {
-    if (!course.value) return
-    const currentLessons = [...lessons.value]
-    if (currentLessons.length === 0) return
 
-    // Check if we already have assessments (to avoid infinite loop or duplication)
-    const hasQuizzes = currentLessons.some(l => l.type === 'Assessment')
-    if (hasQuizzes) return
-
-    // Use centralized logic to inject assessments
-    const {
-        newTimeline,
-        newAssessments,
-        newContents
-    } = injectAssessmentsIntoTimeline(route.params.id as string, course.value.title, currentLessons as any[])
-
-    updateLessonsForCourse(route.params.id as string, newTimeline)
-    addLessonContents(newContents)
-    addAssessments(newAssessments)
-}
-
-onMounted(() => {
-    injectAssessments()
-})
 
 useHead({
     title: course.value ? `${course.value.title} - LearnFast` : 'Course Not Found'
@@ -77,36 +55,21 @@ const weakLessons = computed(() => course.value?.weakCourses || [])
 const weakestCourse = computed(() => weakLessons.value[0] || { name: course.value?.title || 'this course', progress: 0, color: 'text-orange-500' })
 
 const recommendedLesson = computed(() => {
-    // 1. Try static map first
-    const mappedContent = COURSE_CONTENT_MAP[route.params.id as string]
-    if (mappedContent && mappedContent.lessons.length > 0) {
-        const lesson = mappedContent.lessons.find(l => l.assessment) || mappedContent.lessons[0]
-        return lesson
-    }
+    if (lessonStore.lessons && lessonStore.lessons.length > 0) {
+        const courseId = course.value?.id || (route.params.id as string)
+        const courseLessons = lessonStore.getLessonsByCourse(courseId)
 
-    // 2. Fallback to local lessons list
-    if (lessons.value && lessons.value.length > 0) {
-        // Try to find an assessment lesson first
-        const assessmentLesson = lessons.value.find(l => l.type === 'Assessment')
+        const assessmentLesson = courseLessons.find(l => l.type === 'Assessment')
         if (assessmentLesson) return assessmentLesson
-        
-        // Otherwise try one with assessmentId
-        return lessons.value.find(l => l.assessmentId) || lessons.value[0]
-    }
 
+        return courseLessons.find(l => l.assessmentId) || courseLessons[0]
+    }
     return null
 })
 
-const { getAssessmentByLessonId } = useLessons()
 const activeAssessment = computed(() => {
-    if (!recommendedLesson.value) return null
-    // If it's from static map and has assessment attached
-    if ('assessment' in recommendedLesson.value && recommendedLesson.value.assessment) {
-        return recommendedLesson.value.assessment
-    }
-    // Otherwise look up in store
-    if (!recommendedLesson.value.id) return null
-    return getAssessmentByLessonId(recommendedLesson.value.id)
+    if (!recommendedLesson.value || !recommendedLesson.value.id) return null
+    return lessonStore.getAssessmentByLessonId(recommendedLesson.value.id)
 })
 
 const sessionState = ref<SessionState>('idle')
@@ -138,11 +101,11 @@ const handleSessionComplete = () => {
 
     // Simulate analysis update for new courses
     if (course.value && course.value.stats?.[0]?.value === '0%') {
-        const total = lessons.value.length
+        const total = lessonStore.lessons.length
         const completed = 1
         const progress = Math.round((completed / total) * 100)
 
-        updateCourse(route.params.id as string, {
+        courseStore.updateCourse(course.value.id, {
             progress,
             lessons: `${completed}/${total}`,
             stats: [
@@ -150,12 +113,12 @@ const handleSessionComplete = () => {
                 { label: 'Pass Probability', value: '52%', subtext: '+7% improvement', icon: 'i-lucide-line-chart' },
                 { label: 'Sessions This Week', value: '1', subtext: '0.5 hrs total', icon: 'i-lucide-calendar-days' }
             ],
-            strongCourses: lessons.value.slice(0, 2).map(l => ({
+            strongCourses: lessonStore.lessons.slice(0, 2).map(l => ({
                 name: l.title.split(':').pop()?.trim() || l.title,
                 progress: 85,
                 color: 'text-green-500'
             })),
-            weakCourses: lessons.value.slice(2, 4).map(l => ({
+            weakCourses: lessonStore.lessons.slice(2, 4).map(l => ({
                 name: l.title.split(':').pop()?.trim() || l.title,
                 progress: 42,
                 color: 'text-orange-500'

@@ -4,7 +4,8 @@ import { getPaginationRowModel } from '@tanstack/vue-table'
 
 const table = useTemplateRef('table')
 
-const { logs } = useActivityLogs()
+const activityLogStore = useActivityLogStore()
+const logs = computed(() => activityLogStore.logs)
 
 // Helper to fix and satisfy TypeScript inference in UTable slots
 const asLog = (row: any) => row as ActivityLog
@@ -57,30 +58,30 @@ const pagination = ref({
     }" :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
         <template #courseTitle-cell="{ row }">
             <div class="flex flex-col">
-                <span class="font-medium">{{ row.original.courseTitle }}</span>
+                <span class="font-medium">{{ (row.original as any).courseTitle }}</span>
             </div>
         </template>
 
         <template #lessonTitle-cell="{ row }">
-            <span class="text-dimmed">{{ row.original.lessonTitle }}</span>
+            <span class="text-dimmed">{{ (row.original as any).lessonTitle }}</span>
         </template>
 
         <template #type-cell="{ row }">
             <div class="flex items-center gap-2">
-                <UIcon :name="getActivityIcon(row.original.type)" :class="getActivityColor(row.original.type)"
+                <UIcon :name="getActivityIcon((row.original as any).type)" :class="getActivityColor((row.original as any).type)"
                     class="text-lg" />
-                <span class="text-sm">{{ row.original.type }}</span>
+                <span class="text-sm">{{ (row.original as any).type }}</span>
             </div>
         </template>
 
         <template #durationMinutes-cell="{ row }">
             <UBadge color="primary" variant="soft" size="sm">
-                {{ row.original.durationMinutes }} min
+                {{ (row.original as any).durationMinutes }} min
             </UBadge>
         </template>
 
         <template #completedAt-cell="{ row }">
-            <span class="text-xs text-muted">{{ formatTime(row.original.completedAt) }}</span>
+            <span class="text-xs text-muted">{{ formatTime((row.original as any).completedAt) }}</span>
         </template>
 
         <template #empty>

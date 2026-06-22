@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { useCourses } from '~/composables/useCourses'
-import { useDashboard } from '~/composables/useDashboard'
 
-const { courses, pinnedCourses, continueLearningCourse, recentCourses } = useCourses()
-const { stats, recommendedCourses: recommended } = useDashboard()
-const { user } = useUser()
 
-const firstName = computed(() => user.value.profile.fullName.split(' ')[0])
+
+const courseStore = useCourseStore()
+const dashboardStore = useDashboardStore()
+const stats = computed(() => dashboardStore.stats)
+const recommended = computed(() => dashboardStore.recommendedCourses)
+const recentCourses = computed(() => courseStore.courses.slice(0, 3))
+const userStore = useUserStore()
+
+const firstName = computed(() => userStore.profile.fullName.split(' ')[0])
 const recommendedMessage = computed(() => {
     return recommended.value.length > 0
         ? "Based on your interests in AI & Data Science."
@@ -21,9 +24,9 @@ const recommendedMessage = computed(() => {
         </div>
 
         <!-- AI Prompt Section -->
-        <AppDashboardAIPrompt :is-hero="courses.length === 0" />
+        <AppDashboardAIPrompt :is-hero="courseStore.courses.length === 0" />
 
-        <template v-if="courses.length > 0">
+        <template v-if="courseStore.courses.length > 0">
 
             <!-- Sections Layout -->
             <div class="flex flex-col gap-10">
@@ -56,7 +59,7 @@ const recommendedMessage = computed(() => {
                     <!-- 1st Column: Recent Courses & Pinned Courses -->
                     <div class="lg:col-span-3 flex flex-col gap-8">
                         <ClientOnly>
-                            <template v-if="courses.length > 0">
+                            <template v-if="courseStore.courses.length > 0">
                                 <!-- Section: Recent Courses -->
                                 <div v-if="recentCourses.length > 0" class="flex flex-col gap-4">
                                     <div class="flex items-center justify-between h-5">
@@ -75,7 +78,7 @@ const recommendedMessage = computed(() => {
                     </div>
 
                     <!-- 2nd Column: Recommended For You -->
-                    <!-- <div v-if="courses.length > 0" class="flex flex-col gap-4">
+                    <!-- <div v-if="courseStore.courses.length > 0" class="flex flex-col gap-4">
                         <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recommended for You</h3>
                         <div class="flex flex-col gap-2">
                             <UCard variant="soft" :ui="{ body: 'flex flex-col gap-4 relative z-10' }"

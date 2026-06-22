@@ -12,7 +12,7 @@ import {
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
-const { weeklyStats } = useActivityLogs()
+const activityLogStore = useActivityLogStore()
 
 // Map JS getDay() (0=Sun…6=Sat) → Mon-based index (0=Mon…6=Sun)
 const todayIndex = (new Date().getDay() + 6) % 7
@@ -22,11 +22,11 @@ const barColors = Array.from({ length: 7 }, (_, i) =>
 )
 
 const chartData = computed(() => ({
-    labels: weeklyStats.value.labels,
+    labels: activityLogStore.weeklyStats.labels,
     datasets: [
         {
             label: 'Minutes Studied',
-            data: weeklyStats.value.data,
+            data: activityLogStore.weeklyStats.data,
             backgroundColor: barColors,
             borderRadius: 6,
             borderSkipped: false,

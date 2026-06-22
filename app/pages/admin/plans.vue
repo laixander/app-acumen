@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { upperFirst } from 'scule'
 
-const { plans, updatePlan, deletePlan } = usePlans()
+const planStore = usePlanStore()
+const plans = computed(() => planStore.plans)
 const table = useTemplateRef('table')
 const toast = useToast()
 const loading = ref(true)
@@ -29,7 +30,7 @@ const columns = [
 
 const togglePlanStatus = (plan: any) => {
     const newStatus = plan.status === 'Active' ? 'Inactive' : 'Active'
-    updatePlan(plan.id, { status: newStatus })
+    planStore.updatePlan(plan.id, { status: newStatus })
     toast.add({
         title: `Plan ${newStatus}`,
         description: `${plan.name} has been set to ${newStatus.toLowerCase()}.`,
@@ -54,7 +55,7 @@ const confirmDeletePlan = (plan: any) => {
 
 const handleConfirmDelete = () => {
     if (!targetPlan.value) return
-    deletePlan(targetPlan.value.id)
+    planStore.deletePlan(targetPlan.value.id)
     toast.add({
         title: 'Plan Deleted',
         description: `${targetPlan.value.name} has been removed from the platform.`,
@@ -131,7 +132,7 @@ const getRowActions = (plan: any) => [
 
                 <template #tokenLimit-cell="{ row }">
                     <div class="flex flex-col">
-                        <span class="text-sm">{{ (row.original.tokenLimit / 1000000).toFixed(1) }}M Tokens</span>
+                        <span class="text-sm">{{ ((row.original.tokenLimit || 0) / 1000000).toFixed(1) }}M Tokens</span>
                         <span class="text-[10px] text-neutral-500 font-mono">{{ row.original.tokenLimit.toLocaleString()
                         }} raw</span>
                     </div>

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useCourses } from '~/composables/useCourses'
+
 
 const route = useRoute()
 const router = useRouter()
-const { courses, updateCourse, deleteCourse } = useCourses()
+const courseStore = useCourseStore()
 
 const courseId = route.params.courseId as string
-const course = computed(() => courses.value.find(c => c.id === courseId))
+const course = computed(() => courseStore.getCourseBySlugOrId(courseId))
 
 // Modals State
 const isEditNameModalOpen = ref(false)
@@ -46,7 +46,7 @@ const saveSchedule = () => {
         targetDate = new Date(y, m - 1, d).getTime()
     }
 
-    updateCourse(courseId, {
+    courseStore.updateCourse(courseId, {
         targetFinishDate: targetDate,
         sessionsPerWeek: Number(scheduleForm.sessionsPerWeek),
         itemsPerWeek: Number(scheduleForm.itemsPerWeek)
@@ -62,31 +62,35 @@ const isDeleteModalOpen = ref(false)
 // Actions
 const saveName = () => {
     if (newCourseName.value && newCourseName.value !== course.value?.title) {
-        updateCourse(courseId, { title: newCourseName.value })
+        courseStore.updateCourse(course.value!.id, { title: newCourseName.value })
+        const newSlug = generateSlug(newCourseName.value)
+        if (newSlug !== courseId) {
+            router.replace(`/app/courses/${newSlug}/settings`)
+        }
     }
     isEditNameModalOpen.value = false
 }
 
 const saveDesc = () => {
     if (newCourseDesc.value !== course.value?.description) {
-        updateCourse(courseId, { description: newCourseDesc.value })
+        courseStore.updateCourse(courseId, { description: newCourseDesc.value })
     }
     isEditDescModalOpen.value = false
 }
 
 const saveGoal = (goal: string) => {
-    updateCourse(courseId, { learningGoal: goal as any })
+    courseStore.updateCourse(courseId, { learningGoal: goal as any })
     isEditGoalModalOpen.value = false
 }
 
 const handleDeleteCourse = () => {
-    deleteCourse(courseId)
+    courseStore.deleteCourse(courseId)
     isDeleteModalOpen.value = false
     router.push('/app/courses/collection')
 }
 
 const handleArchiveCourse = () => {
-    updateCourse(courseId, { status: 'Archived' })
+    courseStore.updateCourse(courseId, { status: 'Archived' })
     isArchiveModalOpen.value = false
     router.push('/app/courses/collection')
 }
@@ -104,11 +108,11 @@ const toggleNotifications = (val: boolean) => {
 }
 
 const updateSessions = (val: number) => {
-    updateCourse(courseId, { sessionsPerWeek: val })
+    courseStore.updateCourse(courseId, { sessionsPerWeek: val })
 }
 
 const updateItems = (val: number) => {
-    updateCourse(courseId, { itemsPerWeek: val })
+    courseStore.updateCourse(courseId, { itemsPerWeek: val })
 }
 
 // Formatters

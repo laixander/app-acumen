@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useCourses } from '~/composables/useCourses'
-import { useLessons } from '~/composables/useLessons'
+
+
 import type { Course } from '~/types/course'
 import { GOAL_COLORS } from '~/constants/courses'
 
@@ -13,8 +13,8 @@ const props = withDefaults(defineProps<{
     isHero: false
 })
 
-const { togglePin, archiveCourse, deleteCourse, renameCourse } = useCourses()
-const { getLessonsByCourse } = useLessons()
+const courseStore = useCourseStore()
+const lessonStore = useLessonStore()
 const toast = useToast()
 
 const isRenameOpen = ref(false)
@@ -24,7 +24,7 @@ const newTitle = ref(props.course.title)
 
 const handleRename = () => {
     if (newTitle.value && newTitle.value !== props.course.title) {
-        renameCourse(props.course.id, newTitle.value)
+        courseStore.updateCourse(props.course.id, { title: newTitle.value })
         isRenameOpen.value = false
         toast.add({
             title: 'Course Renamed',
@@ -35,7 +35,7 @@ const handleRename = () => {
 }
 
 const handleArchive = () => {
-    archiveCourse(props.course.id)
+    courseStore.updateCourse(props.course.id, { status: 'Archived' })
     isArchiveOpen.value = false
     toast.add({
         title: 'Course Archived',
@@ -45,7 +45,7 @@ const handleArchive = () => {
 }
 
 const handleDelete = () => {
-    deleteCourse(props.course.id)
+    courseStore.deleteCourse(props.course.id)
     isDeleteOpen.value = false
     toast.add({
         title: 'Course Deleted',
@@ -68,7 +68,7 @@ const actions = computed(() => [
             label: 'Settings',
             icon: 'i-lucide-settings',
             onSelect: () => {
-                navigateTo(`/app/courses/${props.course.id}/settings`)
+                navigateTo(`/app/courses/${generateSlug(props.course.title)}/settings`)
             }
         },
         {
@@ -93,7 +93,7 @@ const masteryGap = computed(() => Math.max(0, 100 - (props.course.progress ?? 0)
 
 // Passing rate: same formula as lessons page — completed assessments / total assessments
 const passingRate = computed(() => {
-    const courseLessons = getLessonsByCourse(props.course.id)
+    const courseLessons = lessonStore.getLessonsByCourse(props.course.id)
     const assessments = courseLessons.filter(l => l.type === 'Assessment')
     if (assessments.length === 0) return 0
     const passed = assessments.filter(l => l.status === 'completed').length
@@ -102,7 +102,7 @@ const passingRate = computed(() => {
 
 // Lesson completion count from actual lesson list
 const lessonProgress = computed(() => {
-    const courseLessons = getLessonsByCourse(props.course.id)
+    const courseLessons = lessonStore.getLessonsByCourse(props.course.id)
     const done = courseLessons.filter(l => l.status === 'completed').length
     return { done, total: courseLessons.length }
 })
@@ -117,7 +117,7 @@ const lessonProgress = computed(() => {
             course.isPinned ? 'border-primary-500/30' : ''
         ]" :ui="{
             body: 'relative flex flex-col gap-4 h-full'
-        }" @click="navigateTo(`/app/courses/${course.id || course.title.toLowerCase().replace(/\s+/g, '-')}`)">
+        }" @click="navigateTo(`/app/courses/${generateSlug(course.title)}`)">
 
         <!-- Mesh Gradient Overlay -->
         <div
@@ -139,7 +139,7 @@ const lessonProgress = computed(() => {
             </div>
             <!-- Setting Button -->
             <UButton icon="i-lucide-settings-2" variant="ghost" size="xs" @click.stop
-                @click="navigateTo(`/app/courses/${props.course.id}/settings`)" />
+                @click="navigateTo(`/app/courses/${generateSlug(course.title)}/settings`)" />
             <!-- Dropdown Menu -->
             <!-- <UDropdownMenu v-if="showActions" :items="actions" :content="{
                 align: 'end',

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-
-
-const { user } = useUser()
-const { currentWorkspace: workspace, updateWorkspace, workspaces, currentWorkspaceId } = useWorkspaces()
-const { courses } = useCourses()
+const userStore = useUserStore()
+const workspaceStore = useWorkspaceStore()
+const workspace = computed(() => workspaceStore.currentWorkspace)
+const { updateWorkspace } = workspaceStore
+const workspaces = computed(() => workspaceStore.workspaces)
+const currentWorkspaceId = computed(() => workspaceStore.currentWorkspaceId)
+const courseStore = useCourseStore()
 
 const workspaceCourses = computed(() => {
     if (!workspace.value) return []
-    return courses.value.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
+    return courseStore.courses.filter((t: any) => !t.workspaceId || t.workspaceId === workspace.value?.id)
 })
 
 const workspaceCoursesCount = computed(() => workspaceCourses.value.length)
@@ -49,7 +51,7 @@ const deleteWorkspace = () => {
 
 const currentUserRole = computed(() => {
     if (!workspace.value) return 'Member'
-    const me = workspace.value.members.find(m => m.id === '1')
+    const me = workspace.value.members.find((m: any) => m.id === '1')
     return me ? me.role : 'Member'
 })
 
@@ -106,6 +108,12 @@ const sections = computed(() => [
                 icon: 'i-lucide-credit-card',
                 color: 'emerald',
                 action: '/app/workspaces/billing'
+            },
+            {
+                label: 'Tokens Available',
+                value: workspace.value ? `${formatTokens(workspace.value.tokens)} / ${formatTokens(workspace.value.maxTokens)}` : '0',
+                icon: 'i-lucide-coins',
+                color: 'amber'
             }
         ]
     }

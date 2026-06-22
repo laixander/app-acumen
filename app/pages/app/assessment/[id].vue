@@ -1,19 +1,19 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useLessons } from '~/composables/useLessons'
-import { useCourses } from '~/composables/useCourses'
+
+
 import { ref, computed, onMounted } from 'vue'
 import type { Assessment } from '~/types/course'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
 
 const route = useRoute()
 const router = useRouter()
-const { getAssessmentByLessonId, completeLesson, getLessonsByCourse } = useLessons()
-const { updateCourseProgress, courses } = useCourses()
-const { addLog } = useActivityLogs()
+const lessonStore = useLessonStore()
+const courseStore = useCourseStore()
+const activityLogStore = useActivityLogStore()
 
 const { data: serverAssessmentData } = await useFetch<Assessment>(`/api/assessment/${route.params.id}`)
-const localAssessmentData = getAssessmentByLessonId(route.params.id as string)
+const localAssessmentData = lessonStore.getAssessmentByLessonId(route.params.id as string)
 
 const assessmentData = computed(() => {
     return (localAssessmentData || serverAssessmentData.value) as Assessment | null
@@ -59,7 +59,8 @@ const calculatedScore = computed(() => {
 })
 
 const resetSession = () => {
-    router.push(`/app/courses/${assessmentData.value?.courseId}`)
+    const course = courseStore.getCourseBySlugOrId(assessmentData.value?.courseId || '')
+    router.push(`/app/courses/${course ? generateSlug(course.title) : assessmentData.value?.courseId}`)
 }
 
 const handleViewPlan = () => {
@@ -68,26 +69,27 @@ const handleViewPlan = () => {
 
 // Completion logic for progress updates
 const finalizeAssessment = () => {
-    completeLesson(route.params.id as string);
+    lessonStore.completeLesson(route.params.id as string);
 
     // Trigger Progress Update
     const courseId = assessmentData.value?.courseId;
     if (courseId) {
-        const course = courses.value.find(t => t.id === courseId)
-        const courseLessons = getLessonsByCourse(courseId);
+        const course = courseStore.courses.find(t => t.id === courseId)
+        const courseLessons = lessonStore.getLessonsByCourse(courseId);
         const lessonOverview = courseLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData.value?.lessonId)
 
         if (course && lessonOverview) {
-            addLog(courseId, course.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
+            activityLogStore.addLog(courseId, course.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
         }
 
         const completedCount = courseLessons.filter(l => l.status === 'completed').length;
         const totalCount = courseLessons.length;
         const progress = Math.round((completedCount / totalCount) * 100);
-        updateCourseProgress(courseId, completedCount, totalCount, progress);
+        courseStore.updateCourseProgress(courseId, progress);
     }
 
-    router.push(`/app/courses/${assessmentData.value?.courseId}`)
+    const course = courseStore.getCourseBySlugOrId(assessmentData.value?.courseId || '')
+    router.push(`/app/courses/${course ? generateSlug(course.title) : assessmentData.value?.courseId}`)
 }
 
 const description = computed(() => {

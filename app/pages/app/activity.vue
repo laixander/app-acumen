@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { TabsItem } from '@nuxt/ui'
 
-const { logs, totalMinutesThisWeek, averageMinutesPerDay, currentStreak } = useActivityLogs()
+const activityLogStore = useActivityLogStore()
 
 const stats = computed(() => [
-    { label: 'Total Studied', value: `${Math.floor(totalMinutesThisWeek.value / 60)}h ${totalMinutesThisWeek.value % 60}m`, icon: 'i-lucide-clock', color: 'primary' },
-    { label: 'Avg / Day', value: `${averageMinutesPerDay.value}m`, icon: 'i-lucide-calendar-days', color: 'green' },
-    { label: 'Completed Lessons', value: logs.value.length.toString(), icon: 'i-lucide-check-circle', color: 'teal' }
+    { label: 'Total Studied', value: `${Math.floor(activityLogStore.totalMinutesThisWeek / 60)}h ${activityLogStore.totalMinutesThisWeek % 60}m`, icon: 'i-lucide-clock', color: 'primary' },
+    { label: 'Avg / Day', value: `${activityLogStore.averageMinutesPerDay}m`, icon: 'i-lucide-calendar-days', color: 'green' },
+    { label: 'Completed Lessons', value: activityLogStore.logs.length.toString(), icon: 'i-lucide-check-circle', color: 'teal' }
 ])
 
 const items = [

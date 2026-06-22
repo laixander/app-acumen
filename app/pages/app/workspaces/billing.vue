@@ -1,10 +1,13 @@
 <script setup lang="ts">
-const { currentWorkspace: workspace, updateWorkspace, canManageBilling } = useWorkspaces()
+const workspaceStore = useWorkspaceStore()
+const workspace = computed(() => workspaceStore.currentWorkspace)
+const { updateWorkspace } = workspaceStore
+const canManageBilling = computed(() => workspaceStore.canManageBilling)
 const toast = useToast()
 
-const { plans } = usePlans()
+const planStore = usePlanStore()
 const PLANS = computed(() => {
-    return plans.value
+    return planStore.plans
         .filter(p => p.status === 'Active')
         .map(p => {
             const nameLower = p.name.toLowerCase()

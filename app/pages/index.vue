@@ -16,8 +16,8 @@ definePageMeta({
 
 const isContactModalOpen = ref(false)
 
-const { plans } = usePlans()
-const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+const planStore = usePlanStore()
+const activePlans = computed(() => planStore.plans.filter(p => p.status === 'Active'))
 
 const displayPricings = computed(() => {
     return activePlans.value.map((plan) => {

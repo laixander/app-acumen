@@ -1,11 +1,11 @@
 <script setup lang="ts">
-const { workspaces, currentWorkspaceId, pendingInvitations, isInitialized, saveWorkspaces } = useWorkspaces()
+const workspaceStore = useWorkspaceStore()
 
 const switchWorkspace = (id: string) => {
-    currentWorkspaceId.value = id
-    saveWorkspaces()
+    workspaceStore.currentWorkspaceId = id
     
-    const ws = workspaces.value.find(w => w.id === id)
+    
+    const ws = workspaceStore.workspaces.find(w => w.id === id)
     if (ws) {
         const role = getMyRole(ws)
         if (role === 'Member') {
@@ -20,13 +20,15 @@ const switchWorkspace = (id: string) => {
 }
 
 // Filter workspaces where the current user is an Owner or Admin
-const manageableWorkspaces = computed(() => workspaces.value.filter(ws => {
+const manageableWorkspaces = computed(() => workspaceStore.workspaces.filter(ws => {
+    if (!ws.members) return false
     const me = ws.members.find(m => m.id === '1')
     return me && (me.role === 'Owner' || me.role === 'Admin')
 }))
 
 // Filter workspaces where the current user is just a Member
-const joinedWorkspaces = computed(() => workspaces.value.filter(ws => {
+const joinedWorkspaces = computed(() => workspaceStore.workspaces.filter(ws => {
+    if (!ws.members) return false
     const me = ws.members.find(m => m.id === '1')
     return me && me.role === 'Member'
 }))
@@ -34,17 +36,18 @@ const joinedWorkspaces = computed(() => workspaces.value.filter(ws => {
 
 
 const acceptInvitation = (id: string) => {
-    pendingInvitations.value = pendingInvitations.value.filter(inv => inv.id !== id)
-    saveWorkspaces()
+    workspaceStore.pendingInvitations = workspaceStore.pendingInvitations.filter(inv => inv.id !== id)
+    
     // Add logic to join workspace
 }
 
 const declineInvitation = (id: string) => {
-    pendingInvitations.value = pendingInvitations.value.filter(inv => inv.id !== id)
-    saveWorkspaces()
+    workspaceStore.pendingInvitations = workspaceStore.pendingInvitations.filter(inv => inv.id !== id)
+    
 }
 
 const getMyRole = (ws: any) => {
+    if (!ws || !ws.members) return 'Member'
     const me = ws.members.find((m: any) => m.id === '1')
     return me ? me.role : 'Member'
 }
@@ -53,13 +56,18 @@ const formatTokens = (val?: number) => {
     if (!val) return '0'
     if (val >= 1000000) return (val / 1000000).toFixed(1) + 'M'
     if (val >= 1000) return (val / 1000).toFixed(1) + 'k'
-    return val.toString()
 }
+
+import { onMounted } from 'vue'
+
+onMounted(() => {
+    workspaceStore.isInitialized = true
+})
 </script>
 
 <template>
     <UContainer class="py-12">
-        <div v-if="isInitialized" class="flex flex-col gap-10">
+        <div v-if="workspaceStore.isInitialized" class="flex flex-col gap-10">
             <!-- Breadcrumbs -->
             <nav class="flex items-center gap-2 text-sm text-neutral-500 -mb-6">
                 <ULink to="/app/dashboard" class="hover:text-primary transition-colors">App</ULink>
@@ -78,14 +86,14 @@ const formatTokens = (val?: number) => {
             </header>
 
             <!-- Pending Invitations Section -->
-            <div v-if="pendingInvitations.length > 0" class="flex flex-col gap-4">
+            <div v-if="workspaceStore.pendingInvitations.length > 0" class="flex flex-col gap-4">
                 <div class="flex items-center gap-2 px-1">
                     <UIcon name="i-lucide-mailbox" class="text-primary-500 text-xl" />
                     <h2 class="text-sm font-bold uppercase tracking-widest text-neutral-500">Pending Invitations ({{
-                        pendingInvitations.length }})</h2>
+                        workspaceStore.pendingInvitations.length }})</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <UCard v-for="inv in pendingInvitations" :key="inv.id"
+                    <UCard v-for="inv in workspaceStore.pendingInvitations" :key="inv.id"
                         :ui="{ root: 'bg-primary-50/30 border-primary-100 dark:bg-primary-950/10 dark:border-primary-900/30' }">
                         <div class="flex items-center justify-between gap-4">
                             <div class="flex items-center gap-4">

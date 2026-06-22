@@ -1,190 +1,139 @@
-import { 
-    MOCK_COURSES, 
-    injectAssessmentsIntoTimeline, 
-    MOCK_ACTIVITY_LOGS, 
-    MOCK_SESSION_LOGS, 
-    calculateInterval,
-    generateMockWorkspaces,
-    generateInitialWorkspaces,
-    MOCK_RECEIVED_INVITATIONS,
-    generateMockOrganizations,
-    generateMockAdminAccounts,
-    generateMockPlans,
-    generateMockAdminDashboardData,
-    generateEmptyAdminDashboardData
-} from '~/utils/seeder'
-import { MOCK_RECOMMENDED_COURSES } from '~/constants/dashboard'
-import { useCourses } from '~/composables/useCourses'
-import { useDashboard } from '~/composables/useDashboard'
-import { useLessons } from '~/composables/useLessons'
-import { useOrganizations } from '~/composables/useOrganizations'
-import { useAdminAccounts } from '~/composables/useAdminAccounts'
-import { usePlans } from '~/composables/usePlans'
-import { useAdminDashboard } from '~/composables/useAdminDashboard'
+import { useCourseStore } from '~/stores/courseStore'
+import { useDashboardStore } from '~/stores/dashboardStore'
+import { useLessonStore } from '~/stores/lessonStore'
+import { useOrganizationStore } from '~/stores/organizationStore'
+import { useAdminAccountStore } from '~/stores/adminAccountStore'
+import { usePlanStore } from '~/stores/planStore'
+import { useAdminDashboardStore } from '~/stores/adminDashboardStore'
+import { useActivityLogStore } from '~/stores/activityLogStore'
+import { useWorkspaceStore } from '~/stores/workspaceStore'
+import { useUserStore } from '~/stores/userStore'
 import { useToast } from '#ui/composables/useToast'
-import type { LessonOverview, LessonContent, Assessment } from '~/types/course'
+
 
 export const useSeeder = () => {
-    const { courses } = useCourses()
-    const { getLessonsByCourse, addLessons, addLessonContents, addAssessments, clearAll: clearLessons } = useLessons()
-    const { logs, sessions } = useActivityLogs()
-    const { recommendedCourses } = useDashboard()
     const toast = useToast()
+    const userStore = useUserStore()
+    
+    // Store instances
+    const courseStore = useCourseStore()
+    const dashboardStore = useDashboardStore()
+    const lessonStore = useLessonStore()
+    const organizationStore = useOrganizationStore()
+    const adminAccountStore = useAdminAccountStore()
+    const planStore = usePlanStore()
+    const adminDashboardStore = useAdminDashboardStore()
+    const activityLogStore = useActivityLogStore()
+    const workspaceStore = useWorkspaceStore()
 
-    const { user } = useUser()
+    const seedWorkspaces = async () => {
+        try {
+            const data = await $fetch('/api/workspaces', {
+                method: 'POST',
+                body: { userProfile: userStore.profile }
+            })
+            workspaceStore.workspaces = data as any
+            workspaceStore.currentWorkspaceId = '1'
 
-    const seedWorkspaces = () => {
-        const { workspaces, pendingInvitations, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
-        workspaces.value = generateMockWorkspaces(user.value.profile)
-        pendingInvitations.value = [...MOCK_RECEIVED_INVITATIONS]
-        currentWorkspaceId.value = '1'
-        saveWorkspaces()
+            const invites = await $fetch('/api/invitations')
+            workspaceStore.pendingInvitations = invites as any
+        } catch (e) { console.error(e) }
     }
 
-    const seedOrganizations = () => {
-        const { organizations, currentOrganizationId, saveOrganizations } = useOrganizations()
-        organizations.value = generateMockOrganizations(user.value.profile)
-        currentOrganizationId.value = organizations.value[0]?.id || null
-        saveOrganizations()
+    const seedOrganizations = async () => {
+        try {
+            const data = await $fetch('/api/organizations', {
+                method: 'POST',
+                body: { userProfile: userStore.profile }
+            })
+            organizationStore.organizations = data as any
+            organizationStore.currentOrganizationId = (data as any)[0]?.id || null
+        } catch (e) { console.error(e) }
     }
 
     const clearWorkspaces = () => {
-        const { workspaces, pendingInvitations, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
-        workspaces.value = generateInitialWorkspaces(user.value.profile)
-        pendingInvitations.value = []
-        currentWorkspaceId.value = '1'
-        saveWorkspaces()
+        workspaceStore.workspaces = generateInitialWorkspaces(userStore.profile)
+        workspaceStore.pendingInvitations = []
+        workspaceStore.currentWorkspaceId = '1'
     }
 
     const clearOrganizations = () => {
-        const { organizations, currentOrganizationId, saveOrganizations } = useOrganizations()
-        organizations.value = []
-        currentOrganizationId.value = null
-        saveOrganizations()
+        organizationStore.organizations = []
+        organizationStore.currentOrganizationId = null
     }
 
-    const seedAdminAccounts = () => {
-        const { adminAccounts, saveAdminAccounts } = useAdminAccounts()
-        adminAccounts.value = generateMockAdminAccounts()
-        saveAdminAccounts()
+    const seedAdminAccounts = async () => {
+        try {
+            const data = await $fetch('/api/admin-accounts')
+            adminAccountStore.adminAccounts = data as any
+        } catch (e) { console.error(e) }
     }
 
     const clearAdminAccounts = () => {
-        const { adminAccounts, saveAdminAccounts } = useAdminAccounts()
-        adminAccounts.value = []
-        saveAdminAccounts()
+        adminAccountStore.adminAccounts = []
     }
 
-    const seedPlans = () => {
-        const { plans, savePlans } = usePlans()
-        plans.value = generateMockPlans()
-        savePlans()
+    const seedPlans = async () => {
+        try {
+            const data = await $fetch('/api/plans')
+            planStore.plans = data as any
+        } catch (e) { console.error(e) }
     }
 
     const clearPlans = () => {
-        const { plans, savePlans } = usePlans()
-        plans.value = []
-        savePlans()
+        planStore.plans = []
     }
 
-    const seedAdminDashboard = () => {
-        const { adminDashboardData, saveAdminDashboard } = useAdminDashboard()
-        adminDashboardData.value = generateMockAdminDashboardData()
-        saveAdminDashboard()
+    const seedAdminDashboard = async () => {
+        try {
+            const data = await $fetch('/api/admin-dashboard')
+            adminDashboardStore.adminDashboardData = data as any
+        } catch (e) { console.error(e) }
     }
 
     const clearAdminDashboard = () => {
-        const { adminDashboardData, saveAdminDashboard } = useAdminDashboard()
-        adminDashboardData.value = generateEmptyAdminDashboardData()
-        saveAdminDashboard()
+        adminDashboardStore.adminDashboardData = generateEmptyAdminDashboardData()
     }
 
-    const seedCourses = () => {
-        courses.value = [...MOCK_COURSES]
-        logs.value = [...MOCK_ACTIVITY_LOGS]
-        sessions.value = [...MOCK_SESSION_LOGS]
-        recommendedCourses.value = [...MOCK_RECOMMENDED_COURSES]
-        
-        seedWorkspaces()
-        seedOrganizations()
-        seedAdminAccounts()
-        seedPlans()
-        seedAdminDashboard()
-        
-        const allLessons: LessonOverview[] = []
-        const allContents: LessonContent[] = []
-        const allAssessments: Assessment[] = []
+    const seedCourses = async () => {
+        try {
+            const logsData = await $fetch('/api/activity-logs') as any
+            activityLogStore.logs = logsData.logs
+            activityLogStore.sessions = logsData.sessions
 
-        MOCK_COURSES.forEach(course => {
-            const lessonsParts = course.lessons.split('/').map(Number)
-            const completed = lessonsParts[0] ?? 0
-            const total = lessonsParts[1] ?? 0
+            const dashData = await $fetch('/api/dashboard-stats') as any
+            dashboardStore.recommendedCourses = dashData.recommendedCourses
+
+            await Promise.all([
+                seedWorkspaces(),
+                seedOrganizations(),
+                seedAdminAccounts(),
+                seedPlans(),
+                seedAdminDashboard()
+            ])
+
+            const courseData = await $fetch('/api/course-data') as any
+            courseStore.courses = courseData.courses
             
-            const baseLessons: LessonOverview[] = []
-            
-            // Create base reading lessons
-            for (let i = 1; i <= total; i++) {
-                const lessonId = `${course.id}-lesson-${i}`
-                const interval = calculateInterval(total)
-                const hasQuizAtCurrent = completed > 0 && completed % interval === 0 && completed < total
-                
-                const status = i <= completed 
-                    ? 'completed' 
-                    : (i === completed + 1 && !hasQuizAtCurrent ? 'current' : 'locked')
-                
-                baseLessons.push({
-                    id: lessonId,
-                    courseId: course.id,
-                    title: `Lesson ${i}: ${course.title} Core`,
-                    duration: '15 min',
-                    status: status as any,
-                    type: 'reading',
-                    icon: 'i-lucide-book-open',
-                    color: status === 'completed' ? 'green' : (status === 'current' ? 'primary' : 'neutral'),
-                    summary: `Standard seeded lesson content for module ${i}.`
-                })
+            lessonStore.clearAll()
+            lessonStore.addLessons(courseData.lessons)
+            lessonStore.addLessonContents(courseData.contents)
+            lessonStore.addAssessments(courseData.assessments)
 
-                allContents.push({
-                    id: lessonId,
-                    courseId: course.id,
-                    title: `Lesson ${i}: ${course.title} Core`,
-                    description: `Course module exploration Part ${i}.`,
-                    lessonTypes: ['Reading', 'Video'],
-                    sections: [
-                        { title: "Overview", content: "Details about this seeded lesson.", aiInsight: "Review this before the milestone." }
-                    ]
-                })
-            }
-
-            // Inject Assessments using centralized logic
-            const { newTimeline, newAssessments, newContents } = injectAssessmentsIntoTimeline(
-                course.id, 
-                course.title, 
-                baseLessons, 
-                completed, 
-                total, 
-                course.status === 'Completed'
-            )
-            
-            allLessons.push(...newTimeline)
-            allAssessments.push(...newAssessments)
-            allContents.push(...newContents)
-        })
-
-        clearLessons()
-        addLessons(allLessons)
-        addLessonContents(allContents)
-        addAssessments(allAssessments)
-
-        toast.add({ title: 'Test data seeded!', color: 'success' })
+            toast.add({ title: 'Test data seeded from server!', color: 'success' })
+        } catch (e) {
+            console.error(e)
+            toast.add({ title: 'Failed to seed test data', color: 'error' })
+        }
     }
 
     const clearCourses = () => {
-        courses.value = []
-        logs.value = []
-        sessions.value = []
-        recommendedCourses.value = []
-        clearLessons()
+        courseStore.courses = []
+        activityLogStore.logs = []
+        activityLogStore.sessions = []
+        dashboardStore.recommendedCourses = []
+        
+        lessonStore.clearAll()
         clearWorkspaces()
         clearOrganizations()
         clearAdminAccounts()

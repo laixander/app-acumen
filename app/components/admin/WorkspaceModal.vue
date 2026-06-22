@@ -9,8 +9,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:open'])
 
-const { addWorkspace, updateWorkspace } = useWorkspaces()
-const { user } = useUser()
+const workspaceStore = useWorkspaceStore()
+const userStore = useUserStore()
 const toast = useToast()
 
 const isOpen = computed({
@@ -75,7 +75,7 @@ const handleSubmit = () => {
     if (!form.name) return
 
     if (isEdit.value && props.workspace) {
-        updateWorkspace(props.workspace.id, {
+        workspaceStore.updateWorkspace(props.workspace.id, {
             name: form.name,
             description: form.description,
             icon: form.icon,
@@ -98,16 +98,16 @@ const handleSubmit = () => {
             members: [
                 {
                     id: '1',
-                    name: user.value.profile.fullName,
-                    email: user.value.profile.email,
+                    name: userStore.profile.fullName,
+                    email: userStore.profile.email,
                     role: 'Admin',
-                    avatar: user.value.profile.avatar,
+                    avatar: userStore.profile.avatar,
                     status: 'online'
                 }
             ],
             pendingInvites: []
         }
-        addWorkspace(newWs)
+        workspaceStore.addWorkspace(newWs)
         toast.add({ title: 'Workspace created successfully!', color: 'success' })
     }
 

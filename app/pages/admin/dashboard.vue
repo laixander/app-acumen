@@ -25,7 +25,8 @@ ChartJS.register(
     Filler
 )
 
-const { adminDashboardData } = useAdminDashboard()
+const adminDashboardStore = useAdminDashboardStore()
+const adminDashboardData = computed(() => adminDashboardStore.adminDashboardData)
 
 const chartOptions = {
     responsive: true,
@@ -71,7 +72,7 @@ const chartOptions = {
 }
 
 const activityData = computed(() => ({
-    labels: adminDashboardData.value.activityLabels,
+    labels: adminDashboardStore.adminDashboardData.activityLabels,
     datasets: [
         {
             label: 'Active Learners',
@@ -83,7 +84,7 @@ const activityData = computed(() => ({
             pointBorderWidth: 2,
             pointRadius: 4,
             pointHoverRadius: 6,
-            data: adminDashboardData.value.activityData,
+            data: adminDashboardStore.adminDashboardData.activityData,
             fill: true,
             tension: 0.4
         }
@@ -91,14 +92,14 @@ const activityData = computed(() => ({
 }))
 
 const completionData = computed(() => ({
-    labels: adminDashboardData.value.categoryLabels,
+    labels: adminDashboardStore.adminDashboardData.categoryLabels,
     datasets: [
         {
             label: 'Courses Completed',
             backgroundColor: 'rgba(139, 92, 246, 0.85)', // violet transparent
             hoverBackgroundColor: 'rgba(139, 92, 246, 1)',
             borderRadius: 6,
-            data: adminDashboardData.value.categoryData,
+            data: adminDashboardStore.adminDashboardData.categoryData,
             maxBarThickness: 48
         }
     ]

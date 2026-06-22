@@ -6,8 +6,8 @@ definePageMeta({
     layout: false
 })
 
-const { plans } = usePlans()
-const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+const planStore = usePlanStore()
+const activePlans = computed(() => planStore.plans.filter(p => p.status === 'Active'))
 
 const route = useRoute()
 const toast = useToast()

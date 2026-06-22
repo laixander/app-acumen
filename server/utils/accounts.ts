@@ -1,10 +1,4 @@
-export interface AdminLearner {
-    id: number | string
-    name: string
-    email: string
-    status: 'Active' | 'Inactive'
-    subscription: 'Premium' | 'Pro' | 'Free'
-}
+import type { AdminLearner } from '~/types/admin'
 
 export const MOCK_ADMIN_ACCOUNTS: AdminLearner[] = [
     { id: 1, name: 'Alice Smith', email: 'alice@example.com', status: 'Active', subscription: 'Premium' },

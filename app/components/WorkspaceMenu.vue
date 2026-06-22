@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { workspaces, currentWorkspaceId, saveWorkspaces } = useWorkspaces()
-const { organizations } = useOrganizations()
+const workspaceStore = useWorkspaceStore()
+const organizationStore = useOrganizationStore()
 
-const currentWorkspace = computed(() => workspaces.value.find(w => w.id === currentWorkspaceId.value) || workspaces.value[0])
+const currentWorkspace = computed(() => workspaceStore.workspaces.find(w => w.id === workspaceStore.currentWorkspaceId) || workspaceStore.workspaces[0])
 
 const workspaceOrganization = computed(() => {
-    if (!currentWorkspace.value?.organizationId) return null
-    return organizations.value.find(org => org.id === currentWorkspace.value?.organizationId) || null
+    if (!workspaceStore.currentWorkspace?.organizationId) return null
+    return organizationStore.organizations.find(org => org.id === workspaceStore.currentWorkspace?.organizationId) || null
 })
 
 const switchWorkspace = (id: string) => {
-    currentWorkspaceId.value = id
-    saveWorkspaces()
+    workspaceStore.currentWorkspaceId = id
+    
 
-    const ws = workspaces.value.find(w => w.id === id)
+    const ws = workspaceStore.workspaces.find(w => w.id === id)
     if (ws) {
         const role = getMyRole(ws)
         if (role === 'Member') {
@@ -25,12 +25,13 @@ const switchWorkspace = (id: string) => {
 }
 
 const getMyRole = (ws: any) => {
+    if (!ws || !ws.members) return 'Member'
     const me = ws.members.find((m: any) => m.id === '1')
     return me ? me.role : 'Member'
 }
 
 const items = computed<DropdownMenuItem[][]>(() => [
-    workspaces.value.map(ws => ({
+    workspaceStore.workspaces.map(ws => ({
         label: ws.name,
         icon: ws.icon,
         description: getMyRole(ws),
@@ -38,7 +39,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             e.preventDefault()
             switchWorkspace(ws.id)
         },
-        checked: currentWorkspaceId.value === ws.id,
+        checked: workspaceStore.currentWorkspaceId === ws.id,
         type: 'checkbox'
     })),
     [
@@ -47,7 +48,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             icon: 'i-lucide-plus',
             to: '/app/workspaces/new'
         },
-        ...(getMyRole(currentWorkspace.value) === 'Owner' || getMyRole(currentWorkspace.value) === 'Admin' ? [{
+        ...(getMyRole(workspaceStore.currentWorkspace) === 'Owner' || getMyRole(workspaceStore.currentWorkspace) === 'Admin' ? [{
             label: 'Workspace Settings',
             icon: 'i-lucide-settings-2',
             to: '/app/workspaces/settings'

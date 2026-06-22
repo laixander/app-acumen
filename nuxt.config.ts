@@ -2,7 +2,9 @@
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt'
   ],
 
   devtools: {
@@ -13,6 +15,10 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': { prerender: true }
+  },
+
+  imports: {
+    dirs: ['constants']
   },
 
   compatibilityDate: '2025-01-15',
@@ -69,6 +75,7 @@ export default defineNuxtConfig({
         '@vue/devtools-kit',
         '@vueuse/core',
         '@tanstack/vue-table',
+        'pinia'
       ]
     }
   }

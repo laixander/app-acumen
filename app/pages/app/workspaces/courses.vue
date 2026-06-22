@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const { currentWorkspace: workspace } = useWorkspaces()
-const { courses } = useCourses()
+const workspaceStore = useWorkspaceStore()
+const workspace = computed(() => workspaceStore.currentWorkspace)
+const courseStore = useCourseStore()
 
 const workspaceCourses = computed(() => {
     if (!workspace.value) return []
-    return courses.value.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
+    return courseStore.courses.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
 })
 </script>
 
@@ -48,7 +49,7 @@ const workspaceCourses = computed(() => {
                     <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
                         <div v-for="course in workspaceCourses" :key="course.id"
                             class="flex items-center justify-between p-5 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors group cursor-pointer"
-                            @click="navigateTo(`/app/courses/${course.id}`)">
+                            @click="navigateTo(`/app/courses/${generateSlug(course.title)}`)">
                             <div class="flex items-center gap-4">
                                 <div
                                     class="w-12 h-12 flex items-center justify-center rounded-xl bg-primary-500/10 text-primary-500 border border-primary-500/10 transition-transform group-hover:scale-110">

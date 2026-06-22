@@ -8,8 +8,9 @@ const props = defineProps<{
 
 const emit = defineEmits(['update:open'])
 
-const { addOrganization, updateOrganization } = useOrganizations()
-const { user } = useUser()
+const organizationStore = useOrganizationStore()
+const workspaceStore = useWorkspaceStore()
+const userStore = useUserStore()
 const toast = useToast()
 
 const isOpen = computed({
@@ -34,8 +35,8 @@ const typeOptions = [
     { label: 'Personal', value: 'Personal', icon: 'i-lucide-user' }
 ]
 
-const { plans } = usePlans()
-const activePlans = computed(() => plans.value.filter(p => p.status === 'Active'))
+const planStore = usePlanStore()
+const activePlans = computed(() => planStore.plans.filter(p => p.status === 'Active'))
 const planOptions = computed(() => activePlans.value.map(p => ({
     label: p.name,
     value: p.name,
@@ -67,7 +68,7 @@ const handleSubmit = () => {
     if (!form.name) return
 
     if (isEdit.value && props.organization) {
-        updateOrganization(props.organization.id, {
+        workspaceStore.updateWorkspace(props.organization.id, {
             name: form.name,
             type: form.type,
             plan: form.plan,
@@ -75,7 +76,7 @@ const handleSubmit = () => {
             website: form.website,
             logo: typeOptions.find(opt => opt.value === form.type)?.icon,
             updatedAt: new Date().toISOString()
-        })
+        } as any)
         toast.add({ title: 'Organization updated successfully!', color: 'success' })
     } else {
         const newOrg: Organization = {
@@ -93,16 +94,16 @@ const handleSubmit = () => {
             members: [
                 {
                     id: '1',
-                    name: user.value.profile.fullName,
-                    email: user.value.profile.email,
+                    name: userStore.profile.fullName,
+                    email: userStore.profile.email,
                     role: 'Owner',
                     orgRole: 'Org_Owner',
-                    avatar: user.value.profile.avatar,
+                    avatar: userStore.profile.avatar,
                     status: 'online'
                 }
             ]
         }
-        addOrganization(newOrg)
+        organizationStore.addOrganization(newOrg)
         toast.add({ title: 'Organization created successfully!', color: 'success' })
     }
 

@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useCourses } from '~/composables/useCourses'
-import { useLessons } from '~/composables/useLessons'
-import { injectAssessmentsIntoTimeline, generateBaseLessonsForCourse } from '~/utils/seeder'
+
+
+
 import { slugify } from '~/utils/format'
 import type { LearningGoal } from '~/types/course'
 import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 
-const { user } = useUser()
-const { addCourse } = useCourses()
-const { addLessons, addLessonContents, addAssessments } = useLessons()
+const userStore = useUserStore()
+const courseStore = useCourseStore()
+const lessonStore = useLessonStore()
 const router = useRouter()
 
 // Flow States
@@ -225,56 +225,54 @@ const resetFlow = () => {
     formData.files = []
 }
 
-const confirmFinish = () => {
-    const courseId = slugify(formData.title || 'Untitled Course')
+const confirmFinish = async () => {
+    const courseId = slugify(formData.title || 'Untitled Course') + '-' + Math.random().toString(36).substr(2, 5)
 
-    const {
-        baseLessons,
-        baseContents,
-        baseAssessments
-    } = generateBaseLessonsForCourse(courseId, formData.title)
+    try {
+        const { timeline, contents, assessments } = await $fetch('/api/courses/generate-timeline', {
+            method: 'POST',
+            body: { courseId, courseTitle: formData.title || 'Untitled Course' }
+        })
 
-    const {
-        newTimeline,
-        newAssessments,
-        newContents: injectedContents
-    } = injectAssessmentsIntoTimeline(courseId, formData.title, baseLessons, 0, baseLessons.length, false, baseAssessments)
+        lessonStore.addLessons(timeline)
+        lessonStore.addLessonContents(contents)
+        lessonStore.addAssessments(assessments)
 
-    addLessons(newTimeline)
-    addLessonContents([...baseContents, ...injectedContents])
-    addAssessments(newAssessments)
+        courseStore.addCourse({ id: courseId,
+            title: formData.title || 'Untitled Course',
+            progress: 0,
+            tag: creationMode.value === 'upload' ? 'Materials' : 'Curriculum',
+            status: 'Ongoing',
+            lessons: `0/${timeline.length}`,
+            lastStudied: 'Just now',
+            lastStudiedAt: Date.now(),
+            icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : creationMode.value === 'prompt' ? 'i-lucide-sparkles' : 'i-lucide-book-open',
+            isPinned: false,
+            learningGoal: formData.learningGoal,
+            description: formData.description,
+            targetFinishDate: formData.targetFinishDate ? new Date(formData.targetFinishDate).getTime() : undefined,
+            sessionsPerWeek: formData.sessionsPerWeek,
+            itemsPerWeek: formData.itemsPerWeek,
+            createdBy: {
+                id: 'user-1',
+                name: userStore.profile.fullName,
+                avatar: userStore.profile.avatar,
+                role: 'Author'
+            },
+            stats: [
+                { label: 'Master (Overall)', value: '0%', subtext: 'Analysis pending', icon: 'i-lucide-award' },
+                { label: 'Pass Probability', value: '0%', subtext: 'Initial benchmark', icon: 'i-lucide-line-chart' },
+                { label: 'Sessions This Week', value: '0', subtext: 'Ready to start', icon: 'i-lucide-calendar-days' }
+            ],
+            strongCourses: [],
+            weakCourses: []
+        })
 
-    addCourse({
-        title: formData.title || 'Untitled Course',
-        progress: 0,
-        tag: creationMode.value === 'upload' ? 'Materials' : 'Curriculum',
-        status: 'Ongoing',
-        lessons: `0/${newTimeline.length}`,
-        lastStudied: 'Just now',
-        lastStudiedAt: Date.now(),
-        icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : creationMode.value === 'prompt' ? 'i-lucide-sparkles' : 'i-lucide-book-open',
-        isPinned: false,
-        learningGoal: formData.learningGoal,
-        description: formData.description,
-        targetFinishDate: formData.targetFinishDate ? new Date(formData.targetFinishDate).getTime() : undefined,
-        sessionsPerWeek: formData.sessionsPerWeek,
-        itemsPerWeek: formData.itemsPerWeek,
-        createdBy: {
-            id: 'user-1',
-            name: user.value.profile.fullName,
-            avatar: user.value.profile.avatar,
-            role: 'Author'
-        },
-        stats: [
-            { label: 'Master (Overall)', value: '0%', subtext: 'Analysis pending', icon: 'i-lucide-award' },
-            { label: 'Pass Probability', value: '0%', subtext: 'Initial benchmark', icon: 'i-lucide-line-chart' },
-            { label: 'Sessions This Week', value: '0', subtext: 'Ready to start', icon: 'i-lucide-calendar-days' }
-        ],
-        strongCourses: [],
-        weakCourses: []
-    })
-
-    router.push('/app/dashboard')
+        router.push('/app/dashboard')
+    } catch (e) {
+        console.error('Failed to generate course timeline:', e)
+        isGenerating.value = false
+    }
 }
 </script>
 

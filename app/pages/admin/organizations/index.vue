@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { upperFirst } from 'scule'
 
-const { organizations, updateOrganization } = useOrganizations()
+const organizationStore = useOrganizationStore()
+const workspaceStore = useWorkspaceStore()
 const table = useTemplateRef('table')
 const toast = useToast()
 
@@ -31,7 +32,7 @@ const handleConfirmToggle = () => {
     const org = targetOrg.value
     const newStatus = org.status === 'Suspended' ? 'Active' : 'Suspended'
     
-    updateOrganization(org.id, { status: newStatus })
+    workspaceStore.updateWorkspace(org.id, { status: newStatus } as any)
     toast.add({ 
         title: `Organization ${newStatus === 'Active' ? 'Activated' : 'Suspended'}`,
         description: `${org.name} has been ${newStatus.toLowerCase()}.`,
@@ -87,7 +88,7 @@ const columns = [
     }
 ]
 
-const orgData = computed(() => organizations.value.map(org => ({
+const orgData = computed(() => organizationStore.organizations.map(org => ({
     id: org.id,
     name: org.name,
     type: org.type,
