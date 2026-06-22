@@ -34,7 +34,7 @@ const roadmapItems = [
         category: 'AI Engine',
         tasks: [
             { id: 10, label: 'Live LLM Integration', description: 'Connect to Gemini 1.5 Pro or GPT-4o APIs for real-time analysis.', status: 'todo', priority: 'high' },
-            { id: 11, label: 'Vector RAG Implementation', description: 'Setup Pinecone for topic knowledge embedding and retrieval.', status: 'todo', priority: 'medium' },
+            { id: 11, label: 'Vector RAG Implementation', description: 'Setup Pinecone for course knowledge embedding and retrieval.', status: 'todo', priority: 'medium' },
             { id: 12, label: 'Adaptive Pathfinding', description: 'Refine logic for dynamic lesson adjustment based on performance.', status: 'todo', priority: 'medium' }
         ]
     },

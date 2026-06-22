@@ -1,5 +1,5 @@
 import { watch } from 'vue'
-import type { LessonOverview, LessonContent, Assessment } from '~/types/topic'
+import type { LessonOverview, LessonContent, Assessment } from '~/types/course'
 
 export const useLessons = () => {
     const lessons = useState<LessonOverview[]>('lessons', () => [])
@@ -49,20 +49,20 @@ export const useLessons = () => {
         assessments.value.push(...newAssessments)
     }
 
-    const getLessonsByTopic = (topicId: string) => {
-        return lessons.value.filter(l => l.topicId === topicId)
+    const getLessonsByCourse = (courseId: string) => {
+        return lessons.value.filter(l => l.courseId === courseId)
     }
 
     const getAdjacentLessons = (lessonId: string) => {
         const current = lessons.value.find(l => l.id === lessonId)
         if (!current) return { prev: null, next: null }
 
-        const topicLessons = getLessonsByTopic(current.topicId)
-        const index = topicLessons.findIndex(l => l.id === lessonId)
+        const courseLessons = getLessonsByCourse(current.courseId)
+        const index = courseLessons.findIndex(l => l.id === lessonId)
 
         return {
-            prev: index > 0 ? topicLessons[index - 1] : null,
-            next: index < topicLessons.length - 1 ? topicLessons[index + 1] : null
+            prev: index > 0 ? courseLessons[index - 1] : null,
+            next: index < courseLessons.length - 1 ? courseLessons[index + 1] : null
         }
     }
 
@@ -73,9 +73,9 @@ export const useLessons = () => {
         current.status = 'completed'
         current.color = 'green'
 
-        const topicLessons = getLessonsByTopic(current.topicId)
-        const index = topicLessons.findIndex(l => l.id === lessonId)
-        const next = topicLessons[index + 1]
+        const courseLessons = getLessonsByCourse(current.courseId)
+        const index = courseLessons.findIndex(l => l.id === lessonId)
+        const next = courseLessons[index + 1]
 
         if (next && next.status === 'locked') {
             next.status = 'current'
@@ -93,9 +93,9 @@ export const useLessons = () => {
         return assessments.value.find(a => a.lessonId === lessonId)
     }
 
-    const updateLessonsForTopic = (topicId: string, newLessons: LessonOverview[]) => {
-        // Remove old lessons for this topic
-        lessons.value = lessons.value.filter(l => l.topicId !== topicId)
+    const updateLessonsForCourse = (courseId: string, newLessons: LessonOverview[]) => {
+        // Remove old lessons for this course
+        lessons.value = lessons.value.filter(l => l.courseId !== courseId)
         // Add new ones
         lessons.value.push(...newLessons)
     }
@@ -114,8 +114,8 @@ export const useLessons = () => {
         addLessons,
         addLessonContents,
         addAssessments,
-        updateLessonsForTopic,
-        getLessonsByTopic,
+        updateLessonsForCourse,
+        getLessonsByCourse,
         getAdjacentLessons,
         completeLesson,
         getLessonContentById,

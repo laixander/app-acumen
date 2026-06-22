@@ -4,7 +4,7 @@ import { onClickOutside } from '@vueuse/core'
 
 const fabRef = ref(null)
 const fabOpen = ref(false)
-const { seedTopics, clearTopics } = useSeeder()
+const { seedCourses, clearCourses } = useSeeder()
 
 onClickOutside(fabRef, () => {
     fabOpen.value = false
@@ -17,7 +17,7 @@ const actions = [
         icon: 'i-lucide-database',
         color: 'primary' as const,
         action: () => {
-            seedTopics()
+            seedCourses()
             fabOpen.value = false
         }
     },
@@ -27,7 +27,7 @@ const actions = [
         icon: 'i-lucide-trash',
         color: 'red' as const,
         action: () => {
-            clearTopics()
+            clearCourses()
             fabOpen.value = false
         }
     }

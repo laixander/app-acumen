@@ -2,8 +2,8 @@ export default defineAppConfig({
     version: '2.5.0',
     ui: {
         colors: {
-            primary: 'violet',
-            neutral: 'mauve',
+            primary: 'teal',
+            neutral: 'zinc',
             success: 'emerald',
             info: 'sky',
             warning: 'yellow',

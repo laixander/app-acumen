@@ -1,15 +1,22 @@
 // Composable for persisting onboarding draft to localStorage
-// Used by: /start page (write), signup.vue (read), /app/topics/new (consume)
+// Used by: /start page (write), signup.vue (read), /app/courses/new (consume)
 
 export interface OnboardingDraft {
     mode: 'upload' | 'explore' | 'prompt' | null
-    topic: string            // subject name / prompt text / first filename
+    course: string            // subject name / prompt text / first filename
     files: string[]          // filenames only (actual upload deferred to post-signup)
     assessmentAnswers: string[]
     score: number
     quizComplete: boolean
     plan?: string           // chosen pricing tier: 'free' | 'pro' | 'team'
     createdAt: number
+    
+    // details form data
+    description?: string
+    learningGoal?: string
+    targetFinishDate?: string
+    sessionsPerWeek?: number
+    itemsPerWeek?: number
 }
 
 const DRAFT_KEY = 'acumen_onboarding_draft'
@@ -28,7 +35,7 @@ export const useOnboardingDraft = () => {
     const write = (draft: Partial<OnboardingDraft>) => {
         if (!import.meta.client) return
         const existing = read() ?? {
-            mode: null, topic: '', files: [],
+            mode: null, course: '', files: [],
             assessmentAnswers: [], score: 0,
             quizComplete: false, createdAt: Date.now()
         }

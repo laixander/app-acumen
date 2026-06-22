@@ -17,7 +17,7 @@
         <div class="grid grid-cols-3 divide-x divide-default/50 mt-8">
             <div class="text-center">
                 <div class="text-xl font-bold">12</div>
-                <div class="text-xs font-medium text-dimmed uppercase tracking-wider mt-1">Topics</div>
+                <div class="text-xs font-medium text-dimmed uppercase tracking-wider mt-1">Courses</div>
             </div>
             <div class="text-center">
                 <div class="text-xl font-bold">48</div>

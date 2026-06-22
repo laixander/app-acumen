@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const { items } = useBreadcrumb({
-    basePath: 'app/topics',   // strips these segments
-    homeLabel: 'Collection',
+    basePath: 'app/courses',   // strips these segments
+    homeLabel: 'Courses',
     homeIcon: 'i-lucide-folder-open',
-    homeTo: '/app/topics/collection'
+    homeTo: '/app/courses/collection'
 })
 </script>
 

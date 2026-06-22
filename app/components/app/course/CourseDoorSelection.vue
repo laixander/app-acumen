@@ -46,26 +46,28 @@ const doors = [
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
             <!-- Upload & Explore doors -->
-            <div v-for="door in doors" :key="door.id"
-                class="group relative flex flex-col p-8 rounded-[2rem] border border-neutral-200/50 dark:border-neutral-800/50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-sm hover:shadow-2xl transition-all duration-700 cursor-pointer overflow-hidden"
-                :class="[
+            <UCard v-for="door in doors" :key="door.id" variant="subtle"
+                class="group rounded-[2rem] backdrop-blur-xl shadow-sm hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden"
+                :ui="{
+                    body: 'relative flex flex-col h-full sm:p-8',
+                }" :class="[
                     door.id === 'upload'
-                        ? 'hover:shadow-primary-500/10 hover:border-primary-500/50 dark:hover:border-primary-500/50'
-                        : 'hover:shadow-emerald-500/10 hover:border-emerald-500/50 dark:hover:border-emerald-500/50'
+                        ? 'hover:shadow-primary-500/10 hover:ring-primary-500/50 dark:hover:ring-primary-500/50'
+                        : 'hover:shadow-warning-500/10 hover:ring-warning-500/50 dark:hover:ring-warning-500/50'
                 ]" @click="emit(`select-${door.id}`)">
                 <!-- Background Glow -->
-                <div class="absolute -top-32 -right-32 w-80 h-80 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-700"
-                    :class="door.id === 'upload' ? 'bg-primary-500' : 'bg-emerald-500'" />
+                <div class="absolute -top-32 -right-32 w-80 h-80 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-300"
+                    :class="door.id === 'upload' ? 'bg-primary-500' : 'bg-warning-500'" />
 
                 <div class="flex items-start justify-between mb-8">
                     <div class="p-4 rounded-2xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500"
-                        :class="door.id === 'upload' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-500' : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-500'">
+                        :class="door.id === 'upload' ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-500' : 'bg-warning-50 dark:bg-warning-950/30 text-warning-500'">
                         <UIcon :name="door.icon" class="w-8 h-8 flex" />
                     </div>
                     <div class="px-3 py-1 rounded-full text-xs font-medium transition-colors" :class="[
                         door.id === 'upload'
                             ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
-                            : 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-warning-50 dark:bg-warning-950/30 text-warning-600 dark:text-warning-400'
                     ]">
                         {{ door.title }}
                     </div>
@@ -80,21 +82,22 @@ const doors = [
                 </div>
 
                 <div class="mt-8 flex items-center gap-2 font-medium"
-                    :class="door.id === 'upload' ? 'text-primary-600 dark:text-primary-400' : 'text-emerald-600 dark:text-emerald-400'">
+                    :class="door.id === 'upload' ? 'text-primary-600 dark:text-primary-400' : 'text-warning-600 dark:text-warning-400'">
                     <span>{{ door.action }}</span>
                     <UIcon name="i-lucide-arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
-            </div>
+            </UCard>
 
             <!-- AI Prompt Door — spans full width -->
-            <div v-if="!isOnboarding"
-                class="group relative md:col-span-2 flex flex-col sm:flex-row rounded-[2rem] border border-violet-200/60 dark:border-violet-800/40 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-xl shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:border-violet-500/50 dark:hover:border-violet-500/40 transition-all duration-700 overflow-hidden">
+            <UCard v-if="!isOnboarding" variant="subtle" :ui="{ body: 'p-0 sm:p-0 relative flex flex-col sm:flex-row' }"
+                class="group md:col-span-2 rounded-[2rem] shadow-sm hover:shadow-2xl hover:shadow-violet-500/10 hover:ring-violet-500/50 dark:hover:ring-violet-500/40 transition-all duration-300 overflow-hidden">
+
+                <div
+                    class="absolute z-0 -top-24 -right-24 w-64 h-64 bg-violet-500 blur-[80px] opacity-0 group-hover:opacity-15 transition-opacity duration-300 pointer-events-none" />
 
                 <!-- Left: info panel -->
                 <div
-                    class="relative flex flex-col justify-between p-8 sm:w-72 shrink-0 border-b sm:border-b-0 sm:border-r border-violet-100 dark:border-violet-900/40 overflow-hidden">
-                    <div
-                        class="absolute -top-24 -left-24 w-64 h-64 bg-violet-500 blur-[80px] opacity-0 group-hover:opacity-15 transition-opacity duration-700 pointer-events-none" />
+                    class="relative flex flex-col justify-between p-8 sm:w-72 shrink-0 border-b sm:border-b-0 sm:border-r border-neutral-100 dark:border-neutral-800 overflow-hidden">
 
                     <div class="flex items-start justify-between mb-6">
                         <div
@@ -113,7 +116,7 @@ const doors = [
                             Tell the AI what you want to learn — no files, no category list. It generates a full
                             curriculum from your words.
                         </p>
-                        <div class="pt-3 border-t border-violet-100 dark:border-violet-900/40">
+                        <div class="pt-3 border-t border-neutral-100 dark:border-neutral-800">
                             <p class="text-xs italic text-neutral-500">
                                 "The AI interprets your goal and builds a personalized plan around it."
                             </p>
@@ -122,14 +125,17 @@ const doors = [
                 </div>
 
                 <!-- Right: prompt input -->
-                <div class="flex flex-col flex-1 p-8 gap-5 justify-between">
+                <div class="relative z-10 flex flex-col flex-1 p-8 gap-5 justify-between">
                     <div class="flex flex-col gap-2">
                         <label class="text-xs font-bold uppercase tracking-widest text-violet-500">
                             What do you want to learn?
                         </label>
-                        <textarea v-model="promptText" rows="4"
-                            placeholder="e.g. I want to understand how transformer models work from scratch, for a machine learning interview next month..."
-                            class="w-full resize-none rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-900 px-4 py-3 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 outline-none focus:border-violet-400 dark:focus:border-violet-600 focus:ring-2 focus:ring-violet-500/20 transition-all duration-300" />
+                        <UTextarea v-model="promptText" :rows="5" variant="subtle"
+                            placeholder="e.g. I want to understand how transformer models work from scratch..."
+                            style="--ui-primary: var(--color-violet-500); --ui-primary-elevated: var(--color-violet-400);"
+                            :ui="{
+                                base: 'resize-none transition-all duration-300 rounded-2xl px-4 py-3 w-full'
+                            }" />
                         <p class="text-[11px] text-neutral-400 dark:text-neutral-600">
                             Be specific — mention your goal, timeline, or level if relevant.
                         </p>
@@ -154,7 +160,7 @@ const doors = [
                             @click="emit('select-prompt', promptText.trim())" />
                     </div>
                 </div>
-            </div>
+            </UCard>
         </div>
 
         <div class="text-center">

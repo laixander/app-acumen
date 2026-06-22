@@ -45,7 +45,7 @@ useSeoMeta({
                         <li><strong>Learning Materials:</strong> Documents (PDFs, text files), notes, and links that you
                             upload to be processed by our AI Engine.</li>
                         <li><strong>Learning Data:</strong> Your assessment scores, confidence levels, learning paths,
-                            and topic progress logs.</li>
+                            and course progress logs.</li>
                         <li><strong>Usage Data:</strong> Information about how you interact with our platform, including
                             diagnostic data and performance metrics.</li>
                     </ul>

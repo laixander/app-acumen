@@ -1,4 +1,4 @@
-import type { AssessmentQuestion, SubTopicAnalysis } from './topic'
+import type { AssessmentQuestion, SubCourseAnalysis } from './course'
 
 export type SessionState = 'idle' | 'processing' | 'ready' | 'active' | 'complete' | 'plan'
 
@@ -21,7 +21,7 @@ export interface SessionCompleteData {
 }
 
 export interface SessionReadyProps {
-    topicName: string
+    courseName: string
     moduleTitle: string
     difficulty: string
     duration: string
@@ -39,7 +39,7 @@ export interface ReadyCardProps {
 }
 
 export interface SessionReadinessPlanProps {
-    weakestTopic?: SubTopicAnalysis
+    weakestCourse?: SubCourseAnalysis
 }
 
 export interface SessionProbingReasoningProps {

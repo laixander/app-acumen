@@ -1,6 +1,6 @@
-export const TOPIC_TAGS = ['All', 'Math', 'History', 'Science', 'Language', 'English']
-export const TOPIC_STATUSES = ['Ongoing', 'Completed', 'Archived', 'All']
-export const TOPIC_SORT_OPTIONS = ['Recent', 'Progress', 'Alphabetical']
+export const COURSE_TAGS = ['All', 'Math', 'History', 'Science', 'Language', 'English']
+export const COURSE_STATUSES = ['Ongoing', 'Completed', 'Archived', 'All']
+export const COURSE_SORT_OPTIONS = ['Recent', 'Progress', 'Alphabetical']
 
 export const GOAL_COLORS = {
     'Mastery': 'amber',

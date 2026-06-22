@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AssessmentQuestion, AssessmentOption } from '~/types/topic'
+import type { AssessmentQuestion, AssessmentOption } from '~/types/course'
 import type { SessionActiveProps } from '~/types/session'
 
 const props = defineProps<SessionActiveProps>()

@@ -1,24 +1,24 @@
-export type LearningGoal = 'Mastery' | 'Overview' | 'Project Based' | 'Exam Prep'
+export type LearningGoal = 'Deep Mastery' | 'Quick Overview' | 'Practical Application' | 'Exam Preparation' | 'Casual / Hobby'
 
 export interface ExamInfo {
     name: string
     daysAway: number
 }
 
-export interface TopicStat {
+export interface CourseStat {
     label: string
     value: string
     subtext: string
     icon: string
 }
 
-export interface SubTopicAnalysis {
+export interface SubCourseAnalysis {
     name: string
     progress: number
     color: string
 }
 
-export interface Topic {
+export interface Course {
     id: string
     title: string
     progress: number
@@ -35,20 +35,27 @@ export interface Topic {
         name: string
         avatar?: string
         role: string
-        topicsCount?: number
+        coursesCount?: number
     }
     workspaceId?: string
     viewersCount?: number
     completedCount?: number
     examInfo?: ExamInfo
-    stats?: TopicStat[]
-    strongTopics?: SubTopicAnalysis[]
-    weakTopics?: SubTopicAnalysis[]
+    stats?: CourseStat[]
+    strongCourses?: SubCourseAnalysis[]
+    weakCourses?: SubCourseAnalysis[]
+    
+    // Course Settings
+    description?: string
+    targetFinishDate?: number // Timestamp
+    sessionsPerWeek?: number
+    itemsPerWeek?: number
+    notificationsEnabled?: boolean
 }
 
 export interface LessonOverview {
     id: string
-    topicId: string
+    courseId: string
     title: string
     duration: string
     status: 'completed' | 'current' | 'locked'
@@ -67,7 +74,7 @@ export interface LessonSection {
 
 export interface LessonContent {
     id: string
-    topicId: string
+    courseId: string
     title: string
     description: string
     sections: LessonSection[]
@@ -91,7 +98,7 @@ export interface AssessmentQuestion {
 export interface Assessment {
     id: string
     lessonId: string
-    topicId: string
+    courseId: string
     title: string
     questions: AssessmentQuestion[]
     completionSummary?: string
@@ -104,8 +111,8 @@ export interface Assessment {
 
 export interface ActivityLog {
     id: string
-    topicId: string
-    topicTitle: string
+    courseId: string
+    courseTitle: string
     lessonId: string
     lessonTitle: string
     type: 'Lesson' | 'Assessment' | 'Review'

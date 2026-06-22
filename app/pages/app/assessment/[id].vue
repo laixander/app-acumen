@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useLessons } from '~/composables/useLessons'
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { ref, computed, onMounted } from 'vue'
-import type { Assessment } from '~/types/topic'
+import type { Assessment } from '~/types/course'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
 
 const route = useRoute()
 const router = useRouter()
-const { getAssessmentByLessonId, completeLesson, getLessonsByTopic } = useLessons()
-const { updateTopicProgress, topics } = useTopics()
+const { getAssessmentByLessonId, completeLesson, getLessonsByCourse } = useLessons()
+const { updateCourseProgress, courses } = useCourses()
 const { addLog } = useActivityLogs()
 
 const { data: serverAssessmentData } = await useFetch<Assessment>(`/api/assessment/${route.params.id}`)
@@ -59,7 +59,7 @@ const calculatedScore = computed(() => {
 })
 
 const resetSession = () => {
-    router.push(`/app/topics/${assessmentData.value?.topicId}`)
+    router.push(`/app/courses/${assessmentData.value?.courseId}`)
 }
 
 const handleViewPlan = () => {
@@ -71,23 +71,23 @@ const finalizeAssessment = () => {
     completeLesson(route.params.id as string);
 
     // Trigger Progress Update
-    const topicId = assessmentData.value?.topicId;
-    if (topicId) {
-        const topic = topics.value.find(t => t.id === topicId)
-        const topicLessons = getLessonsByTopic(topicId);
-        const lessonOverview = topicLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData.value?.lessonId)
+    const courseId = assessmentData.value?.courseId;
+    if (courseId) {
+        const course = courses.value.find(t => t.id === courseId)
+        const courseLessons = getLessonsByCourse(courseId);
+        const lessonOverview = courseLessons.find(l => l.assessmentId === route.params.id || l.id === assessmentData.value?.lessonId)
 
-        if (topic && lessonOverview) {
-            addLog(topicId, topic.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
+        if (course && lessonOverview) {
+            addLog(courseId, course.title, lessonOverview.id, lessonOverview.title, lessonOverview.duration)
         }
 
-        const completedCount = topicLessons.filter(l => l.status === 'completed').length;
-        const totalCount = topicLessons.length;
+        const completedCount = courseLessons.filter(l => l.status === 'completed').length;
+        const totalCount = courseLessons.length;
         const progress = Math.round((completedCount / totalCount) * 100);
-        updateTopicProgress(topicId, completedCount, totalCount, progress);
+        updateCourseProgress(courseId, completedCount, totalCount, progress);
     }
 
-    router.push(`/app/topics/${assessmentData.value?.topicId}`)
+    router.push(`/app/courses/${assessmentData.value?.courseId}`)
 }
 
 const description = computed(() => {
@@ -111,7 +111,7 @@ const description = computed(() => {
                     @complete="handleProcessingComplete" />
 
                 <AppSessionReady v-else-if="sessionState === 'ready'"
-                    :topic-name="assessmentData?.title || 'Checkpoint'" :module-title="description" difficulty="Medium"
+                    :course-name="assessmentData?.title || 'Checkpoint'" :module-title="description" difficulty="Medium"
                     :duration="`${questions.length * 2} min`" @start="beginSessionAction" />
 
                 <AppSessionActive v-else-if="sessionState === 'active'" :questions="questions"
@@ -120,7 +120,7 @@ const description = computed(() => {
 
                 <AppSessionComplete v-else-if="sessionState === 'complete'"
                     :module-title="assessmentData?.title || 'Assessment'"
-                    :what-you-did-well="calculatedScore >= 70 ? 'Strong grasp of core concepts and reasoning.' : 'Partial understanding of the topic basics.'"
+                    :what-you-did-well="calculatedScore >= 70 ? 'Strong grasp of core concepts and reasoning.' : 'Partial understanding of the course basics.'"
                     :where-you-struggled="calculatedScore >= 70 ? 'Keep practicing complex applications.' : 'Needs review on fundamental principles.'"
                     :pass-prob-before="assessmentData?.passProbBefore || '45%'"
                     :pass-prob-after="calculatedScore >= 70 ? (assessmentData?.passProbAfter || '75%') : assessmentData?.passProbBefore || '45%'"

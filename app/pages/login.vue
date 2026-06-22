@@ -113,7 +113,7 @@ function submitLogin() {
         <div class="hidden lg:flex flex-col p-12 text-white h-full relative overflow-hidden login-panel">
 
             <!-- Layered gradient background -->
-            <div class="absolute inset-0 z-0 login-panel-bg" />
+            <!-- <div class="absolute inset-0 z-0 login-panel-bg" /> -->
 
             <!-- Animated floating orbs -->
             <div class="absolute inset-0 z-0 pointer-events-none">

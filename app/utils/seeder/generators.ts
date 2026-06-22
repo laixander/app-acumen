@@ -1,24 +1,24 @@
-import type { Topic, LessonOverview, LessonContent, Assessment } from '~/types/topic'
-import { TOPIC_CONTENT_MAP } from './topics'
+import type { Course, LessonOverview, LessonContent, Assessment } from '~/types/course'
+import { COURSE_CONTENT_MAP } from './courses'
 
-export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string): {
+export const generateBaseLessonsForCourse = (courseId: string, courseTitle: string): {
     baseLessons: LessonOverview[],
     baseContents: LessonContent[],
     baseAssessments: Assessment[]
 } => {
-    const custom = TOPIC_CONTENT_MAP[topicId]
+    const custom = COURSE_CONTENT_MAP[courseId]
     const baseLessons: LessonOverview[] = []
     const baseContents: LessonContent[] = []
     const baseAssessments: Assessment[] = []
 
     if (custom) {
         custom.lessons.forEach((l, idx) => {
-            const lessonId = l.id || `${topicId}-lesson-${idx + 1}`
+            const lessonId = l.id || `${courseId}-lesson-${idx + 1}`
             const status = idx === 0 ? 'current' : 'locked'
 
             baseLessons.push({
                 id: lessonId,
-                topicId,
+                courseId,
                 title: l.title || `Lesson ${idx + 1}`,
                 duration: l.duration || '15 min',
                 status: status as any,
@@ -30,7 +30,7 @@ export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string)
 
             baseContents.push({
                 id: lessonId,
-                topicId,
+                courseId,
                 title: l.title || `Lesson ${idx + 1}`,
                 description: l.content?.description || `Detailed study materials for ${l.title}.`,
                 lessonTypes: l.content?.lessonTypes || ['Reading', 'Video'],
@@ -43,7 +43,7 @@ export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string)
                 baseAssessments.push({
                     id: `assess-${lessonId}`,
                     lessonId,
-                    topicId,
+                    courseId,
                     title: l.assessment.title || `Assessment: ${l.title}`,
                     questions: l.assessment.questions || []
                 } as Assessment)
@@ -52,26 +52,26 @@ export const generateBaseLessonsForTopic = (topicId: string, topicTitle: string)
     } else {
         const count = 8 + Math.floor(Math.random() * 5)
         for (let i = 1; i <= count; i++) {
-            const lessonId = `${topicId}-lesson-${i}`
+            const lessonId = `${courseId}-lesson-${i}`
             const status = i === 1 ? 'current' : 'locked'
 
             baseLessons.push({
                 id: lessonId,
-                topicId,
-                title: `Lesson ${i}: Understanding ${topicTitle}`,
+                courseId,
+                title: `Lesson ${i}: Understanding ${courseTitle}`,
                 duration: '20 min',
                 status: status as any,
                 type: 'reading',
                 icon: 'i-lucide-book-open',
                 color: i === 1 ? 'primary' : 'neutral',
-                summary: `Essential concepts for ${topicTitle} - part ${i}.`
+                summary: `Essential concepts for ${courseTitle} - part ${i}.`
             })
 
             baseContents.push({
                 id: lessonId,
-                topicId,
-                title: `Lesson ${i}: ${topicTitle}`,
-                description: `Deep dive into the core principles of ${topicTitle}.`,
+                courseId,
+                title: `Lesson ${i}: ${courseTitle}`,
+                description: `Deep dive into the core principles of ${courseTitle}.`,
                 lessonTypes: ['Reading', 'Video'],
                 sections: [
                     { title: 'Core Objectives', content: 'AI-generated content for this section.', aiInsight: 'Focus on foundations.' }
@@ -89,14 +89,14 @@ export const calculateInterval = (totalLessons: number) => {
     return 5
 }
 
-export const generateReviewContent = (id: string, topicId: string, topicTitle: string, isFinal: boolean): LessonContent => {
+export const generateReviewContent = (id: string, courseId: string, courseTitle: string, isFinal: boolean): LessonContent => {
     return {
         id,
-        topicId,
-        title: isFinal ? 'Final Topic Review' : 'Checkpoint Review',
+        courseId,
+        title: isFinal ? 'Final Course Review' : 'Checkpoint Review',
         description: isFinal
-            ? `You've reached the end of ${topicTitle}! This final review session will help you synthesize everything you've learned before the final assessment.`
-            : `Great job reaching this milestone in ${topicTitle}. Take a moment to review core concepts.`,
+            ? `You've reached the end of ${courseTitle}! This final review session will help you synthesize everything you've learned before the final assessment.`
+            : `Great job reaching this milestone in ${courseTitle}. Take a moment to review core concepts.`,
         lessonTypes: ['Reading'],
         sections: [
             {
@@ -115,12 +115,12 @@ export const generateReviewContent = (id: string, topicId: string, topicTitle: s
 }
 
 export const injectAssessmentsIntoTimeline = (
-    topicId: string,
-    topicTitle: string,
+    courseId: string,
+    courseTitle: string,
     baseLessons: LessonOverview[],
     completedCount: number = 0,
     totalCount: number = 0,
-    isTopicComplete: boolean = false,
+    isCourseComplete: boolean = false,
     predefinedAssessments: Assessment[] = []
 ) => {
     const totalBaseLessons = baseLessons.filter(l => l.type !== 'quiz').length
@@ -141,7 +141,7 @@ export const injectAssessmentsIntoTimeline = (
         }
 
         if (baseCount % interval === 0 && index !== baseLessons.length - 1) {
-            const quizId = `${topicId}-quiz-${baseCount}`
+            const quizId = `${courseId}-quiz-${baseCount}`
             
             let status: 'completed' | 'current' | 'locked' = 'locked'
             let color: string = 'neutral'
@@ -156,7 +156,7 @@ export const injectAssessmentsIntoTimeline = (
 
             newTimeline.push({
                 id: quizId,
-                topicId,
+                courseId,
                 title: `Checkpoint Quiz ${Math.ceil(baseCount / interval)}`,
                 duration: '10 min',
                 status,
@@ -166,14 +166,14 @@ export const injectAssessmentsIntoTimeline = (
                 summary: `Review milestone for the last ${interval} lessons.`
             })
 
-            const review = generateReviewContent(quizId, topicId, topicTitle, false)
+            const review = generateReviewContent(quizId, courseId, courseTitle, false)
             newContents.push(review)
 
             newAssessments.push({
                 id: quizId,
                 lessonId: quizId,
-                topicId,
-                title: `Checkpoint Quiz: ${topicTitle}`,
+                courseId,
+                title: `Checkpoint Quiz: ${courseTitle}`,
                 questions: [
                     {
                         id: 1,
@@ -183,7 +183,7 @@ export const injectAssessmentsIntoTimeline = (
                     },
                     {
                         id: 2,
-                        text: `How does this relate to ${topicTitle}?`,
+                        text: `How does this relate to ${courseTitle}?`,
                         options: [{ id: '1', label: 'Related' }, { id: '2', label: 'Unrelated' }],
                         correct: '1'
                     }
@@ -192,11 +192,11 @@ export const injectAssessmentsIntoTimeline = (
         }
     })
 
-    const finalId = `${topicId}-final`
+    const finalId = `${courseId}-final`
     let finalStatus: 'completed' | 'current' | 'locked' = 'locked'
     let finalColor: string = 'neutral'
 
-    if (isTopicComplete) {
+    if (isCourseComplete) {
         finalStatus = 'completed'
         finalColor = 'green'
     } else if (completedCount === totalCount) {
@@ -206,26 +206,26 @@ export const injectAssessmentsIntoTimeline = (
 
     newTimeline.push({
         id: finalId,
-        topicId,
+        courseId,
         title: 'Final Assessment',
         duration: '25 min',
         status: finalStatus,
         type: 'Assessment',
         icon: 'i-lucide-graduation-cap',
         color: finalColor,
-        summary: 'Comprehensive evaluation of the entire topic.'
+        summary: 'Comprehensive evaluation of the entire course.'
     })
 
-    newContents.push(generateReviewContent(finalId, topicId, topicTitle, true))
+    newContents.push(generateReviewContent(finalId, courseId, courseTitle, true))
 
     newAssessments.push({
         id: finalId,
         lessonId: finalId,
-        topicId,
-        title: `Final Assessment: ${topicTitle}`,
+        courseId,
+        title: `Final Assessment: ${courseTitle}`,
         questions: Array.from({ length: 5 }, (_, idx) => ({
             id: idx + 1,
-            text: `Advanced evaluation question ${idx + 1} for ${topicTitle}.`,
+            text: `Advanced evaluation question ${idx + 1} for ${courseTitle}.`,
             options: [
                 { id: '1', label: 'Mastery Answer' },
                 { id: '2', label: 'Distractor A' },

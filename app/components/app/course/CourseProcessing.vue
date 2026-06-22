@@ -11,10 +11,10 @@ const config = computed(() => {
         return {
             title: 'Mapping Your Curriculum...',
             description: 'Building a personalized learning path based on your selected subject.',
-            statuses: ['SCANNING SUBJECT', 'MAPPING TOPICS', 'BUILDING OUTLINE'],
+            statuses: ['SCANNING SUBJECT', 'MAPPING COURSES', 'BUILDING OUTLINE'],
             initialSteps: [
                 { id: 1, label: 'Scanning subject', status: 'in-progress', progress: 0, icon: 'i-lucide-search' },
-                { id: 2, label: 'Mapping topics', status: 'pending', progress: 0, icon: 'i-lucide-network' },
+                { id: 2, label: 'Mapping courses', status: 'pending', progress: 0, icon: 'i-lucide-network' },
                 { id: 3, label: 'Building outline', status: 'pending', progress: 0, icon: 'i-lucide-list-tree' }
             ]
         }

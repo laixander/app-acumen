@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SessionLog } from '~/types/topic'
+import type { SessionLog } from '~/types/course'
 import { getPaginationRowModel } from '@tanstack/vue-table'
 
 const table = useTemplateRef('table')

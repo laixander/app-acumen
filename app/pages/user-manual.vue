@@ -88,7 +88,7 @@ onMounted(() => {
                     <!-- Learner -->
                     <DocsSection id="learner" title="Learner" icon="i-lucide-user">
                         <p class="text-lg text-dimmed leading-relaxed mb-6">
-                            As a Learner, you are the primary user of the platform. Your goal is to master new topics
+                            As a Learner, you are the primary user of the platform. Your goal is to master new courses
                             efficiently through AI-guided adaptive paths.
                         </p>
 

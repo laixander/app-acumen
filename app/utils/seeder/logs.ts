@@ -1,10 +1,10 @@
-import type { ActivityLog, SessionLog } from '~/types/topic'
+import type { ActivityLog, SessionLog } from '~/types/course'
 
 export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
     {
         id: 'log-1',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
+        courseId: 'introduction-to-algebra',
+        courseTitle: 'Introduction to Algebra',
         lessonId: 'introduction-to-algebra-lesson-1',
         lessonTitle: 'Understanding Variables',
         type: 'Lesson',
@@ -13,8 +13,8 @@ export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-2',
-        topicId: 'world-war-ii-overview',
-        topicTitle: 'World War II Overview',
+        courseId: 'world-war-ii-overview',
+        courseTitle: 'World War II Overview',
         lessonId: 'world-war-ii-overview-lesson-1',
         lessonTitle: 'The Road to War',
         type: 'Lesson',
@@ -23,8 +23,8 @@ export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-3',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
+        courseId: 'introduction-to-algebra',
+        courseTitle: 'Introduction to Algebra',
         lessonId: 'introduction-to-algebra-lesson-2',
         lessonTitle: 'Solving One-Step Equations',
         type: 'Lesson',
@@ -33,8 +33,8 @@ export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-4',
-        topicId: 'advanced-javascript',
-        topicTitle: 'Advanced JavaScript',
+        courseId: 'advanced-javascript',
+        courseTitle: 'Advanced JavaScript',
         lessonId: 'advanced-javascript-lesson-1',
         lessonTitle: 'Closures & Scope',
         type: 'Assessment',
@@ -43,8 +43,8 @@ export const MOCK_ACTIVITY_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-5',
-        topicId: 'spanish-basics',
-        topicTitle: 'Spanish Basics',
+        courseId: 'spanish-basics',
+        courseTitle: 'Spanish Basics',
         lessonId: 'spanish-basics-lesson-1',
         lessonTitle: 'Essential Greetings',
         type: 'Lesson',

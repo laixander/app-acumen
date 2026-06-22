@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { useDashboard } from '~/composables/useDashboard'
 
-const { topics, pinnedTopics, continueLearningTopic, recentTopics } = useTopics()
-const { stats, recommendedTopics: recommended } = useDashboard()
+const { courses, pinnedCourses, continueLearningCourse, recentCourses } = useCourses()
+const { stats, recommendedCourses: recommended } = useDashboard()
 const { user } = useUser()
 
 const firstName = computed(() => user.value.profile.fullName.split(' ')[0])
@@ -21,9 +21,9 @@ const recommendedMessage = computed(() => {
         </div>
 
         <!-- AI Prompt Section -->
-        <AppDashboardAIPrompt :is-hero="topics.length === 0" />
+        <AppDashboardAIPrompt :is-hero="courses.length === 0" />
 
-        <template v-if="topics.length > 0">
+        <template v-if="courses.length > 0">
 
             <!-- Sections Layout -->
             <div class="flex flex-col gap-10">
@@ -53,19 +53,21 @@ const recommendedMessage = computed(() => {
                 <!-- Second Section: 2 Column Layout -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                    <!-- 1st Column: Recent Topics & Pinned Topics -->
-                    <div class="lg:col-span-2 flex flex-col gap-8">
+                    <!-- 1st Column: Recent Courses & Pinned Courses -->
+                    <div class="lg:col-span-3 flex flex-col gap-8">
                         <ClientOnly>
-                            <template v-if="topics.length > 0">
-                                <!-- Section: Recent Topics -->
-                                <div v-if="recentTopics.length > 0" class="flex flex-col gap-4">
+                            <template v-if="courses.length > 0">
+                                <!-- Section: Recent Courses -->
+                                <div v-if="recentCourses.length > 0" class="flex flex-col gap-4">
                                     <div class="flex items-center justify-between h-5">
-                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent Topics</h3>
+                                        <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recent
+                                            Courses</h3>
                                         <UButton label="View all" icon="i-lucide-arrow-right" color="primary"
-                                            variant="ghost" size="sm" class="uppercase" to="/app/topics/collection" />
+                                            variant="ghost" size="sm" class="uppercase" to="/app/courses/collection" />
                                     </div>
-                                    <div class="grid md:grid-cols-2 gap-6">
-                                        <AppTopicCard v-for="topic in recentTopics" :key="topic.title" :topic="topic" />
+                                    <div class="grid md:grid-cols-3 gap-6">
+                                        <AppCourseCard v-for="course in recentCourses" :key="course.title"
+                                            :course="course" />
                                     </div>
                                 </div>
                             </template>
@@ -73,7 +75,7 @@ const recommendedMessage = computed(() => {
                     </div>
 
                     <!-- 2nd Column: Recommended For You -->
-                    <div v-if="topics.length > 0" class="flex flex-col gap-4">
+                    <!-- <div v-if="courses.length > 0" class="flex flex-col gap-4">
                         <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Recommended for You</h3>
                         <div class="flex flex-col gap-2">
                             <UCard variant="soft" :ui="{ body: 'flex flex-col gap-4 relative z-10' }"
@@ -82,7 +84,6 @@ const recommendedMessage = computed(() => {
                                     <UIcon name="i-lucide-sparkles" class="text-lg text-primary shrink-0" />
                                     {{ recommendedMessage }}
                                 </p>
-
                                 <div v-if="recommended.length > 0" class="flex flex-col gap-2">
                                     <UCard v-for="rec in recommended" :key="rec.title" variant="soft"
                                         :ui="{ body: 'flex items-center gap-3 sm:p-4' }"
@@ -95,8 +96,6 @@ const recommendedMessage = computed(() => {
                                         <UButton icon="i-lucide-plus" size="xs" variant="ghost" color="primary" />
                                     </UCard>
                                 </div>
-
-                                <!-- Recommendations Empty State -->
                                 <div v-else
                                     class="flex flex-col items-center justify-center py-6 text-center border-2 border-dashed border-neutral-700/50 rounded-xl">
                                     <p class="text-xs text-muted max-w-[180px]">
@@ -105,19 +104,16 @@ const recommendedMessage = computed(() => {
                                 </div>
                             </UCard>
                         </div>
-
-                        <!-- 2nd Column: Stats & Weekly Activity -->
                         <div class="flex flex-col gap-4">
-                            <!-- Chart Bar -->
                             <UCard variant="subtle" class="grow">
                                 <template #header>
                                     <h3 class="text-sm font-semibold text-muted uppercase tracking-wide">Weekly Activity
                                     </h3>
                                 </template>
-                            <AppWeeklyActivityChart />
-                        </UCard>
-                    </div>
-                    </div>
+                                <AppWeeklyActivityChart />
+                            </UCard>
+                        </div>
+                    </div> -->
 
                 </div>
 

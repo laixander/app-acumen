@@ -190,7 +190,7 @@ export const testimonials = [
 export const faqs = [
     {
         label: 'How does the AI analysis process work?',
-        content: 'Our AI processes your uploaded documents (PDFs, text, DOCX) and uses advanced natural language processing to extract key topics, concepts, and relationships, structuring them into a digestible learning path.'
+        content: 'Our AI processes your uploaded documents (PDFs, text, DOCX) and uses advanced natural language processing to extract key courses, concepts, and relationships, structuring them into a digestible learning path.'
     },
     {
         label: 'What file formats are supported?',

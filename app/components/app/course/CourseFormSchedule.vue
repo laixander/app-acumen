@@ -41,7 +41,7 @@ const updateField = (field: string, value: any) => {
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
             <!-- Duration -->
-            <UFormField label="How long do you want this topic to last?">
+            <UFormField label="How long do you want this course to last?">
                 <div class="flex flex-col gap-3 mt-4">
                     <UCard v-for="d in durations" :key="d.value" class="cursor-pointer transition-all duration-200"
                         :class="[

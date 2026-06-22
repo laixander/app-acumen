@@ -1,11 +1,11 @@
 import { computed, watch } from 'vue'
-import type { ActivityLog, SessionLog } from '~/types/topic'
+import type { ActivityLog, SessionLog } from '~/types/course'
 
 const FALLBACK_MOCK_LOGS: ActivityLog[] = [
     {
         id: 'log-1',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
+        courseId: 'introduction-to-algebra',
+        courseTitle: 'Introduction to Algebra',
         lessonId: 'introduction-to-algebra-lesson-1',
         lessonTitle: 'Understanding Variables',
         type: 'Lesson',
@@ -14,8 +14,8 @@ const FALLBACK_MOCK_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-2',
-        topicId: 'world-war-ii-overview',
-        topicTitle: 'World War II Overview',
+        courseId: 'world-war-ii-overview',
+        courseTitle: 'World War II Overview',
         lessonId: 'world-war-ii-overview-lesson-1',
         lessonTitle: 'The Road to War',
         type: 'Lesson',
@@ -24,8 +24,8 @@ const FALLBACK_MOCK_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-3',
-        topicId: 'introduction-to-algebra',
-        topicTitle: 'Introduction to Algebra',
+        courseId: 'introduction-to-algebra',
+        courseTitle: 'Introduction to Algebra',
         lessonId: 'introduction-to-algebra-lesson-2',
         lessonTitle: 'Solving One-Step Equations',
         type: 'Lesson',
@@ -34,8 +34,8 @@ const FALLBACK_MOCK_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-4',
-        topicId: 'advanced-javascript',
-        topicTitle: 'Advanced JavaScript',
+        courseId: 'advanced-javascript',
+        courseTitle: 'Advanced JavaScript',
         lessonId: 'advanced-javascript-lesson-1',
         lessonTitle: 'Closures & Scope',
         type: 'Assessment',
@@ -44,8 +44,8 @@ const FALLBACK_MOCK_LOGS: ActivityLog[] = [
     },
     {
         id: 'log-5',
-        topicId: 'spanish-basics',
-        topicTitle: 'Spanish Basics',
+        courseId: 'spanish-basics',
+        courseTitle: 'Spanish Basics',
         lessonId: 'spanish-basics-lesson-1',
         lessonTitle: 'Essential Greetings',
         type: 'Lesson',
@@ -99,12 +99,12 @@ export const useActivityLogs = () => {
         return value
     }
 
-    const addLog = (topicId: string, topicTitle: string, lessonId: string, lessonTitle: string, durationStr: string, type: 'Lesson' | 'Assessment' | 'Review' = 'Lesson') => {
+    const addLog = (courseId: string, courseTitle: string, lessonId: string, lessonTitle: string, durationStr: string, type: 'Lesson' | 'Assessment' | 'Review' = 'Lesson') => {
         const durationMinutes = parseDuration(durationStr)
         const newLog: ActivityLog = {
             id: `log-${Date.now()}`,
-            topicId,
-            topicTitle,
+            courseId,
+            courseTitle,
             lessonId,
             lessonTitle,
             type,

@@ -1,21 +1,25 @@
 <script setup lang="ts">
-import type { LearningGoal } from '~/types/topic'
+import type { LearningGoal } from '~/types/course'
 
 const props = defineProps<{
     modelValue: {
         title: string
         description: string
         learningGoal: LearningGoal
+        targetFinishDate?: string
+        sessionsPerWeek?: number
+        itemsPerWeek?: number
     }
 }>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'next', 'back'])
 
 const goals: { label: LearningGoal; icon: string; description: string }[] = [
-    { label: 'Mastery', icon: 'i-lucide-award', description: 'Deep dive into every concept.' },
-    { label: 'Overview', icon: 'i-lucide-search', description: 'High-level summary of materials.' },
-    { label: 'Project Based', icon: 'i-lucide-code', description: 'Focus on practical application.' },
-    { label: 'Exam Prep', icon: 'i-lucide-clipboard-list', description: 'Targeted study for assessments.' }
+    { label: 'Deep Mastery', icon: 'i-lucide-award', description: 'Deep dive into every concept.' },
+    { label: 'Quick Overview', icon: 'i-lucide-search', description: 'High-level summary of materials.' },
+    { label: 'Practical Application', icon: 'i-lucide-code', description: 'Focus on practical application.' },
+    { label: 'Exam Preparation', icon: 'i-lucide-clipboard-list', description: 'Targeted study for assessments.' },
+    { label: 'Casual / Hobby', icon: 'i-lucide-coffee', description: 'Learning for fun and personal interest.' }
 ]
 
 const updateField = (field: string, value: any) => {
@@ -33,29 +37,29 @@ const titleError = computed(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-8 p-8 sm:p-10">
         <div class="flex items-center gap-4">
             <div class="p-3 bg-primary-100 dark:bg-primary-900/40 rounded-xl">
-                <UIcon name="i-lucide-book" class="text-2xl text-primary flex shrink-0" />
+                <UIcon name="i-lucide-pencil-line" class="text-2xl text-primary flex shrink-0" />
             </div>
             <div>
-                <h2 class="text-xl font-bold">Tell us what you want to learn</h2>
+                <h2 class="text-xl font-bold">Course Details</h2>
                 <p class="text-sm text-muted">The more detail you provide, the better AI can customize your path.
                 </p>
             </div>
         </div>
 
         <div class="flex flex-col gap-6">
-            <UFormField label="Topic Title" help="e.g. Machine Learning Fundamentals" :error="titleError">
+            <UFormField label="Course Title" help="e.g. Machine Learning Fundamentals" :error="titleError">
                 <UInput :model-value="modelValue.title" @update:model-value="v => updateField('title', v)"
-                    placeholder="Enter the main topic..." size="xl" variant="soft" class="w-full"
+                    placeholder="Enter the main course..." size="xl" variant="subtle" class="w-full"
                     :color="titleError ? 'error' : 'neutral'" />
             </UFormField>
             <UFormField label="Detailed Description"
                 help="What specific areas do you want to cover? Any prerequisites?">
                 <UTextarea :model-value="modelValue.description"
                     @update:model-value="v => updateField('description', v)" placeholder="Add more context here..."
-                    size="xl" :rows="4" variant="soft" class="w-full" />
+                    size="xl" :rows="4" variant="subtle" class="w-full" />
             </UFormField>
 
             <div class="flex flex-col gap-3">
@@ -82,6 +86,30 @@ const titleError = computed(() => {
                     </UCard>
                 </div>
             </div>
+
+            <div class="flex flex-col gap-3 mt-2 pt-6 border-t border-neutral-200 dark:border-neutral-800">
+                <div class="flex flex-col gap-1 mb-2">
+                    <label class="text-sm font-medium text-neutral-900 dark:text-white">Schedule & Targets</label>
+                    <p class="text-xs text-muted">Set your goals and timeline for this course. You can change this later.</p>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-6">
+                    <UFormField label="Target Finish Date" hint="Optional" class="lg:col-span-2">
+                        <UInput type="date" :model-value="modelValue.targetFinishDate" @update:model-value="v => updateField('targetFinishDate', v)" icon="i-lucide-calendar" size="lg" class="w-full" />
+                    </UFormField>
+                    <UFormField label="Sessions per Week" help="How many times a week do you plan to study?">
+                        <UInput type="number" min="1" max="14" :model-value="modelValue.sessionsPerWeek" @update:model-value="v => updateField('sessionsPerWeek', Number(v))" icon="i-lucide-calendar-days" size="lg" class="w-full" />
+                    </UFormField>
+                    <UFormField label="Items per Week" help="Number of lessons or quizzes to complete weekly.">
+                        <UInput type="number" min="1" max="100" :model-value="modelValue.itemsPerWeek" @update:model-value="v => updateField('itemsPerWeek', Number(v))" icon="i-lucide-list-todo" size="lg" class="w-full" />
+                    </UFormField>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between mt-8 pt-8 border-t border-neutral-200 dark:border-neutral-800">
+            <UButton label="Back" variant="ghost" color="neutral" @click="$emit('back')" />
+            <UButton label="Continue" trailing-icon="i-lucide-arrow-right" variant="solid" color="primary"
+                :disabled="!modelValue.title" @click="$emit('next')" />
         </div>
     </div>
 </template>

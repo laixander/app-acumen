@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 import { slugify } from '~/utils/format'
-import type { LearningGoal } from '~/types/topic'
+import type { LearningGoal } from '~/types/course'
 
 definePageMeta({ layout: false })
 
 const { write } = useOnboardingDraft()
 
 // Mirror new.vue's FlowState exactly
-type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'assessment' | 'review' | 'pricing'
+type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'details' | 'assessment' | 'review' | 'pricing'
 
 const flowState = ref<FlowState>('entry')
 const creationMode = ref<'upload' | 'explore' | 'prompt' | null>(null)
@@ -32,8 +32,9 @@ const formData = reactive({
     title: '',
     description: '',
     learningGoal: 'Mastery' as LearningGoal,
-    duration: '2 weeks',
-    availability: 'Standard (5-7h/week)',
+    targetFinishDate: '',
+    sessionsPerWeek: 3,
+    itemsPerWeek: 5,
     files: [] as any[],
     assessments: [
         { label: 'Core Fundamentals', value: 50 },
@@ -45,17 +46,18 @@ const formData = reactive({
 
 // Mirror new.vue's steps/stepper
 const steps = computed(() => {
-    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
-    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan']
-    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Details', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'prompt') return ['Mode', 'Details', 'Pre-Assessment', 'Plan']
+    return ['Mode', 'Materials', 'Details', 'Pre-Assessment', 'Plan']
 })
 
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
-    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
-    if (flowState.value === 'pricing') return creationMode.value === 'prompt' ? 3 : 4
+    if (flowState.value === 'processing' || flowState.value === 'details') return creationMode.value === 'prompt' ? 1 : 2
+    if (flowState.value === 'assessment') return creationMode.value === 'prompt' ? 2 : 3
+    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 3 : 4
+    if (flowState.value === 'pricing') return creationMode.value === 'prompt' ? 4 : 5
     return 0
 })
 
@@ -78,19 +80,26 @@ const handlePromptSelect = (prompt: string) => {
     formData.description = `AI-generated curriculum for: ${prompt}`
     creationMode.value = 'prompt'
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    setTimeout(() => { flowState.value = 'details' }, 3500)
 }
 
 const handleUploadComplete = () => {
     flowState.value = 'indexing'
-    setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    if (formData.files && formData.files.length > 0) {
+        const firstFile = formData.files[0]
+        const baseName = firstFile.name ? firstFile.name.replace(/\.[^/.]+$/, "") : 'Uploaded Material'
+        formData.title = baseName
+        const fileNames = formData.files.map((f: any) => f.name).join(', ')
+        formData.description = `Curriculum built from: ${fileNames}`
+    }
+    setTimeout(() => { flowState.value = 'details' }, 3500)
 }
 
 const handleSubjectSelect = (subject: string) => {
     formData.title = subject
     formData.description = `Universal curriculum for ${subject}`
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    setTimeout(() => { flowState.value = 'details' }, 3500)
 }
 
 const handleAssessmentComplete = () => {
@@ -98,17 +107,23 @@ const handleAssessmentComplete = () => {
     scrollToTop()
 }
 
+const nextStep = () => {
+    if (flowState.value === 'details') flowState.value = 'assessment'
+}
+
 const prevStep = () => {
     if (flowState.value === 'setup') {
         flowState.value = 'entry'
         creationMode.value = null
-    } else if (flowState.value === 'assessment') {
+    } else if (flowState.value === 'details') {
         if (creationMode.value === 'prompt') {
             flowState.value = 'entry'
             creationMode.value = null
         } else {
             flowState.value = 'setup'
         }
+    } else if (flowState.value === 'assessment') {
+        flowState.value = 'details'
     } else if (flowState.value === 'review') {
         flowState.value = 'assessment'
     } else if (flowState.value === 'pricing') {
@@ -147,7 +162,12 @@ const selectPlan = (planId: string) => {
     }
     write({
         mode: creationMode.value,
-        topic: formData.title,
+        course: formData.title,
+        description: formData.description,
+        learningGoal: formData.learningGoal,
+        targetFinishDate: formData.targetFinishDate,
+        sessionsPerWeek: formData.sessionsPerWeek,
+        itemsPerWeek: formData.itemsPerWeek,
         files: formData.files.map((f: any) => f.name ?? String(f)),
         quizComplete: true,
         plan: planName,
@@ -230,14 +250,14 @@ const pricingPlans = computed(() => {
                             Experience the <span class="text-primary">real thing.</span>
                         </h1>
                         <p class="text-sm font-light leading-relaxed text-white/60">
-                            This is the actual Acumen topic creator. Sign up to save your plan and start learning.
+                            This is the actual Acumen course creator. Sign up to save your plan and start learning.
                         </p>
                     </div>
                 </div>
 
                 <!-- Feature checklist -->
                 <div class="space-y-2.5">
-                    <div v-for="item in ['Full topic creation flow', 'AI-powered pre-assessment', 'Personalized lesson plan']"
+                    <div v-for="item in ['Full course creation flow', 'AI-powered pre-assessment', 'Personalized lesson plan']"
                         :key="item" class="flex items-center gap-3 text-sm font-light text-white/80">
                         <div
                             class="size-5 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
@@ -292,7 +312,7 @@ const pricingPlans = computed(() => {
                                 Choose how you want to learn
                             </h2>
                             <p class="text-sm text-muted max-w-md mx-auto leading-relaxed">
-                                Your personalised topic
+                                Your personalised course
                                 <strong class="text-foreground">
                                     {{ formData.title || 'is ready' }}
                                 </strong>.
@@ -388,17 +408,17 @@ const pricingPlans = computed(() => {
 
                     <!-- Generation Overlay (legacy – kept for safety) -->
                     <div v-else-if="isGenerating" class="flex flex-col justify-center my-auto w-full">
-                        <AppTopicGenerating @finish="selectPlan('free')" />
+                        <AppCourseGenerating @finish="selectPlan('free')" />
                     </div>
 
                     <!-- Indexing Overlay (Upload only) -->
                     <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center my-auto w-full">
-                        <AppTopicAnalyzing />
+                        <AppCourseAnalyzing />
                     </div>
 
                     <!-- Processing Overlay (Explore & Prompt Modes) -->
                     <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center my-auto w-full">
-                        <AppTopicProcessing :mode="creationMode" />
+                        <AppCourseProcessing :mode="creationMode" />
                     </div>
 
                     <!-- Main Flow -->
@@ -407,13 +427,13 @@ const pricingPlans = computed(() => {
                         <!-- Stepper heading (shown after door selection) -->
                         <div v-if="flowState !== 'entry'"
                             class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                            <!-- <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered /> -->
-                            <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
+                            <!-- <ContentHeading :title="`Create Course: ${steps[currentStepIndex]}`" centered /> -->
+                            <AppCourseStepper :current-step="currentStepIndex" :steps="steps" />
                         </div>
 
                         <!-- Entry (Door Selection) -->
                         <div v-if="flowState === 'entry'">
-                            <AppTopicDoorSelection is-onboarding @select-upload="selectMode('upload')"
+                            <AppCourseDoorSelection is-onboarding @select-upload="selectMode('upload')"
                                 @select-explore="selectMode('explore')" @select-prompt="handlePromptSelect" />
                         </div>
 
@@ -432,21 +452,27 @@ const pricingPlans = computed(() => {
 
                                         <!-- Setup Step -->
                                         <template v-if="flowState === 'setup'">
-                                            <AppTopicFormMaterials v-if="creationMode === 'upload'"
+                                            <AppCourseFormMaterials v-if="creationMode === 'upload'"
                                                 :model-value="formData"
                                                 @update:model-value="val => Object.assign(formData, val)"
                                                 @upload-ready="handleUploadComplete" />
-                                            <AppTopicSubjectPicker v-else-if="creationMode === 'explore'"
+                                            <AppCourseSubjectPicker v-else-if="creationMode === 'explore'"
                                                 @select="handleSubjectSelect" />
                                         </template>
 
+                                        <!-- Details Step -->
+                                        <AppCourseFormBasic v-else-if="flowState === 'details'"
+                                            :model-value="formData" @update:model-value="val => Object.assign(formData, val)"
+                                            @next="nextStep" @back="prevStep" />
+
                                         <!-- Assessment Step -->
-                                        <AppTopicFormPreAssessment v-else-if="flowState === 'assessment'"
-                                            v-model="formData" @complete="handleAssessmentComplete" @back="prevStep" />
+                                        <AppCourseFormPreAssessment v-else-if="flowState === 'assessment'"
+                                            :model-value="formData" @update:model-value="val => Object.assign(formData, val)"
+                                            @complete="handleAssessmentComplete" @back="prevStep" />
 
                                         <!-- Plan / Review Step -->
                                         <AppSessionReadinessPlan v-else-if="flowState === 'review'"
-                                            :topic-title="formData.title" is-onboarding is-teaser @close="handleFinish" />
+                                            :course-title="formData.title" is-onboarding is-teaser @close="handleFinish" />
 
                                     </div>
                                 </Transition>

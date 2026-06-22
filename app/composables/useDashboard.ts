@@ -1,9 +1,9 @@
 import { computed, watch } from 'vue'
-import { MOCK_DASHBOARD_STATS, MOCK_RECOMMENDED_TOPICS } from '~/constants/dashboard'
+import { MOCK_DASHBOARD_STATS, MOCK_RECOMMENDED_COURSES } from '~/constants/dashboard'
 import { useActivityLogs } from '~/composables/useActivityLogs'
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 
-export interface RecommendedTopic {
+export interface RecommendedCourse {
     title: string
     tag: string
     icon: string
@@ -11,24 +11,24 @@ export interface RecommendedTopic {
 
 export const useDashboard = () => {
     const { currentStreak, totalMinutesToday, logs } = useActivityLogs()
-    const { topics } = useTopics()
+    const { courses } = useCourses()
     
-    // Recommended Topics State (initial empty, seedable)
-    const recommendedTopics = useState<RecommendedTopic[]>('recommended-topics', () => [])
+    // Recommended Courses State (initial empty, seedable)
+    const recommendedCourses = useState<RecommendedCourse[]>('recommended-courses', () => [])
 
     const initDashboard = () => {
         if (import.meta.client) {
-            const saved = localStorage.getItem('learnfast-recommended-topics')
+            const saved = localStorage.getItem('learnfast-recommended-courses')
             if (saved) {
                 try {
-                    recommendedTopics.value = JSON.parse(saved)
+                    recommendedCourses.value = JSON.parse(saved)
                 } catch (e) {
-                    console.error("Failed to load recommended topics:", e)
+                    console.error("Failed to load recommended courses:", e)
                 }
             }
             
-            watch(recommendedTopics, (newVal) => {
-                localStorage.setItem('learnfast-recommended-topics', JSON.stringify(newVal))
+            watch(recommendedCourses, (newVal) => {
+                localStorage.setItem('learnfast-recommended-courses', JSON.stringify(newVal))
             }, { deep: true })
         }
     }
@@ -84,16 +84,16 @@ export const useDashboard = () => {
                 trend = result.trend
 
             } else if (baseStat.key === 'progress') {
-                value = topics.value.filter(t => t.progress > 0 && t.progress < 100 && t.status !== 'Archived').length.toString()
-                // Topics touched today vs yesterday
-                const todayTopicIds = new Set(todayLogs.map(l => l.topicId))
-                const yesterdayTopicIds = new Set(yesterdayLogs.map(l => l.topicId))
-                const result = formatTrend(todayTopicIds.size, yesterdayTopicIds.size, ' topic')
+                value = courses.value.filter(t => t.progress > 0 && t.progress < 100 && t.status !== 'Archived').length.toString()
+                // Courses touched today vs yesterday
+                const todayCourseIds = new Set(todayLogs.map(l => l.courseId))
+                const yesterdayCourseIds = new Set(yesterdayLogs.map(l => l.courseId))
+                const result = formatTrend(todayCourseIds.size, yesterdayCourseIds.size, ' course')
                 trendValue = result.trendValue
                 trend = result.trend
 
             } else if (baseStat.key === 'completed') {
-                value = topics.value.filter(t => t.status === 'Completed' || t.progress >= 100).length.toString()
+                value = courses.value.filter(t => t.status === 'Completed' || t.progress >= 100).length.toString()
                 // Completions logged today vs yesterday (lessons/assessments finished)
                 const result = formatTrend(todayLogs.length, yesterdayLogs.length, ' session')
                 trendValue = result.trendValue
@@ -140,6 +140,6 @@ export const useDashboard = () => {
     return {
         stats,
         initDashboard,
-        recommendedTopics
+        recommendedCourses
     }
 }

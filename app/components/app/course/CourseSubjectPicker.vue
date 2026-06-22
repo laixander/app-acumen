@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CURRICULUM_CATEGORIES } from '~/constants/topics'
+import { CURRICULUM_CATEGORIES } from '~/constants/courses'
 
 const emit = defineEmits(['select'])
 

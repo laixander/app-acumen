@@ -1,17 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 
-const emit = defineEmits(['finish'])
-
 const progress = ref(0)
-const status = ref('ANALYZING CONTEXT')
+const status = ref('READING FILES')
 
 const steps = ref([
-    { id: 1, label: 'Analyzing topic context', status: 'in-progress', progress: 0, icon: 'i-lucide-brain' },
-    { id: 2, label: 'Scanning uploaded materials', status: 'pending', progress: 0, icon: 'i-lucide-file-search' },
-    { id: 3, label: 'Evaluating assessment results', status: 'pending', progress: 0, icon: 'i-lucide-clipboard-check' },
-    { id: 4, label: 'Mapping learning objectives', status: 'pending', progress: 0, icon: 'i-lucide-map' },
-    { id: 5, label: 'Optimizing lesson schedule', status: 'pending', progress: 0, icon: 'i-lucide-calendar' }
+    { id: 1, label: 'Reading files', status: 'in-progress', progress: 0, icon: 'i-lucide-file-text' },
+    { id: 2, label: 'Generating courses', status: 'pending', progress: 0, icon: 'i-lucide-brain' },
+    { id: 3, label: 'First question ready', status: 'pending', progress: 0, icon: 'i-lucide-message-square' }
 ])
 
 const currentStep = computed(() => {
@@ -19,41 +15,39 @@ const currentStep = computed(() => {
 })
 
 onMounted(() => {
-    const duration = 4500
+    const duration = 3500
     const interval = 50
     const stepAmount = (100 / (duration / interval))
 
     const timer = setInterval(() => {
         progress.value += stepAmount
 
-        for (let i = 0; i < 5; i++) {
-            const stepStart = i * 20
-            const stepEnd = (i + 1) * 20
-            if (progress.value >= stepStart && progress.value < stepEnd) {
-                if (steps.value[i]) {
-                    steps.value[i]!.status = 'in-progress'
-                    steps.value[i]!.progress = Math.min(100, ((progress.value - stepStart) / 20) * 100)
-                }
-            } else if (progress.value >= stepEnd) {
-                if (steps.value[i]) {
-                    steps.value[i]!.status = 'completed'
-                    steps.value[i]!.progress = 100
-                }
-            }
+        // Update individual steps
+        if (progress.value < 33) {
+            steps.value[0]!.progress = Math.min(100, (progress.value / 33) * 100)
+        } else if (progress.value < 66) {
+            steps.value[0]!.status = 'completed'
+            steps.value[0]!.progress = 100
+            steps.value[1]!.status = 'in-progress'
+            steps.value[1]!.progress = Math.min(100, ((progress.value - 33) / 33) * 100)
+        } else {
+            steps.value[1]!.status = 'completed'
+            steps.value[1]!.progress = 100
+            steps.value[2]!.status = 'in-progress'
+            steps.value[2]!.progress = Math.min(100, ((progress.value - 66) / 34) * 100)
         }
 
-        if (progress.value < 20) status.value = 'ANALYZING CONTEXT'
-        else if (progress.value < 40) status.value = 'SCANNING MATERIALS'
-        else if (progress.value < 60) status.value = 'EVALUATING RESULTS'
-        else if (progress.value < 80) status.value = 'MAPPING OBJECTIVES'
-        else status.value = 'OPTIMIZING SCHEDULE'
+        if (progress.value >= 33 && progress.value < 66) {
+            status.value = 'INDEXING FACTS'
+        } else if (progress.value >= 66) {
+            status.value = 'MAPPING TRACEABILITY'
+        }
 
         if (progress.value >= 100) {
+            steps.value[2]!.status = 'completed'
+            steps.value[2]!.progress = 100
             progress.value = 100
             clearInterval(timer)
-            setTimeout(() => {
-                emit('finish')
-            }, 500)
         }
     }, interval)
 })
@@ -75,16 +69,17 @@ onMounted(() => {
         </AppCircularProgress>
 
         <div class="space-y-3">
-            <h2 class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">AI is crafting your personal path...</h2>
+            <h2 class="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">AI is indexing your materials
+            </h2>
             <p class="text-sm text-neutral-500 dark:text-neutral-400 max-w-xs mx-auto leading-relaxed">
-                Building your hyper-personalized roadmap tailored to your goals and knowledge gaps.
+                Building your knowledge base — every fact is being traced back to your source material.
             </p>
         </div>
 
         <!-- Status Badge -->
         <div
             class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary-500/20 bg-primary-500/5 text-primary-600 dark:text-primary-400 text-xs font-semibold uppercase tracking-widest">
-            <UIcon name="i-lucide-sparkles" class="w-3.5 h-3.5" />
+            <UIcon name="i-lucide-share-2" class="w-3.5 h-3.5" />
             {{ status }}
         </div>
 
@@ -132,18 +127,5 @@ onMounted(() => {
 .step-fade-leave-to {
     opacity: 0;
     transform: translateY(-15px) scale(0.95);
-}
-</style>
-
-<style scoped>
-.list-enter-active,
-.list-leave-active {
-    transition: all 0.5s ease;
-}
-
-.list-enter-from,
-.list-leave-to {
-    opacity: 0;
-    transform: translateY(10px);
 }
 </style>

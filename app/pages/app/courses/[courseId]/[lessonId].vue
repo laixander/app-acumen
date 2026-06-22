@@ -1,18 +1,26 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { useLessons } from '~/composables/useLessons'
-import { useTopics } from '~/composables/useTopics'
-import { computed, ref } from 'vue'
-import type { LessonContent } from '~/types/topic'
+import { useCourses } from '~/composables/useCourses'
+import { computed, ref, watchEffect } from 'vue'
+import type { LessonContent } from '~/types/course'
 import type { ChatQuote } from '~/types/chat'
+
+definePageMeta({
+    middleware: [
+        function (to, from) {
+            if (!to.meta.breadcrumb) to.meta.breadcrumb = {}
+        }
+    ]
+})
 
 const route = useRoute()
 const router = useRouter()
-const { getLessonContentById, getAdjacentLessons, completeLesson, getLessonsByTopic } = useLessons()
-const { updateTopicProgress, topics } = useTopics()
+const { getLessonContentById, getAdjacentLessons, completeLesson, getLessonsByCourse } = useLessons()
+const { updateCourseProgress, courses } = useCourses()
 
-const { data: serverLessonData } = await useFetch<LessonContent>(`/api/lesson/${route.params.id}`)
-const localLessonData = computed(() => getLessonContentById(route.params.id as string))
+const { data: serverLessonData } = await useFetch<LessonContent>(`/api/lesson/${route.params.lessonId}`)
+const localLessonData = computed(() => getLessonContentById(route.params.lessonId as string))
 
 const lessonData = computed(() => {
     return localLessonData.value || serverLessonData.value
@@ -22,38 +30,47 @@ const title = computed(() => {
     return lessonData.value?.title || 'Lesson Viewer'
 })
 
-const adjacent = computed(() => getAdjacentLessons(route.params.id as string))
+const adjacent = computed(() => getAdjacentLessons(route.params.lessonId as string))
 
-const topic = computed(() => {
-    const topicId = lessonData.value?.topicId
-    if (!topicId) return null
-    return topics.value.find(t => t.id === topicId)
+const course = computed(() => {
+    const courseId = route.params.courseId as string
+    if (!courseId) return null
+    return courses.value.find(t => t.id === courseId)
+})
+
+watchEffect(() => {
+    if (course.value) {
+        (route.meta.breadcrumb as Record<string, string>)[route.params.courseId as string] = course.value.title;
+    }
+    if (lessonData.value) {
+        (route.meta.breadcrumb as Record<string, string>)[route.params.lessonId as string] = lessonData.value.title;
+    }
 })
 
 const handlePrevious = () => {
     if (adjacent.value.prev) {
-        router.push(`/app/topics/lesson/${adjacent.value.prev.id}`)
+        router.push(`/app/courses/${route.params.courseId}/${adjacent.value.prev.id}`)
     }
 }
 
 const handleContinue = () => {
-    completeLesson(route.params.id as string)
+    completeLesson(route.params.lessonId as string)
 
-    const topicId = lessonData.value?.topicId
-    if (topicId) {
-        const topic = topics.value.find(t => t.id === topicId)
-        const topicLessons = getLessonsByTopic(topicId)
+    const courseId = route.params.courseId as string
+    if (courseId) {
+        const course = courses.value.find(t => t.id === courseId)
+        const courseLessons = getLessonsByCourse(courseId)
 
-        const completedCount = topicLessons.filter(l => l.status === 'completed').length
-        const totalCount = topicLessons.length
+        const completedCount = courseLessons.filter(l => l.status === 'completed').length
+        const totalCount = courseLessons.length
         const progress = Math.round((completedCount / totalCount) * 100)
-        updateTopicProgress(topicId, completedCount, totalCount, progress)
+        updateCourseProgress(courseId, completedCount, totalCount, progress)
     }
 
     if (adjacent.value.next) {
-        router.push(`/app/topics/lesson/${adjacent.value.next.id}`)
+        router.push(`/app/courses/${route.params.courseId}/${adjacent.value.next.id}`)
     } else {
-        router.push(topicId ? `/app/topics/lessons/${topicId}` : '/app/dashboard')
+        router.push(courseId ? `/app/courses/lessons/${courseId}` : '/app/dashboard')
     }
 }
 
@@ -73,14 +90,14 @@ const handleAskAboutLine = (payload: ChatQuote) => {
         <!-- Breadcrumbs -->
         <AppBreadcrumb />
         <!-- <nav class="flex items-center gap-2 text-sm text-neutral-500">
-            <ULink to="/app/topics/collection" class="hover:text-primary transition-colors">Collection</ULink>
+            <ULink to="/app/courses/collection" class="hover:text-primary transition-colors">Collection</ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
-            <template v-if="topic">
-                <ULink :to="`/app/topics/${topic.id}`" class="hover:text-primary transition-colors">{{ topic.title }}
+            <template v-if="course">
+                <ULink :to="`/app/courses/${course.id}`" class="hover:text-primary transition-colors">{{ course.title }}
                 </ULink>
                 <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
             </template>
-            <ULink :to="`/app/topics/lessons/${lessonData?.topicId}`" class="hover:text-primary transition-colors">
+            <ULink :to="`/app/courses/lessons/${lessonData?.courseId}`" class="hover:text-primary transition-colors">
                 Lessons</ULink>
             <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
             <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ lessonData?.title }}</span>

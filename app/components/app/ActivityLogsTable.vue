@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ActivityLog } from '~/types/topic'
+import type { ActivityLog } from '~/types/course'
 import { getPaginationRowModel } from '@tanstack/vue-table'
 
 const table = useTemplateRef('table')
@@ -10,7 +10,7 @@ const { logs } = useActivityLogs()
 const asLog = (row: any) => row as ActivityLog
 
 const columns = [
-    { accessorKey: 'topicTitle', header: 'Topic' },
+    { accessorKey: 'courseTitle', header: 'Course' },
     { accessorKey: 'lessonTitle', header: 'Lesson' },
     { accessorKey: 'type', header: 'Type' },
     { accessorKey: 'durationMinutes', header: 'Duration' },
@@ -55,9 +55,9 @@ const pagination = ref({
     <UTable :data="logs" :columns="columns" ref="table" v-model:pagination="pagination" :pagination-options="{
         getPaginationRowModel: getPaginationRowModel()
     }" :ui="{ th: 'text-xs uppercase tracking-wider text-muted font-bold px-4 sm:px-6', td: 'px-4 sm:px-6' }">
-        <template #topicTitle-cell="{ row }">
+        <template #courseTitle-cell="{ row }">
             <div class="flex flex-col">
-                <span class="font-medium">{{ row.original.topicTitle }}</span>
+                <span class="font-medium">{{ row.original.courseTitle }}</span>
             </div>
         </template>
 

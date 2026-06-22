@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AssessmentQuestion } from '~/types/topic'
+import type { AssessmentQuestion } from '~/types/course'
 
 defineProps<{
     modelValue: any
@@ -23,7 +23,7 @@ const questions: AssessmentQuestion[] = [
   {
     id: 2,
     type: 'true_false',
-    text: 'Acumen uses your uploaded materials as the sole source of truth for jurisdiction-specific topics.',
+    text: 'Acumen uses your uploaded materials as the sole source of truth for jurisdiction-specific courses.',
     options: [
       { id: 'true', label: 'True' },
       { id: 'false', label: 'False' }

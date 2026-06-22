@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { useLessons } from '~/composables/useLessons'
-import { injectAssessmentsIntoTimeline, generateBaseLessonsForTopic } from '~/utils/seeder'
+import { injectAssessmentsIntoTimeline, generateBaseLessonsForCourse } from '~/utils/seeder'
 import { slugify } from '~/utils/format'
-import type { LearningGoal } from '~/types/topic'
+import type { LearningGoal } from '~/types/course'
 import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
 
 const { user } = useUser()
-const { addTopic } = useTopics()
+const { addCourse } = useCourses()
 const { addLessons, addLessonContents, addAssessments } = useLessons()
 const router = useRouter()
 
@@ -44,19 +44,26 @@ onMounted(() => {
             const mode = draft.mode ?? 'prompt'
             creationMode.value = mode
 
-            if (mode === 'upload') {
+            formData.title = draft.course || 'Untitled Course'
+            formData.description = draft.description || ''
+            if (draft.learningGoal) formData.learningGoal = draft.learningGoal as any
+            if (draft.targetFinishDate) formData.targetFinishDate = draft.targetFinishDate
+            if (draft.sessionsPerWeek) formData.sessionsPerWeek = draft.sessionsPerWeek
+            if (draft.itemsPerWeek) formData.itemsPerWeek = draft.itemsPerWeek
+
+            if (mode === 'upload' && (!formData.title || formData.title === 'Untitled Course')) {
                 formData.title = draft.files[0] ?? 'Uploaded Material'
-                formData.description = `Curriculum built from: ${draft.files.join(', ')}`
-                flowState.value = 'review'
+                if (!formData.description) formData.description = `Curriculum built from: ${draft.files.join(', ')}`
             } else if (mode === 'explore') {
-                formData.title = draft.topic
-                formData.description = `Universal curriculum for ${draft.topic}`
-                flowState.value = 'review'
+                if (!formData.title) formData.title = draft.course
+                if (!formData.description) formData.description = `Universal curriculum for ${draft.course}`
             } else {
-                formData.title = draft.topic
-                formData.description = `AI-generated curriculum for: ${draft.topic}`
-                flowState.value = 'review'
+                if (!formData.title) formData.title = draft.course
+                if (!formData.description) formData.description = `AI-generated curriculum for: ${draft.course}`
             }
+
+            // User already completed details and pre-assessment in onboarding, skip to review plan
+            flowState.value = 'review'
 
             clear()
             return
@@ -66,40 +73,60 @@ onMounted(() => {
     if (_qMode === 'prompt' && promptParam) {
         formData.title = promptParam
         formData.description = `AI-generated curriculum for: ${promptParam}`
-        setTimeout(() => { flowState.value = 'assessment' }, 3500)
+        setTimeout(() => { flowState.value = 'details' }, 3500)
     } else if (_qMode === 'explore' && subjectParam) {
         formData.title = subjectParam
         formData.description = `Universal curriculum for ${subjectParam}`
-        setTimeout(() => { flowState.value = 'assessment' }, 3500)
+        setTimeout(() => { flowState.value = 'details' }, 3500)
     } else if (_qMode === 'upload' && _qStep === 'indexing') {
-        setTimeout(() => { flowState.value = 'assessment' }, 3500)
+        const queryFiles = route.query.files as string | undefined
+        if (queryFiles) {
+            const filesList = queryFiles.split(',')
+            formData.title = filesList[0]?.replace(/\.[^/.]+$/, "") || 'Uploaded Material'
+            formData.description = `Curriculum built from: ${filesList.join(', ')}`
+        } else {
+            formData.title = 'Uploaded Material'
+            formData.description = 'Curriculum built from uploaded material'
+        }
+        setTimeout(() => { flowState.value = 'details' }, 3500)
     }
 })
 
 const steps = computed(() => {
     if (creationMode.value === 'explore') {
-        return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
+        return ['Mode', 'Subject', 'Details', 'Pre-Assessment', 'Plan']
     }
     if (creationMode.value === 'prompt') {
-        return ['Mode', 'Pre-Assessment', 'Plan']
+        return ['Mode', 'Details', 'Pre-Assessment', 'Plan']
     }
-    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
+    return ['Mode', 'Materials', 'Details', 'Pre-Assessment', 'Plan']
 })
 
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
-    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
+    if (flowState.value === 'processing' || flowState.value === 'details') {
+        if (creationMode.value === 'prompt') return 1
+        return 2 // explore/upload
+    }
+    if (flowState.value === 'assessment') {
+        if (creationMode.value === 'prompt') return 2
+        return 3 // upload/explore
+    }
+    if (flowState.value === 'review') {
+        if (creationMode.value === 'prompt') return 3
+        return 4 // upload/explore
+    }
     return 0
 })
 
 const formData = reactive({
     title: '',
     description: '',
-    learningGoal: 'Mastery' as LearningGoal,
-    duration: '2 weeks',
-    availability: 'Standard (5-7h/week)',
+    learningGoal: 'Deep Mastery' as LearningGoal,
+    targetFinishDate: '',
+    sessionsPerWeek: 3,
+    itemsPerWeek: 5,
     files: [] as any[],
     assessments: [
         { label: 'Core Fundamentals', value: 50 },
@@ -119,8 +146,18 @@ const selectMode = (mode: 'upload' | 'explore') => {
 
 const handleUploadComplete = () => {
     flowState.value = 'indexing'
+    
+    // Prefill details based on uploaded files
+    if (formData.files && formData.files.length > 0) {
+        const firstFile = formData.files[0]
+        const baseName = firstFile.name ? firstFile.name.replace(/\.[^/.]+$/, "") : 'Uploaded Material'
+        formData.title = baseName
+        const fileNames = formData.files.map(f => f.name).join(', ')
+        formData.description = `Curriculum built from: ${fileNames}`
+    }
+    
     setTimeout(() => {
-        flowState.value = 'assessment'
+        flowState.value = 'details'
     }, 3500)
 }
 
@@ -128,7 +165,7 @@ const handleSubjectSelect = (subject: string) => {
     formData.title = subject
     formData.description = `Universal curriculum for ${subject}`
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    setTimeout(() => { flowState.value = 'details' }, 3500)
 }
 
 const handlePromptSelect = (prompt: string) => {
@@ -136,7 +173,7 @@ const handlePromptSelect = (prompt: string) => {
     formData.description = `AI-generated curriculum for: ${prompt}`
     creationMode.value = 'prompt'
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'assessment' }, 3500)
+    setTimeout(() => { flowState.value = 'details' }, 3500)
 }
 
 const handleAssessmentComplete = () => {
@@ -146,6 +183,7 @@ const handleAssessmentComplete = () => {
 
 const nextStep = () => {
     if (flowState.value === 'setup' && creationMode.value === 'upload') handleUploadComplete()
+    else if (flowState.value === 'details') flowState.value = 'assessment'
     else if (flowState.value === 'assessment') handleAssessmentComplete()
     else if (flowState.value === 'review') handleFinish()
 }
@@ -155,8 +193,7 @@ const prevStep = () => {
         flowState.value = 'entry'
         creationMode.value = null
     }
-    else if (flowState.value === 'assessment') {
-        // Prompt mode has no setup step — go back to entry
+    else if (flowState.value === 'details') {
         if (creationMode.value === 'prompt') {
             flowState.value = 'entry'
             creationMode.value = null
@@ -164,8 +201,15 @@ const prevStep = () => {
             flowState.value = 'setup'
         }
     }
-    else if (flowState.value === 'review') flowState.value = 'assessment'
-    else if (flowState.value === 'entry') router.push('/app/dashboard')
+    else if (flowState.value === 'assessment') {
+        flowState.value = 'details'
+    }
+    else if (flowState.value === 'review') {
+        flowState.value = 'assessment'
+    }
+    else if (flowState.value === 'entry') {
+        router.push('/app/dashboard')
+    }
 }
 
 const handleFinish = () => {
@@ -182,26 +226,26 @@ const resetFlow = () => {
 }
 
 const confirmFinish = () => {
-    const topicId = slugify(formData.title || 'Untitled Topic')
+    const courseId = slugify(formData.title || 'Untitled Course')
 
     const {
         baseLessons,
         baseContents,
         baseAssessments
-    } = generateBaseLessonsForTopic(topicId, formData.title)
+    } = generateBaseLessonsForCourse(courseId, formData.title)
 
     const {
         newTimeline,
         newAssessments,
         newContents: injectedContents
-    } = injectAssessmentsIntoTimeline(topicId, formData.title, baseLessons, 0, baseLessons.length, false, baseAssessments)
+    } = injectAssessmentsIntoTimeline(courseId, formData.title, baseLessons, 0, baseLessons.length, false, baseAssessments)
 
     addLessons(newTimeline)
     addLessonContents([...baseContents, ...injectedContents])
     addAssessments(newAssessments)
 
-    addTopic({
-        title: formData.title || 'Untitled Topic',
+    addCourse({
+        title: formData.title || 'Untitled Course',
         progress: 0,
         tag: creationMode.value === 'upload' ? 'Materials' : 'Curriculum',
         status: 'Ongoing',
@@ -211,6 +255,10 @@ const confirmFinish = () => {
         icon: creationMode.value === 'upload' ? 'i-lucide-file-text' : creationMode.value === 'prompt' ? 'i-lucide-sparkles' : 'i-lucide-book-open',
         isPinned: false,
         learningGoal: formData.learningGoal,
+        description: formData.description,
+        targetFinishDate: formData.targetFinishDate ? new Date(formData.targetFinishDate).getTime() : undefined,
+        sessionsPerWeek: formData.sessionsPerWeek,
+        itemsPerWeek: formData.itemsPerWeek,
         createdBy: {
             id: 'user-1',
             name: user.value.profile.fullName,
@@ -222,8 +270,8 @@ const confirmFinish = () => {
             { label: 'Pass Probability', value: '0%', subtext: 'Initial benchmark', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '0', subtext: 'Ready to start', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [],
-        weakTopics: []
+        strongCourses: [],
+        weakCourses: []
     })
 
     router.push('/app/dashboard')
@@ -248,17 +296,17 @@ const confirmFinish = () => {
 
             <!-- Generation Overlay -->
             <div v-if="isGenerating" class="flex flex-col justify-center grow">
-                <AppTopicGenerating @finish="confirmFinish" />
+                <AppCourseGenerating @finish="confirmFinish" />
             </div>
 
             <!-- Indexing Overlay (Upload Mode Only) -->
             <div v-else-if="flowState === 'indexing'" class="flex flex-col justify-center grow">
-                <AppTopicAnalyzing />
+                <AppCourseAnalyzing />
             </div>
 
             <!-- Processing Overlay (Explore & Prompt Modes) -->
             <div v-else-if="flowState === 'processing'" class="flex flex-col justify-center grow">
-                <AppTopicProcessing :mode="creationMode" />
+                <AppCourseProcessing :mode="creationMode" />
             </div>
 
             <!-- Main Flow -->
@@ -266,13 +314,13 @@ const confirmFinish = () => {
                 <!-- Stepper (Visible after mode selection) -->
                 <div v-if="flowState !== 'entry'"
                     class="flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                    <!-- <ContentHeading :title="`Create Topic: ${steps[currentStepIndex]}`" centered /> -->
-                    <AppTopicStepper :current-step="currentStepIndex" :steps="steps" />
+                    <!-- <ContentHeading :title="`Create Course: ${steps[currentStepIndex]}`" centered /> -->
+                    <AppCourseStepper :current-step="currentStepIndex" :steps="steps" />
                 </div>
 
                 <!-- Entry Point -->
                 <div v-if="flowState === 'entry'">
-                    <AppTopicDoorSelection @select-upload="selectMode('upload')" @select-explore="selectMode('explore')"
+                    <AppCourseDoorSelection @select-upload="selectMode('upload')" @select-explore="selectMode('explore')"
                         @select-prompt="handlePromptSelect" />
                 </div>
 
@@ -290,20 +338,26 @@ const confirmFinish = () => {
                             <div :key="flowState">
                                 <!-- Setup Step -->
                                 <template v-if="flowState === 'setup'">
-                                    <AppTopicFormMaterials v-if="creationMode === 'upload'" :model-value="formData"
+                                    <AppCourseFormMaterials v-if="creationMode === 'upload'" :model-value="formData"
                                         @update:model-value="val => Object.assign(formData, val)"
                                         @upload-ready="handleUploadComplete" />
-                                    <AppTopicSubjectPicker v-else-if="creationMode === 'explore'"
+                                    <AppCourseSubjectPicker v-else-if="creationMode === 'explore'"
                                         @select="handleSubjectSelect" />
                                 </template>
 
+                                <!-- Details Step -->
+                                <AppCourseFormBasic v-else-if="flowState === 'details'" :model-value="formData"
+                                    @update:model-value="val => Object.assign(formData, val)" @next="nextStep"
+                                    @back="prevStep" />
+
                                 <!-- Assessment Step -->
-                                <AppTopicFormPreAssessment v-else-if="flowState === 'assessment'" v-model="formData"
+                                <AppCourseFormPreAssessment v-else-if="flowState === 'assessment'"
+                                    :model-value="formData" @update:model-value="val => Object.assign(formData, val)"
                                     @complete="handleAssessmentComplete" @back="prevStep" />
 
                                 <!-- Review Step -->
                                 <AppSessionReadinessPlan v-else-if="flowState === 'review'"
-                                    :topic-title="formData.title" is-onboarding @close="handleFinish" />
+                                    :course-title="formData.title" is-onboarding @close="handleFinish" />
 
                             </div>
                         </Transition>

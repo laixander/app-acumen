@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { useLessons } from '~/composables/useLessons'
-import type { Topic } from '~/types/topic'
-import { GOAL_COLORS } from '~/constants/topics'
+import type { Course } from '~/types/course'
+import { GOAL_COLORS } from '~/constants/courses'
 
 const props = withDefaults(defineProps<{
-    topic: Topic
+    course: Course
     showActions?: boolean
     isHero?: boolean
 }>(), {
@@ -13,21 +13,21 @@ const props = withDefaults(defineProps<{
     isHero: false
 })
 
-const { togglePin, archiveTopic, deleteTopic, renameTopic } = useTopics()
-const { getLessonsByTopic } = useLessons()
+const { togglePin, archiveCourse, deleteCourse, renameCourse } = useCourses()
+const { getLessonsByCourse } = useLessons()
 const toast = useToast()
 
 const isRenameOpen = ref(false)
 const isArchiveOpen = ref(false)
 const isDeleteOpen = ref(false)
-const newTitle = ref(props.topic.title)
+const newTitle = ref(props.course.title)
 
 const handleRename = () => {
-    if (newTitle.value && newTitle.value !== props.topic.title) {
-        renameTopic(props.topic.id, newTitle.value)
+    if (newTitle.value && newTitle.value !== props.course.title) {
+        renameCourse(props.course.id, newTitle.value)
         isRenameOpen.value = false
         toast.add({
-            title: 'Topic Renamed',
+            title: 'Course Renamed',
             description: `Successfully renamed to ${newTitle.value}`,
             color: 'success'
         })
@@ -35,40 +35,49 @@ const handleRename = () => {
 }
 
 const handleArchive = () => {
-    archiveTopic(props.topic.id)
+    archiveCourse(props.course.id)
     isArchiveOpen.value = false
     toast.add({
-        title: 'Topic Archived',
-        description: 'This topic has been moved to archives.',
+        title: 'Course Archived',
+        description: 'This course has been moved to archives.',
         color: 'neutral'
     })
 }
 
 const handleDelete = () => {
-    deleteTopic(props.topic.id)
+    deleteCourse(props.course.id)
     isDeleteOpen.value = false
     toast.add({
-        title: 'Topic Deleted',
-        description: 'The topic has been removed from your library.',
+        title: 'Course Deleted',
+        description: 'The course has been removed from your library.',
         color: 'success'
     })
 }
 
 const actions = computed(() => [
-    [{
-        label: 'Rename',
-        icon: 'i-lucide-pencil',
-        onSelect: () => {
-            newTitle.value = props.topic.title
-            isRenameOpen.value = true
-        }
-    }, {
-        label: 'Archive',
-        icon: 'i-lucide-archive',
-        onSelect: () => {
-            isArchiveOpen.value = true
-        }
-    }],
+    [
+        //     {
+        //     label: 'Rename',
+        //     icon: 'i-lucide-pencil',
+        //     onSelect: () => {
+        //         newTitle.value = props.course.title
+        //         isRenameOpen.value = true
+        //     }
+        // }, 
+        {
+            label: 'Settings',
+            icon: 'i-lucide-settings',
+            onSelect: () => {
+                navigateTo(`/app/courses/${props.course.id}/settings`)
+            }
+        },
+        {
+            label: 'Archive',
+            icon: 'i-lucide-archive',
+            onSelect: () => {
+                isArchiveOpen.value = true
+            }
+        }],
     [{
         label: 'Delete',
         icon: 'i-lucide-trash',
@@ -80,12 +89,12 @@ const actions = computed(() => [
 ])
 
 // Remaining progress to reach 100% mastery
-const masteryGap = computed(() => Math.max(0, 100 - (props.topic.progress ?? 0)))
+const masteryGap = computed(() => Math.max(0, 100 - (props.course.progress ?? 0)))
 
 // Passing rate: same formula as lessons page — completed assessments / total assessments
 const passingRate = computed(() => {
-    const topicLessons = getLessonsByTopic(props.topic.id)
-    const assessments = topicLessons.filter(l => l.type === 'Assessment')
+    const courseLessons = getLessonsByCourse(props.course.id)
+    const assessments = courseLessons.filter(l => l.type === 'Assessment')
     if (assessments.length === 0) return 0
     const passed = assessments.filter(l => l.status === 'completed').length
     return Math.round((passed / assessments.length) * 100)
@@ -93,55 +102,60 @@ const passingRate = computed(() => {
 
 // Lesson completion count from actual lesson list
 const lessonProgress = computed(() => {
-    const topicLessons = getLessonsByTopic(props.topic.id)
-    const done = topicLessons.filter(l => l.status === 'completed').length
-    return { done, total: topicLessons.length }
+    const courseLessons = getLessonsByCourse(props.course.id)
+    const done = courseLessons.filter(l => l.status === 'completed').length
+    return { done, total: courseLessons.length }
 })
 </script>
 
 <template>
     <UCard variant="subtle"
-        class="transition-all duration-300 cursor-pointer overflow-hidden group shadow-sm dark:shadow-none"
-        :class="[
-            topic.status === 'Archived'
+        class="transition-all duration-300 cursor-pointer overflow-hidden group shadow-sm dark:shadow-none" :class="[
+            course.status === 'Archived'
                 ? 'opacity-20 grayscale-[0.50] hover:opacity-90 hover:grayscale-0'
                 : 'hover:-translate-y-1.5 hover:ring-2 hover:ring-primary-500/50 hover:shadow-xl',
-            topic.isPinned ? 'border-primary-500/30' : ''
+            course.isPinned ? 'border-primary-500/30' : ''
         ]" :ui="{
-            body: 'relative flex flex-col gap-4'
-        }" @click="navigateTo(`/app/topics/${topic.id || topic.title.toLowerCase().replace(/\s+/g, '-')}`)">
-        
+            body: 'relative flex flex-col gap-4 h-full'
+        }" @click="navigateTo(`/app/courses/${course.id || course.title.toLowerCase().replace(/\s+/g, '-')}`)">
+
         <!-- Mesh Gradient Overlay -->
         <div
             class="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent pointer-events-none opacity-50 group-hover:opacity-100 transition-opacity" />
-        
+
         <div class="flex items-center gap-2">
             <div class="bg-primary/20 backdrop-blur-md p-2 rounded-xl relative">
-                <UIcon :name="topic.icon" class="text-xl text-primary flex shrink-0" />
+                <UIcon :name="course.icon" class="text-xl text-primary flex shrink-0" />
             </div>
 
             <div class="flex items-center flex-1 min-w-0 gap-2">
-                <div class="font-semibold truncate min-w-0" :class="{ 'text-neutral-400': topic.status === 'Archived' }">{{ topic.title }}</div>
+                <div class="font-semibold truncate min-w-0"
+                    :class="{ 'text-neutral-400': course.status === 'Archived' }">{{ course.title }}</div>
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <UBadge v-if="topic.status === 'Archived'" label="Archived" color="neutral" variant="subtle" size="sm" />
-                    <UBadge :label="topic.tag" variant="soft" size="sm" />
+                    <UBadge v-if="course.status === 'Archived'" label="Archived" color="neutral" variant="subtle"
+                        size="sm" />
+                    <UBadge :label="course.tag" variant="soft" size="sm" />
                 </div>
             </div>
-            <UDropdownMenu v-if="showActions" :items="actions" :content="{
+            <!-- Setting Button -->
+            <UButton icon="i-lucide-settings-2" variant="ghost" size="xs" @click.stop
+                @click="navigateTo(`/app/courses/${props.course.id}/settings`)" />
+            <!-- Dropdown Menu -->
+            <!-- <UDropdownMenu v-if="showActions" :items="actions" :content="{
                 align: 'end',
                 side: 'bottom',
                 sideOffset: 8
             }" size="sm">
-                <UButton icon="i-lucide-more-horizontal" color="neutral" variant="ghost" size="xs"
-                    @click.stop />
-            </UDropdownMenu>
+                <UButton icon="i-lucide-more-horizontal" color="neutral" variant="ghost" size="xs" @click.stop />
+            </UDropdownMenu> -->
         </div>
 
-        <p class="text-xs text-dimmed">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.</p>
+        <p class="text-xs text-dimmed line-clamp-2 flex-1">{{ course.description || 'No description provided.' }}</p>
 
         <div class="flex items-center gap-2 w-full">
             <!-- Mastery Percentage -->
-            <div class="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800/80 rounded-lg px-2.5 py-1.5 flex-1">
+            <div
+                class="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800/80 rounded-lg px-2.5 py-1.5 flex-1">
                 <UIcon name="i-lucide-trending-up" class="size-3.5 text-yellow-500 shrink-0" />
                 <div class="flex flex-col leading-none gap-0.5">
                     <span class="text-[9px] font-bold uppercase tracking-wider text-muted">Mastery Gap</span>
@@ -149,7 +163,8 @@ const lessonProgress = computed(() => {
                 </div>
             </div>
             <!-- Passing Rate -->
-            <div class="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800/80 rounded-lg px-2.5 py-1.5 flex-1">
+            <div
+                class="flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800/80 rounded-lg px-2.5 py-1.5 flex-1">
                 <UIcon name="i-lucide-target" class="size-3.5 text-lime-500 shrink-0" />
                 <div class="flex flex-col leading-none gap-0.5">
                     <span class="text-[9px] font-bold uppercase tracking-wider text-muted">Passing Rate</span>
@@ -162,57 +177,60 @@ const lessonProgress = computed(() => {
         <div class="flex flex-col gap-1.5">
             <div class="flex items-center justify-between">
                 <span class="text-[9px] font-bold uppercase tracking-wider text-muted">Overall Progress</span>
-                <span class="text-[10px] font-bold text-primary">{{ topic.progress }}%</span>
+                <span class="text-[10px] font-bold text-primary">{{ course.progress }}%</span>
             </div>
-            <UProgress :model-value="topic.progress" color="primary" size="xs" />
+            <UProgress :model-value="course.progress" color="primary" size="xs" />
         </div>
 
         <!-- Last Studied + Lesson Count -->
         <div class="flex items-center justify-between text-[10px] text-muted">
             <div class="flex items-center gap-1">
                 <UIcon name="i-lucide-clock" class="size-3 shrink-0" />
-                <span>{{ topic.lastStudied || 'Not studied yet' }}</span>
+                <span>{{ course.lastStudied || 'Not studied yet' }}</span>
             </div>
             <div class="flex items-center gap-1">
                 <UIcon name="i-lucide-book-open" class="size-3 shrink-0" />
-                <span v-if="lessonProgress.total > 0">{{ lessonProgress.done }}/{{ lessonProgress.total }} lessons</span>
-                <span v-else>{{ topic.lessons }}</span>
+                <span v-if="lessonProgress.total > 0">{{ lessonProgress.done }}/{{ lessonProgress.total }}
+                    lessons</span>
+                <span v-else>{{ course.lessons }}</span>
             </div>
         </div>
 
         <USeparator />
 
         <!-- Grid View Workspace/Creator Meta -->
-        <div v-if="topic.createdBy" class="flex items-center justify-between">
+        <div v-if="course.createdBy" class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="xs"
+                <UAvatar :src="course.createdBy.avatar" :alt="course.createdBy.name" size="xs"
                     class="ring-1 ring-neutral-200 dark:ring-neutral-800" />
                 <div class="flex flex-col">
                     <span
                         class="text-[9px] text-neutral-400 font-bold uppercase tracking-wider leading-none mb-0.5">Author</span>
                     <span class="text-[10px] text-neutral-700 dark:text-neutral-300 font-medium leading-none">{{
-                        topic.createdBy.name }}</span>
+                        course.createdBy.name }}</span>
                 </div>
             </div>
         </div>
     </UCard>
-    
+
     <!-- Rename Modal -->
     <UModal v-model:open="isRenameOpen">
         <template #content>
             <div class="p-6 flex flex-col gap-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-primary-50 dark:bg-primary-950/30 text-primary-600">
+                    <div
+                        class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-primary-50 dark:bg-primary-950/30 text-primary-600">
                         <UIcon name="i-lucide-pencil" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold leading-tight">Rename Topic</h3>
-                        <p class="text-sm text-neutral-500 mt-1">Change the display name of your study topic.</p>
+                        <h3 class="text-xl font-bold leading-tight">Rename Course</h3>
+                        <p class="text-sm text-neutral-500 mt-1">Change the display name of your study course.</p>
                     </div>
                 </div>
 
                 <UFormField label="New Title" name="title">
-                    <UInput v-model="newTitle" placeholder="e.g. Advanced Vue.js Patterns" class="w-full" size="lg" autofocus @keyup.enter="handleRename" />
+                    <UInput v-model="newTitle" placeholder="e.g. Advanced Vue.js Patterns" class="w-full" size="lg"
+                        autofocus @keyup.enter="handleRename" />
                 </UFormField>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
@@ -228,22 +246,24 @@ const lessonProgress = computed(() => {
         <template #content>
             <div class="p-6 flex flex-col gap-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-warning-50 dark:bg-warning-950/30 text-warning-600">
+                    <div
+                        class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-warning-50 dark:bg-warning-950/30 text-warning-600">
                         <UIcon name="i-lucide-archive" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold leading-tight">Archive Topic?</h3>
+                        <h3 class="text-xl font-bold leading-tight">Archive Course?</h3>
                         <p class="text-sm text-neutral-500 mt-1">This will hide it from your active dashboard.</p>
                     </div>
                 </div>
 
                 <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    Are you sure you want to archive <span class="font-bold text-neutral-900 dark:text-white">"{{ topic.title }}"</span>? You can still find it later in the Archived tab.
+                    Are you sure you want to archive <span class="font-bold text-neutral-900 dark:text-white">"{{
+                        course.title }}"</span>? You can still find it later in the Archived tab.
                 </p>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <UButton label="Cancel" variant="ghost" color="neutral" @click="isArchiveOpen = false" />
-                    <UButton label="Archive Topic" color="warning" @click="handleArchive" />
+                    <UButton label="Archive Course" color="warning" @click="handleArchive" />
                 </div>
             </div>
         </template>
@@ -254,22 +274,24 @@ const lessonProgress = computed(() => {
         <template #content>
             <div class="p-6 flex flex-col gap-6">
                 <div class="flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-error-50 dark:bg-error-950/30 text-error-600">
+                    <div
+                        class="w-12 h-12 rounded-full flex items-center justify-center shrink-0 bg-error-50 dark:bg-error-950/30 text-error-600">
                         <UIcon name="i-lucide-alert-triangle" class="text-2xl" />
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold leading-tight">Delete Topic?</h3>
+                        <h3 class="text-xl font-bold leading-tight">Delete Course?</h3>
                         <p class="text-sm text-neutral-500 mt-1">This action cannot be undone.</p>
                     </div>
                 </div>
 
                 <p class="text-neutral-600 dark:text-neutral-400 leading-relaxed">
-                    Are you sure you want to delete <span class="font-bold text-neutral-900 dark:text-white">"{{ topic.title }}"</span>? All associated lessons and progress will be permanently removed.
+                    Are you sure you want to delete <span class="font-bold text-neutral-900 dark:text-white">"{{
+                        course.title }}"</span>? All associated lessons and progress will be permanently removed.
                 </p>
 
                 <div class="flex items-center justify-end gap-3 pt-2">
                     <UButton label="Cancel" variant="ghost" color="neutral" @click="isDeleteOpen = false" />
-                    <UButton label="Delete Topic" color="error" @click="handleDelete" />
+                    <UButton label="Delete Course" color="error" @click="handleDelete" />
                 </div>
             </div>
         </template>

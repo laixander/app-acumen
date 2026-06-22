@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { LearningGoal } from '~/types/topic'
+import type { LearningGoal } from '~/types/course'
 
 const props = defineProps<{
     formData: {
@@ -48,8 +48,8 @@ const stats = [
                 <div class="flex flex-col gap-4">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs text-muted uppercase font-bold">Topic</p>
-                            <p class="font-bold">{{ formData.title || 'Untitled Topic' }}</p>
+                            <p class="text-xs text-muted uppercase font-bold">Course</p>
+                            <p class="font-bold">{{ formData.title || 'Untitled Course' }}</p>
 
                         </div>
                         <UBadge :label="formData.learningGoal" variant="soft" color="primary" />

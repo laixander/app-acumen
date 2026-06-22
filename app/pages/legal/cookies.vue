@@ -75,7 +75,7 @@ useSeoMeta({
                     <h2 class="text-2xl font-semibold text-neutral-900 dark:text-white mb-4">3. Local Storage</h2>
                     <p>In addition to traditional cookies, Acumen extensively uses your browser's Local Storage to save
                         your
-                        learning data, offline progress, and AI topic generations locally on your device. This ensures a
+                        learning data, offline progress, and AI course generations locally on your device. This ensures a
                         fast,
                         responsive experience and protects your data privacy by keeping personal study progress entirely
                         client-side

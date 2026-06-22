@@ -1,9 +1,10 @@
-import type { Topic, LessonOverview, LessonContent, Assessment } from '~/types/topic'
+import type { Course, LessonOverview, LessonContent, Assessment } from '~/types/course'
 
-export const MOCK_TOPICS: Topic[] = [
+export const MOCK_COURSES: Course[] = [
     {
         id: 'introduction-to-algebra',
         title: 'Introduction to Algebra',
+        description: 'Master the fundamentals of variables, equations, and algebraic thinking to build a strong foundation for advanced mathematics.',
         progress: 80,
         tag: 'Math',
         status: 'Ongoing',
@@ -12,8 +13,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 2 * 60 * 60 * 1000,
         icon: 'i-lucide-function-square',
         isPinned: true,
-        learningGoal: 'Mastery',
-        createdBy: { id: '2', name: 'Alice Smith', avatar: 'https://i.pravatar.cc/100?u=2', role: 'Admin', topicsCount: 15 },
+        learningGoal: 'Deep Mastery',
+        targetFinishDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 5,
+        createdBy: { id: '2', name: 'Alice Smith', avatar: 'https://i.pravatar.cc/100?u=2', role: 'Admin', coursesCount: 15 },
         viewersCount: 12,
         completedCount: 4,
         examInfo: { name: 'SAT Math Preparation', daysAway: 15 },
@@ -22,13 +26,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '85%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '8', subtext: '6 hrs total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'Linear Equations', progress: 92, color: 'text-green-500' },
             { name: 'Variables & Expressions', progress: 88, color: 'text-green-500' },
             { name: 'Order of Operations', progress: 85, color: 'text-green-500' },
             { name: 'Integers', progress: 82, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'Quadratic Equations', progress: 45, color: 'text-orange-500' },
             { name: 'Factoring', progress: 52, color: 'text-orange-500' },
             { name: 'Inequalities', progress: 58, color: 'text-orange-500' },
@@ -38,6 +42,7 @@ export const MOCK_TOPICS: Topic[] = [
     {
         id: 'world-war-ii-overview',
         title: 'World War II Overview',
+        description: 'Explore the causes, major battles, and global impact of the most devastating conflict in human history.',
         progress: 55,
         tag: 'History',
         status: 'Ongoing',
@@ -46,8 +51,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 24 * 60 * 60 * 1000,
         icon: 'i-lucide-landmark',
         isPinned: false,
-        learningGoal: 'Overview',
-        createdBy: { id: '3', name: 'Bob Johnson', avatar: 'https://i.pravatar.cc/100?u=3', role: 'Admin', topicsCount: 8 },
+        learningGoal: 'Quick Overview',
+        targetFinishDate: Date.now() + 14 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 4,
+        createdBy: { id: '3', name: 'Bob Johnson', avatar: 'https://i.pravatar.cc/100?u=3', role: 'Admin', coursesCount: 8 },
         viewersCount: 45,
         completedCount: 12,
         examInfo: { name: 'AP World History Exam', daysAway: 42 },
@@ -56,13 +64,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '52%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '12', subtext: '14 hrs total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'Causes of WWII', progress: 78, color: 'text-green-500' },
             { name: 'The Blitzkrieg Strategy', progress: 75, color: 'text-green-500' },
             { name: 'Axis Powers', progress: 72, color: 'text-green-500' },
             { name: 'Major Battles', progress: 70, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'Pacific Theater', progress: 35, color: 'text-orange-500' },
             { name: 'The Holocaust', progress: 42, color: 'text-orange-500' },
             { name: 'Post-War Reconstruction', progress: 48, color: 'text-orange-500' },
@@ -72,6 +80,7 @@ export const MOCK_TOPICS: Topic[] = [
     {
         id: 'newtons-laws-of-motion',
         title: "Newton's Laws of Motion",
+        description: 'Discover the foundational principles of classical mechanics and learn how forces dictate the motion of objects.',
         progress: 30,
         tag: 'Science',
         status: 'Ongoing',
@@ -80,8 +89,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
         icon: 'i-lucide-microscope',
         isPinned: true,
-        learningGoal: 'Exam Prep',
-        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
+        learningGoal: 'Exam Preparation',
+        targetFinishDate: Date.now() + 60 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 4,
+        itemsPerWeek: 8,
+        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', coursesCount: 24 },
         viewersCount: 8,
         completedCount: 2,
         examInfo: { name: 'Physics Midterm - Unit 1', daysAway: 7 },
@@ -90,13 +102,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '35%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '5', subtext: '4 hrs total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'Law of Inertia', progress: 65, color: 'text-green-500' },
             { name: 'Mass vs Weight', progress: 60, color: 'text-green-500' },
             { name: 'Velocity Concepts', progress: 58, color: 'text-green-500' },
             { name: 'Friction Basics', progress: 55, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'F=ma Calculations', progress: 25, color: 'text-orange-500' },
             { name: 'Action & Reaction', progress: 28, color: 'text-orange-500' },
             { name: 'Acceleration Curves', progress: 32, color: 'text-orange-500' },
@@ -106,6 +118,7 @@ export const MOCK_TOPICS: Topic[] = [
     {
         id: 'spanish-basics',
         title: 'Spanish Basics',
+        description: 'Learn essential vocabulary, grammar structures, and conversational phrases to confidently communicate in Spanish.',
         progress: 65,
         tag: 'Language',
         status: 'Ongoing',
@@ -114,8 +127,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 25 * 60 * 60 * 1000,
         icon: 'i-lucide-languages',
         isPinned: false,
-        learningGoal: 'Mastery',
-        createdBy: { id: '4', name: 'Charlie Williams', avatar: 'https://i.pravatar.cc/100?u=4', role: 'Admin', topicsCount: 5 },
+        learningGoal: 'Deep Mastery',
+        targetFinishDate: Date.now() + 90 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 5,
+        itemsPerWeek: 10,
+        createdBy: { id: '4', name: 'Charlie Williams', avatar: 'https://i.pravatar.cc/100?u=4', role: 'Admin', coursesCount: 5 },
         viewersCount: 24,
         completedCount: 8,
         examInfo: { name: 'DELE A1 Certification', daysAway: 60 },
@@ -124,13 +140,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '68%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '10', subtext: '12 hrs total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'Essential Greetings', progress: 88, color: 'text-green-500' },
             { name: 'Numbers 1-100', progress: 85, color: 'text-green-500' },
             { name: 'Common Nouns', progress: 82, color: 'text-green-500' },
             { name: 'Family Members', progress: 78, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'Verb Conjugation', progress: 40, color: 'text-orange-500' },
             { name: 'Gender Agreement', progress: 45, color: 'text-orange-500' },
             { name: 'Sentence Structure', progress: 52, color: 'text-orange-500' },
@@ -140,6 +156,7 @@ export const MOCK_TOPICS: Topic[] = [
     {
         id: 'greek-mythology',
         title: 'Greek Mythology',
+        description: 'Dive into the ancient tales of gods, heroes, and monsters that shaped the culture and literature of Western civilization.',
         progress: 100,
         tag: 'History',
         status: 'Completed',
@@ -148,8 +165,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
         icon: 'i-lucide-scroll',
         isPinned: false,
-        learningGoal: 'Overview',
-        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', topicsCount: 24 },
+        learningGoal: 'Quick Overview',
+        targetFinishDate: Date.now() + 21 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 1,
+        itemsPerWeek: 2,
+        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', coursesCount: 24 },
         viewersCount: 156,
         completedCount: 42,
         examInfo: { name: 'Classical Studies Final', daysAway: 12 },
@@ -158,13 +178,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '98%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '2', subtext: '1 hr total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'The 12 Olympians', progress: 100, color: 'text-green-500' },
             { name: 'Creation Myths', progress: 100, color: 'text-green-500' },
             { name: 'Heroes & Monsters', progress: 98, color: 'text-green-500' },
             { name: 'Trojan War', progress: 95, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'Minor Deities', progress: 85, color: 'text-orange-500' },
             { name: 'Genealogy of Gods', progress: 88, color: 'text-orange-500' },
             { name: 'Epic Poems', progress: 90, color: 'text-orange-500' },
@@ -174,6 +194,7 @@ export const MOCK_TOPICS: Topic[] = [
     {
         id: 'advanced-javascript',
         title: 'Advanced JavaScript',
+        description: 'Deep dive into modern ES6+ features, asynchronous programming, closures, and performance optimization techniques.',
         progress: 15,
         tag: 'Science',
         status: 'Ongoing',
@@ -182,8 +203,11 @@ export const MOCK_TOPICS: Topic[] = [
         lastStudiedAt: Date.now() - 5 * 60 * 60 * 1000,
         icon: 'i-lucide-code',
         isPinned: false,
-        learningGoal: 'Project Based',
-        createdBy: { id: '5', name: 'David Brown', avatar: 'https://i.pravatar.cc/100?u=5', role: 'Admin', topicsCount: 12 },
+        learningGoal: 'Practical Application',
+        targetFinishDate: Date.now() + 45 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 6,
+        createdBy: { id: '5', name: 'David Brown', avatar: 'https://i.pravatar.cc/100?u=5', role: 'Admin', coursesCount: 12 },
         viewersCount: 3,
         completedCount: 1,
         examInfo: { name: 'Frontend Engineering Cert', daysAway: 30 },
@@ -192,13 +216,13 @@ export const MOCK_TOPICS: Topic[] = [
             { label: 'Pass Probability', value: '20%', subtext: 'at current pace', icon: 'i-lucide-line-chart' },
             { label: 'Sessions This Week', value: '15', subtext: '20 hrs total', icon: 'i-lucide-calendar-days' }
         ],
-        strongTopics: [
+        strongCourses: [
             { name: 'Arrow Functions', progress: 45, color: 'text-green-500' },
             { name: 'Array Methods', progress: 40, color: 'text-green-500' },
             { name: 'ES6 Modules', progress: 35, color: 'text-green-500' },
             { name: 'Destructuring', progress: 30, color: 'text-green-500' }
         ],
-        weakTopics: [
+        weakCourses: [
             { name: 'Prototypes', progress: 5, color: 'text-orange-500' },
             { name: 'Event Loop', progress: 8, color: 'text-orange-500' },
             { name: 'Closures', progress: 12, color: 'text-orange-500' },
@@ -207,7 +231,7 @@ export const MOCK_TOPICS: Topic[] = [
     },
 ]
 
-export const TOPIC_CONTENT_MAP: Record<string, {
+export const COURSE_CONTENT_MAP: Record<string, {
     lessons: Array<Partial<LessonOverview> & { content: Partial<LessonContent>, assessment?: Partial<Assessment> }>
 }> = {
     'introduction-to-algebra': {
@@ -254,7 +278,7 @@ export const TOPIC_CONTENT_MAP: Record<string, {
                     whereYouStruggled: "Inverse operations involving division and negative coefficients.",
                     passProbBefore: "65%",
                     passProbAfter: "82%",
-                    aiFinalComment: "Small move, but real. Two more sessions on this topic, and you'll reach Level 4 mastery — which historically corresponds to a 88% pass probability on the SAT Math Prep."
+                    aiFinalComment: "Small move, but real. Two more sessions on this course, and you'll reach Level 4 mastery — which historically corresponds to a 88% pass probability on the SAT Math Prep."
                 }
             },
             {
@@ -542,7 +566,7 @@ export const TOPIC_CONTENT_MAP: Record<string, {
                     whereYouStruggled: "Lexical 'this' binding in complex scope chains.",
                     passProbBefore: "15%",
                     passProbAfter: "32%",
-                    aiFinalComment: "Small move, but real. Three more sessions on this topic, and you'll reach Level 3 mastery — which historically corresponds to a 67% pass probability on the Frontend Engineering Certification."
+                    aiFinalComment: "Small move, but real. Three more sessions on this course, and you'll reach Level 3 mastery — which historically corresponds to a 67% pass probability on the Frontend Engineering Certification."
                 }
             }
         ]

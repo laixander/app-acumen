@@ -7,25 +7,25 @@ export const APP_NAVIGATION_ITEMS: NavigationMenuItem[] = [
         to: '/app/dashboard'
     },
     // {
-    //     label: 'New Topic',
+    //     label: 'New Course',
     //     icon: 'i-lucide-circle-plus',
-    //     to: '/app/topics/new'
+    //     to: '/app/courses/new'
     // },
     {
-        label: 'Topics',
+        label: 'Courses',
         icon: 'i-lucide-book-open',
         children: [
             {
                 label: 'Collection',
-                description: 'View and manage all your topics',
+                description: 'View and manage all your courses',
                 icon: 'i-lucide-folder-open',
-                to: '/app/topics/collection'
+                to: '/app/courses/collection'
             },
             {
-                label: 'New Topic',
-                description: 'Create a new topic and modules',
+                label: 'New Course',
+                description: 'Create a new course and modules',
                 icon: 'i-lucide-circle-plus',
-                to: '/app/topics/new'
+                to: '/app/courses/new'
             }
         ]
     },

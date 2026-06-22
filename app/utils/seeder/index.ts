@@ -1,4 +1,4 @@
-export * from './topics'
+export * from './courses'
 export * from './workspaces'
 export * from './organizations'
 export * from './accounts'

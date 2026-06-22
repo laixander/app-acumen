@@ -94,7 +94,7 @@ const completionData = computed(() => ({
     labels: adminDashboardData.value.categoryLabels,
     datasets: [
         {
-            label: 'Topics Completed',
+            label: 'Courses Completed',
             backgroundColor: 'rgba(139, 92, 246, 0.85)', // violet transparent
             hoverBackgroundColor: 'rgba(139, 92, 246, 1)',
             borderRadius: 6,
@@ -124,13 +124,13 @@ const completionData = computed(() => ({
 
             <UCard :ui="{ body: 'px-4 py-5 sm:p-6' }">
                 <div class="flex items-center justify-between">
-                    <div class="text-sm font-medium">Topics Mastered</div>
+                    <div class="text-sm font-medium">Courses Mastered</div>
                     <UIcon name="i-lucide-book-open-check" class="text-primary w-5 h-5 opacity-50" />
                 </div>
-                <div class="text-3xl font-bold mt-2">{{ adminDashboardData.topicsMastered.toLocaleString() }}</div>
+                <div class="text-3xl font-bold mt-2">{{ adminDashboardData.coursesMastered.toLocaleString() }}</div>
                 <div class="text-xs text-green-500 font-medium mt-2 flex items-center gap-1">
                     <UIcon name="i-lucide-arrow-up-right" class="w-3 h-3" />
-                    <span>{{ adminDashboardData.topicsMasteredTrend }}</span>
+                    <span>{{ adminDashboardData.coursesMasteredTrend }}</span>
                 </div>
             </UCard>
 
@@ -160,7 +160,7 @@ const completionData = computed(() => ({
 
             <UCard>
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-base font-semibold">Topics by Category</h3>
+                    <h3 class="text-base font-semibold">Courses by Category</h3>
                     <UBadge variant="soft" color="primary">All Time</UBadge>
                 </div>
                 <div class="h-[280px] w-full">

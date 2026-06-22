@@ -1,11 +1,11 @@
 export const learnerSteps = [
     {
         title: "Personalized Onboarding",
-        description: "Access your dashboard to see your active learning topics. If you belong to an organization, your topics are safely organized within your institution's specific workspaces.",
+        description: "Access your dashboard to see your active learning courses. If you belong to an organization, your courses are safely organized within your institution's specific workspaces.",
         status: "Step 1",
     },
     {
-        title: "Topic Analysis & Assessment",
+        title: "Course Analysis & Assessment",
         description: "Upload materials or provide a title. The AI Engine extracts key objectives and generates a diagnostic quiz to measure your existing knowledge base.",
         status: "Step 2",
     },
@@ -16,7 +16,7 @@ export const learnerSteps = [
     },
     {
         title: "Interactive AI Tutoring",
-        description: "Use the integrated AI Tutor for instant clarifications. The tutor has access to your specific topic context, providing highly relevant hints and explanations.",
+        description: "Use the integrated AI Tutor for instant clarifications. The tutor has access to your specific course context, providing highly relevant hints and explanations.",
         status: "Step 4",
     },
     {
@@ -39,7 +39,7 @@ export const aiEnginePhases = [
     },
     {
         title: "Path Personalization",
-        description: "The AI crafts a custom learning sequence, prioritizing your knowledge gaps to ensure you master the topic in the shortest time possible.",
+        description: "The AI crafts a custom learning sequence, prioritizing your knowledge gaps to ensure you master the course in the shortest time possible.",
         status: "Phase 3",
     },
     {
@@ -81,13 +81,13 @@ export const appWalkthrough = [
     },
     {
         title: "Collaborative Workspaces",
-        description: "Admins build out specialized workspaces for teams or departments, ensuring learners have a structured environment for their topics.",
+        description: "Admins build out specialized workspaces for teams or departments, ensuring learners have a structured environment for their courses.",
         icon: "i-lucide-users",
         status: "Step 2"
     },
     {
         title: "AI Knowledge Intake",
-        description: "Learners feed the AI with study materials. The engine processes these inputs to build a comprehensive learning model of the topic.",
+        description: "Learners feed the AI with study materials. The engine processes these inputs to build a comprehensive learning model of the course.",
         icon: "i-lucide-brain-circuit",
         status: "Step 3"
     },

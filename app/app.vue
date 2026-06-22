@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useTheme } from '~/composables/useTheme'
 import { useUser } from '~/composables/useUser'
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { useLessons } from '~/composables/useLessons'
 import { useActivityLogs } from '~/composables/useActivityLogs'
 import { useDashboard } from '~/composables/useDashboard'
@@ -9,7 +9,7 @@ import { generateMockOrganizations, generateMockAdminAccounts, generateMockPlans
 
 const { initTheme } = useTheme()
 const { initUser, user } = useUser()
-const { initTopics } = useTopics()
+const { initCourses } = useCourses()
 const { initLessons } = useLessons()
 const { initActivityLogs } = useActivityLogs()
 const { initDashboard } = useDashboard()
@@ -30,7 +30,7 @@ useSeoMeta({
 onMounted(() => {
     initTheme()
     initUser()
-    initTopics()
+    initCourses()
     initLessons()
     initActivityLogs()
     initDashboard()

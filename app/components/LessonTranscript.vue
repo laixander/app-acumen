@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { LessonSection } from '~/types/topic'
+import type { LessonSection } from '~/types/course'
 
 const props = defineProps<{
     sections: LessonSection[]

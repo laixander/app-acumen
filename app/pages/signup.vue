@@ -111,9 +111,9 @@ const nextStep = () => {
             if (shouldShowPayment.value) {
                 step.value = 4
             } else {
-                toast.add({ title: 'Account created!', description: 'Welcome to Acumen! Setting up your first topic...' })
+                toast.add({ title: 'Account created!', description: 'Welcome to Acumen! Setting up your first course...' })
                 if (hasDraft()) {
-                    navigateTo('/app/topics/new?from=onboarding')
+                    navigateTo('/app/courses/new?from=onboarding')
                 } else {
                     navigateTo('/app/dashboard')
                 }
@@ -129,7 +129,7 @@ const nextStep = () => {
             loading.value = false
             toast.add({ title: 'Account created!', description: 'Welcome to Acumen! Your subscription is now active.' })
             if (hasDraft()) {
-                navigateTo('/app/topics/new?from=onboarding')
+                navigateTo('/app/courses/new?from=onboarding')
             } else {
                 navigateTo('/app/dashboard')
             }

@@ -1,29 +1,29 @@
 <script setup lang="ts">
-import { useTopics } from '~/composables/useTopics'
+import { useCourses } from '~/composables/useCourses'
 import { useLessons } from '~/composables/useLessons'
 import { computed, onMounted } from 'vue'
-import { TOPIC_CONTENT_MAP } from '~/utils/seeder/topics'
+import { COURSE_CONTENT_MAP } from '~/utils/seeder/courses'
 import { injectAssessmentsIntoTimeline } from '~/utils/seeder'
-import { GOAL_COLORS } from '~/constants/topics'
+import { GOAL_COLORS } from '~/constants/courses'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
 
 const route = useRoute()
-const { topics, updateTopic } = useTopics()
-const { getLessonsByTopic, addAssessments, addLessonContents, updateLessonsForTopic } = useLessons()
+const { courses, updateCourse } = useCourses()
+const { getLessonsByCourse, addAssessments, addLessonContents, updateLessonsForCourse } = useLessons()
 const toast = useToast()
 
-const topic = computed(() => {
-    return topics.value.find(t => t.id === route.params.id)
+const course = computed(() => {
+    return courses.value.find(t => t.id === route.params.id)
 })
 
-// Dynamically count topics authored by the same user so newly created topics are counted
-const topicsCountForAuthor = computed(() => {
-    if (!topic.value?.createdBy?.id) return 0
-    return topics.value.filter(t => t.createdBy?.id === topic.value!.createdBy!.id).length
+// Dynamically count courses authored by the same user so newly created courses are counted
+const coursesCountForAuthor = computed(() => {
+    if (!course.value?.createdBy?.id) return 0
+    return courses.value.filter(t => t.createdBy?.id === course.value!.createdBy!.id).length
 })
 
-// Percentage gap left before this topic is fully mastered
-const masteryGap = computed(() => Math.max(0, 100 - (topic.value?.progress ?? 0)))
+// Percentage gap left before this course is fully mastered
+const masteryGap = computed(() => Math.max(0, 100 - (course.value?.progress ?? 0)))
 
 // Passing rate: % of assessment-type lessons that are completed
 const passingRate = computed(() => {
@@ -33,15 +33,15 @@ const passingRate = computed(() => {
     return Math.round((passed / assessments.length) * 100)
 })
 
-const { data: serverLessons } = await useFetch(`/api/lessons?topicId=${route.params.id}`)
+const { data: serverLessons } = await useFetch(`/api/lessons?courseId=${route.params.id}`)
 
 const lessons = computed(() => {
-    const local = getLessonsByTopic(route.params.id as string)
+    const local = getLessonsByCourse(route.params.id as string)
     return local.length > 0 ? local : (serverLessons.value || [])
 })
 
 const injectAssessments = () => {
-    if (!topic.value) return
+    if (!course.value) return
     const currentLessons = [...lessons.value]
     if (currentLessons.length === 0) return
 
@@ -54,9 +54,9 @@ const injectAssessments = () => {
         newTimeline,
         newAssessments,
         newContents
-    } = injectAssessmentsIntoTimeline(route.params.id as string, topic.value.title, currentLessons as any[])
+    } = injectAssessmentsIntoTimeline(route.params.id as string, course.value.title, currentLessons as any[])
 
-    updateLessonsForTopic(route.params.id as string, newTimeline)
+    updateLessonsForCourse(route.params.id as string, newTimeline)
     addLessonContents(newContents)
     addAssessments(newAssessments)
 }
@@ -66,19 +66,19 @@ onMounted(() => {
 })
 
 useHead({
-    title: topic.value ? `${topic.value.title} - LearnFast` : 'Topic Not Found'
+    title: course.value ? `${course.value.title} - LearnFast` : 'Course Not Found'
 })
 
 // SessionState Logic
-const strongLessons = computed(() => topic.value?.strongTopics || [])
+const strongLessons = computed(() => course.value?.strongCourses || [])
 
-const weakLessons = computed(() => topic.value?.weakTopics || [])
+const weakLessons = computed(() => course.value?.weakCourses || [])
 
-const weakestTopic = computed(() => weakLessons.value[0] || { name: topic.value?.title || 'this topic', progress: 0, color: 'text-orange-500' })
+const weakestCourse = computed(() => weakLessons.value[0] || { name: course.value?.title || 'this course', progress: 0, color: 'text-orange-500' })
 
 const recommendedLesson = computed(() => {
     // 1. Try static map first
-    const mappedContent = TOPIC_CONTENT_MAP[route.params.id as string]
+    const mappedContent = COURSE_CONTENT_MAP[route.params.id as string]
     if (mappedContent && mappedContent.lessons.length > 0) {
         const lesson = mappedContent.lessons.find(l => l.assessment) || mappedContent.lessons[0]
         return lesson
@@ -118,8 +118,8 @@ const startSession = () => {
 
 const processingLines = computed<SessionProcessingLine[]>(() => [
     { text: 'Reading your mastery profile...', delay: 800 },
-    { text: `You are <span class="text-primary font-bold">weakest on ${weakestTopic.value?.name || 'this topic'}</span>. Last practiced 3 days ago — decaying.`, delay: 1500 },
-    { text: `You learn faster through <span class="text-primary font-bold">${recommendedLesson.value?.type === 'video' ? 'visual explanations' : 'active problem solving'}</span>. Selecting <span class="text-primary font-bold">${recommendedLesson.value?.title || 'Topic Review'}</span>.`, delay: 1500 },
+    { text: `You are <span class="text-primary font-bold">weakest on ${weakestCourse.value?.name || 'this course'}</span>. Last practiced 3 days ago — decaying.`, delay: 1500 },
+    { text: `You learn faster through <span class="text-primary font-bold">${recommendedLesson.value?.type === 'video' ? 'visual explanations' : 'active problem solving'}</span>. Selecting <span class="text-primary font-bold">${recommendedLesson.value?.title || 'Course Review'}</span>.`, delay: 1500 },
     { text: `Selecting targeted material. Difficulty: <span class="text-primary font-bold">medium</span>. You have time for ${recommendedLesson.value?.duration || '~10 min'}.`, delay: 1500 }
 ])
 
@@ -136,13 +136,13 @@ const handleSessionComplete = () => {
     sessionState.value = 'complete'
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
-    // Simulate analysis update for new topics
-    if (topic.value && topic.value.stats?.[0]?.value === '0%') {
+    // Simulate analysis update for new courses
+    if (course.value && course.value.stats?.[0]?.value === '0%') {
         const total = lessons.value.length
         const completed = 1
         const progress = Math.round((completed / total) * 100)
 
-        updateTopic(route.params.id as string, {
+        updateCourse(route.params.id as string, {
             progress,
             lessons: `${completed}/${total}`,
             stats: [
@@ -150,12 +150,12 @@ const handleSessionComplete = () => {
                 { label: 'Pass Probability', value: '52%', subtext: '+7% improvement', icon: 'i-lucide-line-chart' },
                 { label: 'Sessions This Week', value: '1', subtext: '0.5 hrs total', icon: 'i-lucide-calendar-days' }
             ],
-            strongTopics: lessons.value.slice(0, 2).map(l => ({
+            strongCourses: lessons.value.slice(0, 2).map(l => ({
                 name: l.title.split(':').pop()?.trim() || l.title,
                 progress: 85,
                 color: 'text-green-500'
             })),
-            weakTopics: lessons.value.slice(2, 4).map(l => ({
+            weakCourses: lessons.value.slice(2, 4).map(l => ({
                 name: l.title.split(':').pop()?.trim() || l.title,
                 progress: 42,
                 color: 'text-orange-500'
@@ -248,15 +248,15 @@ const simulateDownload = (filename: string) => {
 </script>
 
 <template>
-    <UContainer v-if="topic" class="py-6">
+    <UContainer v-if="course" class="py-6">
         <Transition name="fade" mode="out-in">
             <div v-if="sessionState === 'idle'" class="flex flex-col gap-6">
                 <!-- Breadcrumbs -->
                 <AppBreadcrumb />
                 <!-- <nav class="flex items-center gap-2 text-sm text-neutral-500">
-                    <ULink to="/app/topics/collection" class="hover:text-primary transition-colors">Collection</ULink>
+                    <ULink to="/app/courses/collection" class="hover:text-primary transition-colors">Collection</ULink>
                     <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
-                    <ULink :to="`/app/topics/${topic.id}`" class="hover:text-primary transition-colors">{{ topic.title }}
+                    <ULink :to="`/app/courses/${course.id}`" class="hover:text-primary transition-colors">{{ course.title }}
                     </ULink>
                     <UIcon name="i-lucide-chevron-right" class="w-3.5 h-3.5" />
                     <span class="font-medium text-neutral-900 dark:text-neutral-100">Lessons</span>
@@ -269,7 +269,7 @@ const simulateDownload = (filename: string) => {
                             class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent pointer-events-none" />
 
                         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                            <ContentHeading :title="topic.title" :icon="topic.icon">
+                            <ContentHeading :title="course.title" :icon="course.icon">
                                 <template #description>
                                     <p class="text-dimmed max-w-lg flex items-center gap-2">
                                         <!-- Percentage to mastery -->
@@ -287,9 +287,9 @@ const simulateDownload = (filename: string) => {
 
                             <!-- <div class="flex flex-col items-end gap-1 text-right border-l-2 border-primary/20 pl-4">
                                 <span class="text-xs font-semibold tracking-wider text-muted uppercase whitespace-nowrap">
-                                    {{ topic.learningGoal || 'Target Exam' }} · {{ topic.examInfo?.name ?? '—' }}
+                                    {{ course.learningGoal || 'Target Exam' }} · {{ course.examInfo?.name ?? '—' }}
                                 </span>
-                                <span class="text-3xl font-bold text-primary whitespace-nowrap">{{ topic.examInfo?.daysAway ?? '?' }} Days Away</span>
+                                <span class="text-3xl font-bold text-primary whitespace-nowrap">{{ course.examInfo?.daysAway ?? '?' }} Days Away</span>
                             </div> -->
                         </div>
                     </UCard>
@@ -395,11 +395,11 @@ const simulateDownload = (filename: string) => {
                                                 <UButton v-if="lesson.status === 'current'"
                                                     :label="lesson.type === 'Assessment' ? 'Start Assessment' : 'Start Lesson'"
                                                     icon="i-lucide-play-circle" color="primary" size="sm"
-                                                    :to="`/app/topics/lesson/${lesson.id}`" />
+                                                    :to="`/app/courses/${route.params.id}/${lesson.id}`" />
                                                 <UButton v-else
                                                     :label="lesson.type === 'Assessment' ? 'Review Results' : 'Review'"
                                                     icon="i-lucide-rotate-ccw" color="neutral" variant="soft" size="sm"
-                                                    :to="`/app/topics/lesson/${lesson.id}`" />
+                                                    :to="`/app/courses/${route.params.id}/${lesson.id}`" />
                                             </div>
                                         </div>
                                     </UCard>
@@ -417,9 +417,9 @@ const simulateDownload = (filename: string) => {
                                             <span class="text-sm font-semibold uppercase tracking-wider text-muted">
                                                 Overall Progress
                                             </span>
-                                            <span class="text-sm font-bold text-primary">{{ topic.progress }}%</span>
+                                            <span class="text-sm font-bold text-primary">{{ course.progress }}%</span>
                                         </div>
-                                        <UProgress :model-value="topic.progress" color="primary" size="sm" />
+                                        <UProgress :model-value="course.progress" color="primary" size="sm" />
                                     </div>
                                     <p class="text-xs text-dimmed">
                                         Keep up the momentum to reach your goal.
@@ -434,9 +434,9 @@ const simulateDownload = (filename: string) => {
                                         </span>
                                     </div>
                                     <div class="flex flex-wrap gap-2">
-                                        <UBadge :label="topic.tag" variant="soft" />
-                                        <UBadge v-if="topic.learningGoal" :label="topic.learningGoal" variant="subtle"
-                                            :color="GOAL_COLORS[topic.learningGoal]" />
+                                        <UBadge :label="course.tag" variant="soft" />
+                                        <UBadge v-if="course.learningGoal" :label="course.learningGoal" variant="subtle"
+                                            :color="GOAL_COLORS[course.learningGoal]" />
                                     </div>
                                 </UCard> -->
 
@@ -453,10 +453,10 @@ const simulateDownload = (filename: string) => {
                                     <div class="flex flex-col gap-2">
                                         <UCard :ui="{ body: 'flex items-center justify-between gap-2 p-2 sm:p-2' }"
                                             class="rounded-md shadow-sm group/file hover:bg-white dark:hover:bg-primary-800 transition-colors cursor-pointer"
-                                            @click="simulateDownload(`${topic.title} Chapter 1-3.pdf`)">
+                                            @click="simulateDownload(`${course.title} Chapter 1-3.pdf`)">
                                             <div class="flex items-center gap-2 min-w-0">
                                                 <UIcon name="i-lucide-file-text" class="text-red-500 shrink-0" />
-                                                <span class="text-xs font-medium truncate">{{ topic.title }} Chapter
+                                                <span class="text-xs font-medium truncate">{{ course.title }} Chapter
                                                     1-3.pdf</span>
                                             </div>
                                             <UButton icon="i-lucide-download" variant="ghost" size="xs"
@@ -476,7 +476,7 @@ const simulateDownload = (filename: string) => {
                                 </UCard>
 
                                 <!-- Author Widget -->
-                                <UCard v-if="topic.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
+                                <UCard v-if="course.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
                                     <div class="flex items-center justify-between">
                                         <span class="text-xs font-semibold uppercase tracking-wider text-muted">
                                             Curated By
@@ -484,23 +484,23 @@ const simulateDownload = (filename: string) => {
                                     </div>
                                     <div class="flex items-center justify-between gap-4">
                                         <div class="flex items-center gap-3">
-                                            <UAvatar :src="topic.createdBy.avatar" :alt="topic.createdBy.name" size="md"
+                                            <UAvatar :src="course.createdBy.avatar" :alt="course.createdBy.name" size="md"
                                                 class="ring-2 ring-primary-500/20" />
                                             <div class="flex flex-col">
                                                 <span
                                                     class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
-                                                        topic.createdBy.name }}</span>
+                                                        course.createdBy.name }}</span>
                                                 <span
                                                     class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
-                                                        topic.createdBy.role }}</span>
+                                                        course.createdBy.role }}</span>
                                             </div>
                                         </div>
 
                                         <div
                                             class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
                                             <div class="flex flex-col items-center">
-                                                <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{ topicsCountForAuthor }}</span>
-                                                <span class="text-[8px] text-neutral-400 font-bold uppercase">Topics</span>
+                                                <span class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{ coursesCountForAuthor }}</span>
+                                                <span class="text-[8px] text-neutral-400 font-bold uppercase">Courses</span>
                                             </div>
                                         </div>
                                     </div>
@@ -516,7 +516,7 @@ const simulateDownload = (filename: string) => {
                 <div class="flex justify-between items-center">
                     <div class="flex flex-col gap-1">
                         <p class="text-muted">Confident Test</p>
-                        <h1 class="text-4xl font-bold tracking-tight">{{ topic.title }}</h1>
+                        <h1 class="text-4xl font-bold tracking-tight">{{ course.title }}</h1>
                     </div>
                     <!-- Timer Widget -->
                     <UCard v-if="sessionState !== 'processing' && sessionState !== 'plan'" variant="soft" :ui="{ body: 'sm:px-4 sm:py-2.5' }">
@@ -542,17 +542,17 @@ const simulateDownload = (filename: string) => {
                         @complete="handleProcessingComplete" />
 
                     <AppSessionReady v-else-if="sessionState === 'ready'"
-                        :topic-name="weakestTopic?.name || 'Current Topic'"
+                        :course-name="weakestCourse?.name || 'Current Course'"
                         :module-title="recommendedLesson?.title || 'Scenario Court'" difficulty="Medium"
                         :duration="recommendedLesson?.duration || '~10 min'" @start="beginSessionAction" />
 
                     <AppSessionActive v-else-if="sessionState === 'active' && recommendedLesson"
                         :questions="activeAssessment?.questions || []"
-                        :module-title="recommendedLesson.title || 'Topic Review'" @close="resetSession"
+                        :module-title="recommendedLesson.title || 'Course Review'" @close="resetSession"
                         @complete="handleSessionComplete" />
 
                     <AppSessionComplete v-else-if="sessionState === 'complete'"
-                        :module-title="activeAssessment?.title || 'Topic Review'"
+                        :module-title="activeAssessment?.title || 'Course Review'"
                         :what-you-did-well="activeAssessment?.whatYouDidWell || 'Understanding core concepts'"
                         :where-you-struggled="activeAssessment?.whereYouStruggled || 'Applying logic to complex scenarios'"
                         :pass-prob-before="activeAssessment?.passProbBefore || '45%'"
@@ -560,7 +560,7 @@ const simulateDownload = (filename: string) => {
                         :ai-final-comment="activeAssessment?.aiFinalComment || 'You are making steady progress. Keep focusing on the application of rules.'"
                         @close="resetSession" @view-plan="handleViewPlan" />
 
-                    <AppSessionReadinessPlan v-else-if="sessionState === 'plan'" :weakest-topic="weakestTopic"
+                    <AppSessionReadinessPlan v-else-if="sessionState === 'plan'" :weakest-course="weakestCourse"
                         @close="resetSession" />
                 </UCard>
             </div>
@@ -570,8 +570,8 @@ const simulateDownload = (filename: string) => {
     <!-- 404 Empty State -->
     <div v-else class="flex flex-col items-center justify-center py-20 text-center">
         <UIcon name="i-lucide-file-search-corner" class="text-6xl text-dimmed mb-4" />
-        <h2 class="text-2xl font-bold">Topic not found</h2>
-        <p class="text-muted mt-2">The topic you're looking for doesn't exist or has been deleted.</p>
+        <h2 class="text-2xl font-bold">Course not found</h2>
+        <p class="text-muted mt-2">The course you're looking for doesn't exist or has been deleted.</p>
         <UButton label="Back to Dashboard" color="primary" variant="subtle" to="/app/dashboard" class="mt-6" />
     </div>
 

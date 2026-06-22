@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CURRICULUM_CATEGORIES } from '~/constants/topics'
+import { CURRICULUM_CATEGORIES } from '~/constants/courses'
 
 type UploadFile = { name: string; size: string; type: string; status?: 'success' | 'error' | 'uploading', file?: File }
 type InputMode = 'prompt' | 'upload' | 'subject'
@@ -99,11 +99,12 @@ const retryFile = (i: number) => {
 // Redirects → new.vue picks up the query and jumps to the right step
 const generate = () => {
     if (!prompt.value.trim()) return
-    router.push({ path: '/app/topics/new', query: { mode: 'prompt', prompt: prompt.value.trim() } })
+    router.push({ path: '/app/courses/new', query: { mode: 'prompt', prompt: prompt.value.trim() } })
 }
 const startIndexing = () => {
     if (!canProceed.value) return
-    router.push({ path: '/app/topics/new', query: { mode: 'upload', step: 'indexing' } })
+    const fileNames = files.value.filter(f => f.status === 'success').map(f => f.name).join(',')
+    router.push({ path: '/app/courses/new', query: { mode: 'upload', step: 'indexing', files: fileNames } })
 }
 const handleSubjectSelect = (subject: string) => {
     selectedSubject.value = subject
@@ -111,7 +112,7 @@ const handleSubjectSelect = (subject: string) => {
 
 const startExplore = () => {
     if (!selectedSubject.value) return
-    router.push({ path: '/app/topics/new', query: { mode: 'explore', subject: selectedSubject.value } })
+    router.push({ path: '/app/courses/new', query: { mode: 'explore', subject: selectedSubject.value } })
 }
 </script>
 
@@ -139,7 +140,7 @@ const startExplore = () => {
                 <div v-else class="flex flex-col items-center gap-2">
                     <div
                         class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider">
-                        <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>Create New Topic</span>
+                        <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>Create New Course</span>
                     </div>
                     <ContentHeading description="You're making great progress! Ready to learn something new today?"
                         centered>
@@ -161,8 +162,9 @@ const startExplore = () => {
                     <!-- PROMPT -->
                     <UTextarea v-if="inputMode === 'prompt'" v-model="prompt"
                         placeholder="e.g., I want to learn advanced Quantum Computing with a focus on Cryptography..."
-                        :ui="{ root: 'w-full', base: 'ring-0 rounded-t-2xl rounded-b-none p-6' }" autoresize
-                        :rows="isHero ? 8 : 1" @keydown.meta.enter="generate" @keydown.ctrl.enter="generate" />
+                        :ui="{ root: 'w-full', base: 'ring-0 focus-visible:ring-0 rounded-t-2xl rounded-b-none p-6' }"
+                        autoresize :rows="isHero ? 8 : 1" @keydown.meta.enter="generate"
+                        @keydown.ctrl.enter="generate" />
 
                     <!-- UPLOAD -->
                     <div v-else-if="inputMode === 'upload'" class="flex flex-col">
@@ -351,7 +353,7 @@ const startExplore = () => {
             <Transition appear enter-active-class="transition-all duration-700 delay-500"
                 enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
                 <div v-if="isHero" class="flex flex-wrap justify-center gap-6">
-                    <div v-for="(stat, i) in [{ label: 'Learning Paths Generated', value: '12.4k+', icon: 'i-lucide-git-branch' }, { label: 'Active Learners', value: '5k+', icon: 'i-lucide-users' }, { label: 'Topics Covered', value: '800+', icon: 'i-lucide-book-open' }]"
+                    <div v-for="(stat, i) in [{ label: 'Learning Paths Generated', value: '12.4k+', icon: 'i-lucide-git-branch' }, { label: 'Active Learners', value: '5k+', icon: 'i-lucide-users' }, { label: 'Courses Covered', value: '800+', icon: 'i-lucide-book-open' }]"
                         :key="i" class="flex items-center gap-3 text-muted">
                         <div class="p-2 rounded-lg bg-accented/40">
                             <UIcon :name="stat.icon" class="text-lg flex" />

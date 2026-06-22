@@ -6,18 +6,18 @@ export const apiEndpoints = [
     },
     {
         method: "GET",
-        path: "/api/topics",
-        description: "List all active and completed learning topics for the user.",
+        path: "/api/courses",
+        description: "List all active and completed learning courses for the user.",
     },
     {
         method: "POST",
-        path: "/api/topics",
-        description: "Create a new topic with title, description, and learning material URLs.",
+        path: "/api/courses",
+        description: "Create a new course with title, description, and learning material URLs.",
     },
     {
         method: "GET",
         path: "/api/assessments/:id",
-        description: "Fetch an AI-generated assessment for a specific topic.",
+        description: "Fetch an AI-generated assessment for a specific course.",
     },
     {
         method: "POST",
@@ -26,7 +26,7 @@ export const apiEndpoints = [
     },
     {
         method: "GET",
-        path: "/api/lessons/:topicId",
+        path: "/api/lessons/:courseId",
         description: "Retrieve the personalized, ordered lesson plan built by the AI Engine.",
     },
 ];
@@ -37,16 +37,16 @@ export const dataModels = [
         fields: "id, name, email, createdAt, updatedAt",
     },
     {
-        name: "Topic",
+        name: "Course",
         fields: "id, user_id, title, description, duration, availability, status, icon",
     },
     {
         name: "Material",
-        fields: "id, topic_id, file_url, type, processedAt",
+        fields: "id, course_id, file_url, type, processedAt",
     },
     {
         name: "Assessment",
-        fields: "id, topic_id, type, score, adaptivePathId",
+        fields: "id, course_id, type, score, adaptivePathId",
     },
     {
         name: "Question",
@@ -58,7 +58,7 @@ export const dataModels = [
     },
     {
         name: "Lesson",
-        fields: "id, topic_id, title, order, content, status",
+        fields: "id, course_id, title, order, content, status",
     },
     {
         name: "Workspace",
@@ -76,8 +76,8 @@ export const dataModels = [
 
 export const workflowSteps = [
     {
-        title: "Topic Creation",
-        description: "Learner defines a topic, uploads study materials, and sets expected duration.",
+        title: "Course Creation",
+        description: "Learner defines a course, uploads study materials, and sets expected duration.",
         status: "Setup",
     },
     {
@@ -102,7 +102,7 @@ export const workflowSteps = [
     },
     {
         title: "Verification",
-        description: "Final assessment verifies mastery. Topic is marked complete or path is adjusted.",
+        description: "Final assessment verifies mastery. Course is marked complete or path is adjusted.",
         status: "Complete",
     },
 ];
@@ -127,7 +127,7 @@ export const changelogItems = [
         changes: [
             "Finalized a cohesive, high-fidelity premium redesign across login, signup, and onboarding pages with theme-aware dark mode visuals and dynamic CSS custom properties",
             "Optimized UI layering with precision masking for dot-grid overlays and standardized UCard containers and stat rows for a professional brand experience",
-            "Refined the topic creation interface in DashboardAIPrompt and guest onboarding (/start) with visual feedback, loading spinners, and completion check icons for subject selection",
+            "Refined the course creation interface in DashboardAIPrompt and guest onboarding (/start) with visual feedback, loading spinners, and completion check icons for subject selection",
             "Introduced a standardized pre-assessment processing overlay across all creation modes (Upload, Explore, Prompt) to bridge the gap between initial selection and diagnostic testing",
             "Implemented persistent dev mode query parameter (?dev=true) across navigation in the app.vue layout to maintain active development controls (SeederFab, DemoFab)",
             "Enhanced layout consistency on the /start onboarding page by relocating the 'Sign Up Free' guest CTA from the main content area to the fixed left-side panel above the footer",
@@ -137,15 +137,15 @@ export const changelogItems = [
     {
         date: "May 16, 2026",
         version: "v2.3.0",
-        title: "Immersive Guest Onboarding & Authentic Topic Creation Flow",
+        title: "Immersive Guest Onboarding & Authentic Course Creation Flow",
         changes: [
             "Launched a dedicated, full-screen Guest Onboarding experience at /start with high-fidelity transitions",
-            "Integrated the authentic AppTopicDoorSelection and full topic creation flow from the main app into the guest experience",
+            "Integrated the authentic AppCourseDoorSelection and full course creation flow from the main app into the guest experience",
             "Implemented useOnboardingDraft persistence layer using localStorage to bridge guest sessions with post-registration setup",
-            "Developed a seamless registration integration that automatically consumes onboarding drafts to pre-fill the first user topic",
+            "Developed a seamless registration integration that automatically consumes onboarding drafts to pre-fill the first user course",
             "Simplified the landing page OnboardingTeaser into a unified, high-conversion entry point linking directly to the guest flow",
             "Optimized the onboarding UI with always-visible stepper navigation, ambient glows, and responsive layout refinements",
-            "Synchronized the guest flow state machine with the core application's topic creation logic for consistent UX",
+            "Synchronized the guest flow state machine with the core application's course creation logic for consistent UX",
         ],
     },
     {
@@ -153,32 +153,32 @@ export const changelogItems = [
         version: "v2.2.0",
         title: "Personalized Learning Pathways & UI Accessibility Sync",
         changes: [
-            "Optimized 'Topic Door Selection' UI and 'Begin Session' workflow with robust data fallback logic",
+            "Optimized 'Course Door Selection' UI and 'Begin Session' workflow with robust data fallback logic",
             "Integrated Assessments directly into Lesson timelines for a more seamless adaptive learning experience",
             "Implemented dynamic AI Chat Panel height with sticky behavior to optimize sidebar real estate",
             "Enhanced source material accessibility with new downloadable card actions and status indicators",
-            "Refactored component type definitions across the core topic module for 100% TypeScript stability",
+            "Refactored component type definitions across the core course module for 100% TypeScript stability",
             "Improved session lifecycle state transitions (Ready, Processing, Active) with synchronized UI feedback",
             "Refactored Dashboard AI Prompt into a multi-mode interface (Prompt, Upload, Subject Discovery)",
-            "Unified the topic creation workflow by synchronizing Dashboard actions with the main Stepper flow via intelligent query-based redirection",
+            "Unified the course creation workflow by synchronizing Dashboard actions with the main Stepper flow via intelligent query-based redirection",
             "Enhanced Material Upload UI with robust error guards, retry mechanisms, and real-time status indicators",
             "Implemented a compact, inline Subject Picker for rapid curriculum selection directly from the dashboard",
-            "Optimized Topic Wizard state initialization to eliminate UI flashes during dashboard-to-stepper transitions",
+            "Optimized Course Wizard state initialization to eliminate UI flashes during dashboard-to-stepper transitions",
         ],
     },
     {
         date: "May 14, 2026",
         version: "v2.1.0",
-        title: "Immersive Session Architecture & Advanced Topic Onboarding",
+        title: "Immersive Session Architecture & Advanced Course Onboarding",
         changes: [
             "Launched the 'Probing Your Reasoning' AI layer with real-time justification prompts and evaluative feedback",
             "Implemented the 'Session Readiness' and 'Readiness Plan' modules to streamline the transition into active learning",
-            "Redesigned the Topic Creation Wizard with a dedicated 'Subject Picker' and 'Door Selection' interactive UI",
+            "Redesigned the Course Creation Wizard with a dedicated 'Subject Picker' and 'Door Selection' interactive UI",
             "Enhanced the 'Session Processing' state with high-fidelity animations and improved AI-path visualization",
-            "Refactored Topic Detail pages to support the new modular session architecture",
+            "Refactored Course Detail pages to support the new modular session architecture",
             "Implemented granular diagnostic scoring and feedback loops within the pre-assessment flow",
             "Standardized session types and interfaces for better maintainability and 100% type safety",
-            "Optimized the 'New Topic' wizard with improved state persistence and breadcrumb navigation",
+            "Optimized the 'New Course' wizard with improved state persistence and breadcrumb navigation",
         ],
     },
     {
@@ -192,7 +192,7 @@ export const changelogItems = [
             "Integrated dynamic 'Pass Probability' tracking with before/after comparison and trend badges",
             "Engineered the 'Acumen AI Insight' module with historical exam correlation (LET, SAT, AP, GRE benchmarks)",
             "Implemented multi-choice validation with answer locking, visual success/error states, and focus fading",
-            "Overhauled the Topic Seeder to include complete 3-question assessments for all 10+ core modules",
+            "Overhauled the Course Seeder to include complete 3-question assessments for all 10+ core modules",
             "Optimized reasoning evaluation flow with simulated AI analysis and context-aware feedback transitions",
             "Enhanced light/dark mode support for all session interfaces ensuring a premium glassmorphic aesthetic",
         ],
@@ -200,12 +200,12 @@ export const changelogItems = [
     {
         date: "May 12, 2026",
         version: "v1.9.0",
-        title: "Enterprise Sales, Billing Ecosystem & Advanced Topic Analytics",
+        title: "Enterprise Sales, Billing Ecosystem & Advanced Course Analytics",
         changes: [
             "Launched the Lead-First Enterprise Sales model with dedicated ContactSalesModal integration",
             "Implemented the CheckoutModal for seamless Pro plan upgrades and payment method management",
             "Integrated Organizational Hierarchy logic into user management and billing services",
-            "Refined Topic Detail pages with new 'Strong/Weak' analysis sections and standardized content layouts",
+            "Refined Course Detail pages with new 'Strong/Weak' analysis sections and standardized content layouts",
             "Updated sidebar navigation logic to support precise redirection for Card System variants",
             "Enhanced the Billing Dashboard with functional upgrade/cancel actions and invoice download capabilities",
             "Standardized UI/UX across the Enterprise suite with consistent modal patterns and success notifications",
@@ -231,9 +231,9 @@ export const changelogItems = [
         title: "Workspace Infrastructure Expansion & Modular Seeder System",
         changes: [
             "Implemented dedicated Workspace Billing and Subscription management interfaces",
-            "Launched Workspace-specific Topics management for granular content organization",
-            "Overhauled the Seeder System into a modular architecture (Generators, Logs, Topics, Workspaces)",
-            "Enhanced Workspace Menu and Topic Cards with refined UI/UX and better state handling",
+            "Launched Workspace-specific Courses management for granular content organization",
+            "Overhauled the Seeder System into a modular architecture (Generators, Logs, Courses, Workspaces)",
+            "Enhanced Workspace Menu and Course Cards with refined UI/UX and better state handling",
             "Improved workspace member invitation flows and role-based access logic",
             "Refactored useWorkspaces and useSeeder composables for better performance and maintainability",
         ],
@@ -263,7 +263,7 @@ export const changelogItems = [
             "Implemented core Legal Pages including Terms of Service, Privacy Policy, and Cookie Policy tailored for the Acumen platform",
             "Updated application footer and navigation links to route users correctly to the new legal resources and coming soon endpoints",
             "Refined legal page layouts by integrating the DocsFooter component and ambient background glow effects",
-            "Finalized DashboardAIPrompt component with integrated AI topic generation flow and mock file attachment UX",
+            "Finalized DashboardAIPrompt component with integrated AI course generation flow and mock file attachment UX",
             "Renamed the application from 'Learn Fast' to 'Acumen Platform' across documentation and meta tags",
             "Added global SEO meta tags in app.vue to improve search indexing and social sharing previews",
             "Overhauled the README.md documentation to accurately reflect Acumen's key features and setup instructions",
@@ -287,13 +287,13 @@ export const changelogItems = [
         title: "Platform Restructuring & Admin Core",
         changes: [
             "Restructured Learner Dashboard with a multi-section layout and side-by-side activity analytics",
-            "Reorganized application navigation by grouping topic-related actions under a 'My Topics' dropdown",
+            "Reorganized application navigation by grouping course-related actions under a 'My Courses' dropdown",
             "Implemented core Administration modules including AI Configuration, Analytics Review, and User Management",
             "Added configurable container size support to the ContentPanel component",
             "Fixed Admin Manage Subscription and Technical Support modal prop binding and emit handling",
-            "Streamlined topic creation flow by removing the redundant slug field and associated artifacts",
+            "Streamlined course creation flow by removing the redundant slug field and associated artifacts",
             "Simplified ContentHeading component by removing unnecessary size, tag, and vibrant variant props",
-            "Added 'View All' quick access to topic collections from the dashboard overview",
+            "Added 'View All' quick access to course collections from the dashboard overview",
         ],
     },
     {
@@ -305,7 +305,7 @@ export const changelogItems = [
             "Restructured Learner Dashboard layout for enhanced hierarchy and improved widget grouping",
             "Implemented Learner Management page with subscription tiers and technical support actions",
             "Expanded AI Configuration with model pipeline, system prompt, safety filters, and vector database settings",
-            "Built Analytics Review dashboard with Chart.js-powered learner trend and topic category visualizations",
+            "Built Analytics Review dashboard with Chart.js-powered learner trend and course category visualizations",
             "Added Manage Subscription modal with plan selector, billing summary, and current plan display",
             "Added Technical Support modal with ticket stats, category selector, priority toggles, and admin notes",
         ],
@@ -319,7 +319,7 @@ export const changelogItems = [
             "Injected AI-generated diagnostic tests and milestones into the learning timeline",
             "Completed migration to a pure client-side LocalStorage architecture for all learning data",
             "Developed a premium brand presentation layer with horizontal scrolling and cinematic effects",
-            "Enhanced the 'Topic' data model with dedicated 'slug' and 'icon' support",
+            "Enhanced the 'Course' data model with dedicated 'slug' and 'icon' support",
             "Centralized all mock data seeding logic into the persistent useSeeder utility",
             "Refactored API reference to reflect the transition to a simulated backend environment",
         ],
@@ -327,14 +327,14 @@ export const changelogItems = [
     {
         date: "April 15, 2026",
         version: "v1.1.1",
-        title: "Topic Customization & Validation Engine",
+        title: "Course Customization & Validation Engine",
         changes: [
-            "Implemented custom URL slug support for the topic creation process",
+            "Implemented custom URL slug support for the course creation process",
             "Added real-time slug auto-generation with support for manual overrides",
             "Developed a title validation system to prevent the use of reserved keywords like 'New'",
-            "Enhanced Topic data model and type definitions with a dedicated 'slug' property",
+            "Enhanced Course data model and type definitions with a dedicated 'slug' property",
             "Fixed TypeScript type mismatches in form validation properties and mock data seeding",
-            "Updated centralized seeder utility to support the expanded topic schema and routing",
+            "Updated centralized seeder utility to support the expanded course schema and routing",
             "Synchronized project versioning across package.json and documentation modules",
         ],
     },
@@ -343,7 +343,7 @@ export const changelogItems = [
         version: "v1.1.0",
         title: "Learning Wizard Optimization & AI Transition States",
         changes: [
-            "Implemented a high-fidelity, multi-step 'New Topic' creation wizard",
+            "Implemented a high-fidelity, multi-step 'New Course' creation wizard",
             "Developed an immersive 'AI Analyzing' transition phase with real-time progress tracking",
             "Integrated a sequential 'AI Path Crafting' checklist for the final generation step",
             "Refactored wizard state management for robust property synchronization across steps",
@@ -360,7 +360,7 @@ export const changelogItems = [
             "Refactored project file structure to fully align with Nuxt 4 best practices",
             "Centralized types, constants, and composables for improved code maintainability",
             "Optimized dashboard user experience with a new 'Continue Learning' hero section",
-            "Implemented a 'Pin/Favorite' system for quick access to prioritized topics",
+            "Implemented a 'Pin/Favorite' system for quick access to prioritized courses",
             "Developed a persistent data seeding system with UI controls for local development",
             "Optimized main CSS stylesheet by reducing verbosity and redundant style overrides",
         ],
@@ -395,9 +395,9 @@ export const changelogItems = [
         title: "Dashboard Implementation & Type Optimization",
         changes: [
             "Implemented a responsive two-column grid layout for the Learner Dashboard",
-            "Integrated a custom, animated Bar Chart component for topic analytics",
+            "Integrated a custom, animated Bar Chart component for course analytics",
             "Centralized component type definitions and interfaces for improved code maintainability",
-            "Added dynamic data binding for dashboard statistics and interactive topic lists",
+            "Added dynamic data binding for dashboard statistics and interactive course lists",
             "Optimized UI responsiveness and hover effects across the dashboard",
             "Improved dashboard information density and visual hierarchy",
         ],
@@ -477,7 +477,7 @@ export const changelogItems = [
 export const modules = [
     {
         name: "Learner Dashboard",
-        desc: "Central hub for managing active topics, tracking progress, and daily schedules.",
+        desc: "Central hub for managing active courses, tracking progress, and daily schedules.",
         icon: "i-lucide-layout-dashboard",
     },
     {

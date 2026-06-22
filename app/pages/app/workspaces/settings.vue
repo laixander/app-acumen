@@ -3,14 +3,14 @@
 
 const { user } = useUser()
 const { currentWorkspace: workspace, updateWorkspace, workspaces, currentWorkspaceId } = useWorkspaces()
-const { topics } = useTopics()
+const { courses } = useCourses()
 
-const workspaceTopics = computed(() => {
+const workspaceCourses = computed(() => {
     if (!workspace.value) return []
-    return topics.value.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
+    return courses.value.filter(t => !t.workspaceId || t.workspaceId === workspace.value?.id)
 })
 
-const workspaceTopicsCount = computed(() => workspaceTopics.value.length)
+const workspaceCoursesCount = computed(() => workspaceCourses.value.length)
 
 const isEditNameModalOpen = ref(false)
 const newWorkspaceName = ref(workspace.value?.name || '')
@@ -77,11 +77,11 @@ const sections = computed(() => [
                 color: 'blue'
             },
             {
-                label: 'Total Topics',
-                value: `${workspaceTopicsCount.value} Active Topics`,
+                label: 'Total Courses',
+                value: `${workspaceCoursesCount.value} Active Courses`,
                 icon: 'i-lucide-book-open',
                 color: 'orange',
-                action: '/app/workspaces/topics'
+                action: '/app/workspaces/courses'
             }
         ]
     },

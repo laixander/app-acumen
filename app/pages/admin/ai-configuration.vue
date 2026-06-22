@@ -9,7 +9,7 @@ const reasoning = ref(true)
 const safetyLevel = ref('moderate')
 const vectorDb = ref('pinecone')
 const storeConversations = ref(true)
-const systemPrompt = ref('You are an expert tutor for LearnFast. Break down complex topics into easy-to-understand concepts and provide actionable examples. Always maintain an encouraging and supportive tone.')
+const systemPrompt = ref('You are an expert tutor for LearnFast. Break down complex courses into easy-to-understand concepts and provide actionable examples. Always maintain an encouraging and supportive tone.')
 
 const modelOptions = [
     { label: 'GPT-4 Omni', value: 'gpt-4o' },
@@ -24,7 +24,7 @@ const modelOptions = [
 const safetyOptions = [
     { label: 'Strict (No mature content)', value: 'strict' },
     { label: 'Moderate (Standard filtering)', value: 'moderate' },
-    { label: 'Lenient (Allow sensitive topics)', value: 'lenient' }
+    { label: 'Lenient (Allow sensitive courses)', value: 'lenient' }
 ]
 </script>
 <template>

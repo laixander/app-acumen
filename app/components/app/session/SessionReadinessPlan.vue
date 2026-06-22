@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SubTopicAnalysis } from '~/types/topic'
+import type { SubCourseAnalysis } from '~/types/course'
 
 const props = withDefaults(defineProps<{
-    weakestTopic?: SubTopicAnalysis
-    topicTitle?: string
+    weakestCourse?: SubCourseAnalysis
+    courseTitle?: string
     isOnboarding?: boolean
     isTeaser?: boolean
 }>(), {
@@ -32,8 +32,8 @@ defineEmits(['close'])
                     <span class="tracking-[0.4em] uppercase font-bold text-[10px]">Readiness Plan</span>
                 </div>
                 <h2 class="text-5xl font-bold tracking-tight text-neutral-900 dark:text-white leading-tight">
-                    <span v-if="topicTitle" class="block text-xl text-neutral-500 mb-2 font-medium tracking-normal">Path
-                        for {{ topicTitle }}</span>
+                    <span v-if="courseTitle" class="block text-xl text-neutral-500 mb-2 font-medium tracking-normal">Path
+                        for {{ courseTitle }}</span>
                     Mastery <span class="text-primary">Roadmap</span>
                 </h2>
                 <p class="text-xl text-neutral-500 dark:text-neutral-400 max-w-2xl mb-4">
@@ -88,8 +88,8 @@ defineEmits(['close'])
 
                     <p v-if="!isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed">
                         Deep dive into <span class="text-neutral-900 dark:text-white font-semibold">{{
-                            weakestTopic?.name
-                            || 'this topic' }}</span> fundamentals. Focus on the interplay between mechanics and
+                            weakestCourse?.name
+                            || 'this course' }}</span> fundamentals. Focus on the interplay between mechanics and
                         outcomes.
                     </p>
 
@@ -158,13 +158,13 @@ defineEmits(['close'])
                             <h3 class="font-bold tracking-tight text-2xl">Final Certification Run</h3>
                             <p v-if="isOnboarding"
                                 class="text-neutral-500 dark:text-neutral-400 leading-relaxed md:max-w-xl">
-                                A full-length assessment covering the entire topic scope to ensure your passing.
+                                A full-length assessment covering the entire course scope to ensure your passing.
                             </p>
                         </div>
                     </div>
 
                     <p v-if="!isOnboarding" class="text-neutral-500 dark:text-neutral-400 leading-relaxed">
-                        A full-length assessment covering the entire topic scope to ensure your probability of passing
+                        A full-length assessment covering the entire course scope to ensure your probability of passing
                         reaches <span class="text-primary font-bold">95%+</span>.
                     </p>
 
