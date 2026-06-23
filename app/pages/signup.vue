@@ -208,7 +208,7 @@ const suStats = [
         <div class="hidden lg:flex flex-col p-12 text-white h-full relative overflow-hidden su-panel">
 
             <!-- Layered gradient background -->
-            <div class="absolute inset-0 z-0 su-panel-bg" />
+            <!-- <div class="absolute inset-0 z-0 su-panel-bg" /> -->
 
             <!-- Animated floating orbs -->
             <div class="absolute inset-0 z-0 pointer-events-none">

@@ -129,8 +129,9 @@ function submitLogin() {
             <!-- <div class="absolute inset-0 z-0 login-grid-overlay pointer-events-none" /> -->
 
             <!-- Logo Header -->
-            <div class="relative z-10 flex items-center gap-3">
+            <div class="relative z-10 flex justify-between items-center gap-3">
                 <AppLogo name="Acumen" icon="i-lucide-brain-circuit" theme="white" size="lg" naked />
+                <UButton icon="i-lucide-home" variant="soft" to="/" size="sm" />
             </div>
 
             <!-- Body Content -->
@@ -230,11 +231,11 @@ function submitLogin() {
         <div class="relative flex items-center justify-center px-6 py-12 lg:px-16 overflow-y-auto">
 
             <!-- Back to home -->
-            <NuxtLink to="/"
+            <!-- <NuxtLink to="/"
                 class="absolute top-6 left-6 lg:top-8 lg:left-10 inline-flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors z-10 group">
                 <UIcon name="i-lucide-arrow-left" class="size-3.5 group-hover:-translate-x-0.5 transition-transform" />
                 Back to home
-            </NuxtLink>
+            </NuxtLink> -->
 
             <div class="w-full max-w-sm my-auto">
 
