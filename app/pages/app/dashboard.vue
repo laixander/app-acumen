@@ -1,15 +1,19 @@
 <script setup lang="ts">
 
-
-
 const courseStore = useCourseStore()
 const dashboardStore = useDashboardStore()
+const workspaceStore = useWorkspaceStore()
 const stats = computed(() => dashboardStore.stats)
 const recommended = computed(() => dashboardStore.recommendedCourses)
 const recentCourses = computed(() => courseStore.workspaceCourses.slice(0, 3))
 const userStore = useUserStore()
 
 const firstName = computed(() => userStore.profile.fullName.split(' ')[0])
+const currentWorkspace = computed(() =>
+    workspaceStore.workspaces.find(w => w.id === workspaceStore.currentWorkspaceId) || workspaceStore.workspaces[0]
+)
+const isHero = computed(() => courseStore.workspaceCourses.length === 0)
+
 const recommendedMessage = computed(() => {
     return recommended.value.length > 0
         ? "Based on your interests in AI & Data Science."
@@ -23,8 +27,56 @@ const recommendedMessage = computed(() => {
             class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]">
         </div>
 
+        <!-- Dashboard Header -->
+        <Transition appear enter-active-class="transition-all duration-700 delay-100"
+            enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
+            <div v-if="isHero" class="flex flex-col items-center text-center">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider mb-4">
+                    <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>AI Learning Engine</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-balance">
+                    What do you want to <span class="text-primary-500 italic">learn</span> today?
+                </h1>
+                <p class="text-lg text-muted font-light max-w-xl text-pretty">
+                    Describe your goals, upload a syllabus, or pick a subject. We'll build a personalized learning
+                    path in seconds.
+                </p>
+            </div>
+            <div v-else class="flex flex-col items-center gap-2">
+                <div
+                    class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider">
+                    <UIcon :name="currentWorkspace?.icon || 'i-lucide-layout-dashboard'" class="animate-pulse" />
+                    <span>{{ currentWorkspace?.name || 'Dashboard' }}</span>
+                </div>
+                <ContentHeading description="You're making great progress! Ready to learn something new today?"
+                    centered>
+                    <template #title>
+                        <span class="text-primary">Welcome back,</span> {{ firstName }}!
+                    </template>
+                </ContentHeading>
+            </div>
+        </Transition>
+
         <!-- AI Prompt Section -->
-        <AppDashboardAIPrompt :is-hero="courseStore.workspaceCourses.length === 0" />
+        <AppDashboardAIPrompt :is-hero="isHero" />
+
+        <!-- Hero stats -->
+        <Transition appear enter-active-class="transition-all duration-700 delay-500"
+            enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
+            <div v-if="isHero" class="flex flex-wrap justify-center gap-6">
+                <div v-for="(stat, i) in [{ label: 'Learning Paths Generated', value: '12.4k+', icon: 'i-lucide-git-branch' }, { label: 'Active Learners', value: '5k+', icon: 'i-lucide-users' }, { label: 'Courses Covered', value: '800+', icon: 'i-lucide-book-open' }]"
+                    :key="i" class="flex items-center gap-3 text-muted">
+                    <div class="p-2 rounded-lg bg-accented/40">
+                        <UIcon :name="stat.icon" class="text-lg flex" />
+                    </div>
+                    <div class="text-left">
+                        <div class="text-sm font-bold">{{ stat.value }}</div>
+                        <div class="text-xs text-dimmed uppercase tracking-tighter">{{ stat.label }}</div>
+                    </div>
+                </div>
+            </div>
+        </Transition>
 
         <template v-if="courseStore.workspaceCourses.length > 0">
 

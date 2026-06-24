@@ -65,8 +65,8 @@ export const generateMockOrganizations = (userProfile: any): Organization[] => [
                 id: '1',
                 name: userProfile.fullName || 'Current User',
                 email: userProfile.email || 'user@example.com',
-                role: 'Admin',
-                orgRole: 'Org_Admin',
+                role: 'Member',
+                orgRole: 'Org_Member',
                 avatar: userProfile.avatar || '',
                 status: 'online'
             },
@@ -90,8 +90,8 @@ export const generateMockOrganizations = (userProfile: any): Organization[] => [
                 id: '1',
                 name: userProfile.fullName || 'Current User',
                 email: userProfile.email || 'user@example.com',
-                role: 'Member',
-                orgRole: 'Org_Member',
+                role: 'Admin',
+                orgRole: 'Org_Admin',
                 avatar: userProfile.avatar || '',
                 status: 'online'
             },

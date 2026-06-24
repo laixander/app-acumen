@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 
-
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { Assessment } from '~/types/course'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
@@ -11,6 +10,16 @@ const router = useRouter()
 const lessonStore = useLessonStore()
 const courseStore = useCourseStore()
 const activityLogStore = useActivityLogStore()
+
+// Register unsaved-changes guard: dirty while assessment is in-flight.
+// 'complete' and 'plan' are already committed so they don't count.
+const { registerUnsavedCheck } = useUnsavedChanges()
+const unregister = registerUnsavedCheck(() =>
+    sessionState.value === 'processing' ||
+    sessionState.value === 'ready' ||
+    sessionState.value === 'active'
+)
+onUnmounted(unregister)
 
 const { data: serverAssessmentData } = await useFetch<Assessment>(`/api/assessment/${route.params.id}`)
 const localAssessmentData = lessonStore.getAssessmentByLessonId(route.params.id as string)

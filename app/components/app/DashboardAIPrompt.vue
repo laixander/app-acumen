@@ -6,10 +6,7 @@ type InputMode = 'prompt' | 'upload' | 'subject'
 
 withDefaults(defineProps<{ isHero?: boolean }>(), { isHero: false })
 
-const userStore = useUserStore()
 const router = useRouter()
-
-const firstName = computed(() => userStore.profile.fullName.split(' ')[0])
 
 const prompt = ref('')
 const inputMode = ref<InputMode>('prompt')
@@ -121,36 +118,7 @@ const startExplore = () => {
         <div class="absolute -top-20 inset-x-0 h-64 bg-primary-500/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div class="flex flex-col gap-8">
-            <!-- Header -->
-            <Transition appear enter-active-class="transition-all duration-700 delay-100"
-                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
-                <div v-if="isHero" class="flex flex-col items-center text-center">
-                    <div
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider mb-4">
-                        <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>AI Learning Engine</span>
-                    </div>
-                    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-balance">
-                        What do you want to <span class="text-primary-500 italic">learn</span> today?
-                    </h1>
-                    <p class="text-lg text-muted font-light max-w-xl text-pretty">
-                        Describe your goals, upload a syllabus, or pick a subject. We'll build a personalized learning
-                        path in seconds.
-                    </p>
-                </div>
-                <div v-else class="flex flex-col items-center gap-2">
-                    <div
-                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider">
-                        <UIcon name="i-lucide-sparkles" class="animate-pulse" /><span>Create New Course</span>
-                    </div>
-                    <ContentHeading description="You're making great progress! Ready to learn something new today?"
-                        centered>
-                        <template #title>
-                            <span class="text-primary">Welcome back,</span> {{ firstName }}!
-                        </template>
-                    </ContentHeading>
-                </div>
-            </Transition>
-
+    
             <!-- Input card -->
             <UCard
                 :ui="{ root: 'relative group border-0 rounded-2xl shadow-2xl hover:shadow-primary/50 hover:ring-4 hover:ring-primary-500/40 transition-all duration-300', body: 'p-0 sm:p-0 flex flex-col' }">
@@ -349,22 +317,6 @@ const startExplore = () => {
                     class="absolute -inset-8 bg-gradient-to-tr from-transparent via-transparent to-primary-300/40 dark:to-primary-500/20 blur opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
             </UCard>
 
-            <!-- Hero stats -->
-            <Transition appear enter-active-class="transition-all duration-700 delay-500"
-                enter-from-class="opacity-0 translate-y-4" enter-to-class="opacity-100 translate-y-0">
-                <div v-if="isHero" class="flex flex-wrap justify-center gap-6">
-                    <div v-for="(stat, i) in [{ label: 'Learning Paths Generated', value: '12.4k+', icon: 'i-lucide-git-branch' }, { label: 'Active Learners', value: '5k+', icon: 'i-lucide-users' }, { label: 'Courses Covered', value: '800+', icon: 'i-lucide-book-open' }]"
-                        :key="i" class="flex items-center gap-3 text-muted">
-                        <div class="p-2 rounded-lg bg-accented/40">
-                            <UIcon :name="stat.icon" class="text-lg flex" />
-                        </div>
-                        <div class="text-left">
-                            <div class="text-sm font-bold">{{ stat.value }}</div>
-                            <div class="text-xs text-dimmed uppercase tracking-tighter">{{ stat.label }}</div>
-                        </div>
-                    </div>
-                </div>
-            </Transition>
         </div>
     </div>
 </template>

@@ -3,6 +3,9 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 
 const workspaceStore = useWorkspaceStore()
 const organizationStore = useOrganizationStore()
+const toast = useToast()
+
+const { hasUnsavedChanges } = useUnsavedChanges()
 
 const currentWorkspace = computed(() => workspaceStore.workspaces.find(w => w.id === workspaceStore.currentWorkspaceId) || workspaceStore.workspaces[0])
 
@@ -11,18 +14,53 @@ const workspaceOrganization = computed(() => {
     return organizationStore.organizations.find(org => org.id === workspaceStore.currentWorkspace?.organizationId) || null
 })
 
-const switchWorkspace = (id: string) => {
-    workspaceStore.currentWorkspaceId = id
-    
+// Confirmation modal state
+const isConfirmModalOpen = ref(false)
+const pendingWorkspaceId = ref<string | null>(null)
 
+const doSwitch = (id: string) => {
+    workspaceStore.currentWorkspaceId = id
     const ws = workspaceStore.workspaces.find(w => w.id === id)
     if (ws) {
-        const role = getMyRole(ws)
-        if (role === 'Member') {
-            navigateTo('/app/dashboard')
-        }
+        navigateTo('/app/dashboard')
+        toast.add({
+            title: `Switched to ${ws.name}`,
+            description: `You're now viewing the ${ws.name} workspace.`,
+            icon: ws.icon,
+            color: 'success',
+            duration: 4000,
+        })
     }
 }
+
+const switchWorkspace = (id: string) => {
+    if (id === workspaceStore.currentWorkspaceId) return
+
+    if (hasUnsavedChanges.value) {
+        pendingWorkspaceId.value = id
+        isConfirmModalOpen.value = true
+        return
+    }
+
+    doSwitch(id)
+}
+
+const confirmSwitch = () => {
+    if (pendingWorkspaceId.value) {
+        doSwitch(pendingWorkspaceId.value)
+    }
+    isConfirmModalOpen.value = false
+    pendingWorkspaceId.value = null
+}
+
+const cancelSwitch = () => {
+    isConfirmModalOpen.value = false
+    pendingWorkspaceId.value = null
+}
+
+const pendingWorkspace = computed(() =>
+    workspaceStore.workspaces.find(w => w.id === pendingWorkspaceId.value)
+)
 
 const userStore = useUserStore()
 const getMyRole = (ws: any) => {
@@ -87,4 +125,35 @@ const items = computed<DropdownMenuItem[][]>(() => [
                 class="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-600 dark:group-hover:text-neutral-300 transition-colors" />
         </UButton>
     </UDropdownMenu>
+
+    <!-- Unsaved Changes Confirmation Modal -->
+    <UModal v-model:open="isConfirmModalOpen" :dismissible="false">
+        <template #content>
+            <div class="p-6 flex flex-col gap-5">
+                <!-- Icon + Title -->
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center shrink-0">
+                        <UIcon name="i-lucide-alert-triangle" class="text-2xl text-warning-500" />
+                    </div>
+                    <div class="flex flex-col gap-0.5">
+                        <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100">Unsaved Changes</h3>
+                        <p class="text-sm text-neutral-500">You have unsaved changes that will be lost.</p>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <p class="text-sm text-neutral-600 dark:text-neutral-400">
+                    Are you sure you want to switch to
+                    <span class="font-semibold text-neutral-900 dark:text-white">{{ pendingWorkspace?.name }}</span>?
+                    Any unsaved work on this page will be discarded.
+                </p>
+
+                <!-- Actions -->
+                <div class="flex items-center justify-end gap-3 pt-1">
+                    <UButton label="Stay on Page" variant="ghost" color="neutral" @click="cancelSwitch" />
+                    <UButton label="Switch Workspace" color="warning" icon="i-lucide-arrow-right-left" @click="confirmSwitch" />
+                </div>
+            </div>
+        </template>
+    </UModal>
 </template>

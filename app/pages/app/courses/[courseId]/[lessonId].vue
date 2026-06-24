@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 
-
 import { computed, ref, watchEffect } from 'vue'
 import type { LessonContent } from '~/types/course'
 import type { ChatQuote } from '~/types/chat'
@@ -13,6 +12,11 @@ definePageMeta({
         }
     ]
 })
+
+// Register unsaved-changes guard for draft notes
+const { registerUnsavedCheck } = useUnsavedChanges()
+const unregister = registerUnsavedCheck(() => newNoteContent.value.trim().length > 0)
+onUnmounted(unregister)
 
 const route = useRoute()
 const router = useRouter()

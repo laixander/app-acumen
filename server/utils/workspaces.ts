@@ -100,7 +100,7 @@ export const generateMockWorkspaces = (userProfile: any): Workspace[] => {
             tokens: 150,
             maxTokens: 500,
             members: [
-                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Owner', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
+                { id: '1', name: userProfile.fullName || 'Current User', email: userProfile.email || 'user@example.com', role: 'Member', avatar: userProfile.avatar || '', status: 'online', tokens: 1000 },
                 ...createMembers(0)
             ],
             pendingInvites: createInvites(0)

@@ -2,10 +2,19 @@
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-
 const route = useRoute()
 const router = useRouter()
 const courseStore = useCourseStore()
+
+// Register unsaved-changes guard for open edit modals
+const { registerUnsavedCheck } = useUnsavedChanges()
+const unregister = registerUnsavedCheck(() =>
+    isEditNameModalOpen.value ||
+    isEditDescModalOpen.value ||
+    isEditGoalModalOpen.value ||
+    isEditScheduleModalOpen.value
+)
+onUnmounted(unregister)
 
 const courseId = route.params.courseId as string
 const course = computed(() => courseStore.getCourseBySlugOrId(courseId))

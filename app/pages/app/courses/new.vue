@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-
-
 import { slugify } from '~/utils/format'
 import type { LearningGoal } from '~/types/course'
 import { useOnboardingDraft } from '~/composables/useOnboardingDraft'
@@ -10,6 +8,11 @@ const userStore = useUserStore()
 const courseStore = useCourseStore()
 const lessonStore = useLessonStore()
 const router = useRouter()
+
+// Register unsaved-changes guard so WorkspaceMenu can intercept mid-wizard switches
+const { registerUnsavedCheck } = useUnsavedChanges()
+const unregister = registerUnsavedCheck(() => flowState.value !== 'entry' && !isGenerating.value)
+onUnmounted(unregister)
 
 // Flow States
 type FlowState = 'entry' | 'setup' | 'indexing' | 'processing' | 'details' | 'schedule' | 'assessment' | 'review'

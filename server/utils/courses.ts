@@ -3,6 +3,7 @@ import type { Course, LessonOverview, LessonContent, Assessment } from '~/types/
 export const MOCK_COURSES: Course[] = [
     {
         id: 'introduction-to-algebra',
+        workspaceId: '3',
         title: 'Introduction to Algebra',
         description: 'Master the fundamentals of variables, equations, and algebraic thinking to build a strong foundation for advanced mathematics.',
         progress: 80,
@@ -41,6 +42,7 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'world-war-ii-overview',
+        workspaceId: '1',
         title: 'World War II Overview',
         description: 'Explore the causes, major battles, and global impact of the most devastating conflict in human history.',
         progress: 55,
@@ -55,7 +57,7 @@ export const MOCK_COURSES: Course[] = [
         targetFinishDate: Date.now() + 14 * 24 * 60 * 60 * 1000,
         sessionsPerWeek: 2,
         itemsPerWeek: 4,
-        createdBy: { id: '3', name: 'Bob Johnson', avatar: 'https://i.pravatar.cc/100?u=3', role: 'Admin', coursesCount: 8 },
+        createdBy: { id: '1', name: 'Alex Johnson', avatar: 'https://i.pravatar.cc/100?u=1', role: 'Owner', coursesCount: 24 },
         viewersCount: 45,
         completedCount: 12,
         examInfo: { name: 'AP World History Exam', daysAway: 42 },
@@ -79,6 +81,7 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'newtons-laws-of-motion',
+        workspaceId: '3',
         title: "Newton's Laws of Motion",
         description: 'Discover the foundational principles of classical mechanics and learn how forces dictate the motion of objects.',
         progress: 30,
@@ -117,6 +120,7 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'spanish-basics',
+        workspaceId: '1',
         title: 'Spanish Basics',
         description: 'Learn essential vocabulary, grammar structures, and conversational phrases to confidently communicate in Spanish.',
         progress: 65,
@@ -155,8 +159,9 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'greek-mythology',
+        workspaceId: '1',
         title: 'Greek Mythology',
-        description: 'Dive into the ancient tales of gods, heroes, and monsters that shaped the culture and literature of Western civilization.',
+        description: 'Explore the gods, heroes, and epic tales of ancient Greece.',
         progress: 100,
         tag: 'History',
         status: 'Completed',
@@ -193,6 +198,7 @@ export const MOCK_COURSES: Course[] = [
     },
     {
         id: 'advanced-javascript',
+        workspaceId: '1',
         title: 'Advanced JavaScript',
         description: 'Deep dive into modern ES6+ features, asynchronous programming, closures, and performance optimization techniques.',
         progress: 15,
@@ -229,6 +235,539 @@ export const MOCK_COURSES: Course[] = [
             { name: 'Memory Management', progress: 15, color: 'text-orange-500' }
         ]
     },
+    {
+        id: "financial-literacy-101",
+        title: "Financial Literacy 101",
+        workspaceId: "1",
+        description: "Understand personal finance, budgeting, and investment strategies for long-term wealth.",
+        progress: 10,
+        tag: "Finance",
+        status: "Ongoing",
+        lessons: "1/10",
+        lastStudied: "Yesterday",
+        lastStudiedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-pie-chart",
+        isPinned: false,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 40 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 4,
+        createdBy: {
+            id: "1",
+            name: "Alex Johnson",
+            avatar: "https://i.pravatar.cc/100?u=1",
+            role: "Owner",
+            coursesCount: 24
+        },
+        viewersCount: 15,
+        completedCount: 2,
+        examInfo: {
+            name: "Finance Basics",
+            daysAway: 20
+        },
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "10%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "nuxt-server-routes",
+        title: "Nuxt Server Routes",
+        workspaceId: "2",
+        description: "Master API creation and server-side logic within the Nuxt 3 framework.",
+        progress: 100,
+        tag: "Development",
+        status: "Completed",
+        lessons: "8/8",
+        lastStudied: "2 weeks ago",
+        lastStudiedAt: Date.now() - 14 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-nuxtdotjs",
+        isPinned: true,
+        learningGoal: "Deep Mastery",
+        targetFinishDate: Date.now() + 0 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 5,
+        createdBy: {
+            id: "3",
+            name: "Jane Smith",
+            avatar: "https://i.pravatar.cc/100?u=3",
+            role: "Instructor",
+            coursesCount: 10
+        },
+        viewersCount: 300,
+        completedCount: 250,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "100%",
+                subtext: "from 50% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "docker-containers",
+        title: "Docker & Containers",
+        workspaceId: "2",
+        description: "Learn containerization principles and how to deploy scalable applications using Docker.",
+        progress: 40,
+        tag: "DevOps",
+        status: "Ongoing",
+        lessons: "4/10",
+        lastStudied: "3 days ago",
+        lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-docker",
+        isPinned: false,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 20 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 4,
+        itemsPerWeek: 6,
+        createdBy: {
+            id: "1",
+            name: "Alex Johnson",
+            avatar: "https://i.pravatar.cc/100?u=1",
+            role: "Owner",
+            coursesCount: 24
+        },
+        viewersCount: 45,
+        completedCount: 12,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "40%",
+                subtext: "from 10% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "aws-essentials",
+        title: "AWS Essentials",
+        workspaceId: "2",
+        description: "Get hands-on experience with core AWS services like EC2, S3, and RDS.",
+        progress: 5,
+        tag: "Cloud",
+        status: "Ongoing",
+        lessons: "1/20",
+        lastStudied: "Just now",
+        lastStudiedAt: Date.now() - 0 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-amazonaws",
+        isPinned: true,
+        learningGoal: "Exam Preparation",
+        targetFinishDate: Date.now() + 60 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 5,
+        itemsPerWeek: 10,
+        createdBy: {
+            id: "3",
+            name: "Jane Smith",
+            avatar: "https://i.pravatar.cc/100?u=3",
+            role: "Instructor",
+            coursesCount: 10
+        },
+        viewersCount: 120,
+        completedCount: 5,
+        examInfo: {
+            name: "AWS Cloud Practitioner",
+            daysAway: 45
+        },
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "5%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "serverless-architecture-with-aws",
+        title: "Serverless Architecture with AWS",
+        workspaceId: "2",
+        description: "Build scalable applications without managing servers using AWS Lambda and API Gateway.",
+        progress: 0,
+        tag: "Cloud",
+        status: "Not Started",
+        lessons: "0/8",
+        lastStudied: "Never",
+        lastStudiedAt: 0,
+        icon: "i-simple-icons-awslambda",
+        isPinned: false,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 4,
+        createdBy: {
+            id: "3",
+            name: "Jane Smith",
+            avatar: "https://i.pravatar.cc/100?u=3",
+            role: "Instructor",
+            coursesCount: 10
+        },
+        viewersCount: 22,
+        completedCount: 0,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "0%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "geometry-and-trigonometry",
+        title: "Geometry & Trigonometry",
+        workspaceId: "3",
+        description: "Explore shapes, angles, and the fundamental properties of space and triangles.",
+        progress: 25,
+        tag: "Math",
+        status: "Ongoing",
+        lessons: "3/12",
+        lastStudied: "1 day ago",
+        lastStudiedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-triangle",
+        isPinned: false,
+        learningGoal: "Deep Mastery",
+        targetFinishDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 6,
+        createdBy: {
+            id: "2",
+            name: "Alice Smith",
+            avatar: "https://i.pravatar.cc/100?u=2",
+            role: "Admin",
+            coursesCount: 15
+        },
+        viewersCount: 30,
+        completedCount: 8,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "25%",
+                subtext: "from 10% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "calculus-1-limits-and-derivatives",
+        title: "Calculus 1: Limits & Derivatives",
+        workspaceId: "3",
+        description: "Master the foundations of calculus to understand continuous change.",
+        progress: 15,
+        tag: "Math",
+        status: "Ongoing",
+        lessons: "2/15",
+        lastStudied: "1 week ago",
+        lastStudiedAt: Date.now() - 7 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-infinity",
+        isPinned: true,
+        learningGoal: "Exam Preparation",
+        targetFinishDate: Date.now() + 60 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 4,
+        itemsPerWeek: 5,
+        createdBy: {
+            id: "2",
+            name: "Alice Smith",
+            avatar: "https://i.pravatar.cc/100?u=2",
+            role: "Admin",
+            coursesCount: 15
+        },
+        viewersCount: 45,
+        completedCount: 5,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "15%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "statistics-and-probability",
+        title: "Statistics & Probability",
+        workspaceId: "3",
+        description: "Learn how to collect, analyze, and interpret data using probability theory.",
+        progress: 80,
+        tag: "Math",
+        status: "Ongoing",
+        lessons: "8/10",
+        lastStudied: "Yesterday",
+        lastStudiedAt: Date.now() - 1 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-bar-chart-2",
+        isPinned: false,
+        learningGoal: "Deep Mastery",
+        targetFinishDate: Date.now() + 14 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 6,
+        createdBy: {
+            id: "2",
+            name: "Alice Smith",
+            avatar: "https://i.pravatar.cc/100?u=2",
+            role: "Admin",
+            coursesCount: 15
+        },
+        viewersCount: 60,
+        completedCount: 20,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "80%",
+                subtext: "from 30% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "ui-ux-fundamentals",
+        title: "UI/UX Fundamentals",
+        workspaceId: "4",
+        description: "Learn the core principles of user interface design and user experience research.",
+        progress: 60,
+        tag: "Design",
+        status: "Ongoing",
+        lessons: "6/10",
+        lastStudied: "4 hrs ago",
+        lastStudiedAt: Date.now() - 0.1 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-figma",
+        isPinned: true,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 15 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 4,
+        createdBy: {
+            id: "4",
+            name: "Charlie Williams",
+            avatar: "https://i.pravatar.cc/100?u=4",
+            role: "Admin",
+            coursesCount: 5
+        },
+        viewersCount: 85,
+        completedCount: 20,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "60%",
+                subtext: "from 20% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "tailwind-css-mastery",
+        title: "Tailwind CSS Mastery",
+        workspaceId: "4",
+        description: "Build modern, responsive layouts rapidly using utility-first CSS.",
+        progress: 10,
+        tag: "Design",
+        status: "Ongoing",
+        lessons: "2/20",
+        lastStudied: "Just now",
+        lastStudiedAt: Date.now() - 0 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-tailwindcss",
+        isPinned: false,
+        learningGoal: "Quick Overview",
+        targetFinishDate: Date.now() + 10 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 4,
+        itemsPerWeek: 8,
+        createdBy: {
+            id: "1",
+            name: "Alex Johnson",
+            avatar: "https://i.pravatar.cc/100?u=1",
+            role: "Owner",
+            coursesCount: 24
+        },
+        viewersCount: 50,
+        completedCount: 5,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "10%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "figma-prototyping",
+        title: "Figma Prototyping",
+        workspaceId: "4",
+        description: "Create interactive and animated prototypes directly within Figma.",
+        progress: 80,
+        tag: "Design",
+        status: "Ongoing",
+        lessons: "8/10",
+        lastStudied: "2 days ago",
+        lastStudiedAt: Date.now() - 2 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-figma",
+        isPinned: true,
+        learningGoal: "Deep Mastery",
+        targetFinishDate: Date.now() + 5 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 3,
+        itemsPerWeek: 6,
+        createdBy: {
+            id: "4",
+            name: "Charlie Williams",
+            avatar: "https://i.pravatar.cc/100?u=4",
+            role: "Admin",
+            coursesCount: 5
+        },
+        viewersCount: 110,
+        completedCount: 40,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "80%",
+                subtext: "from 40% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "contributing-to-open-source",
+        title: "Contributing to Open Source",
+        workspaceId: "5",
+        description: "A comprehensive guide on how to find projects, make pull requests, and collaborate globally.",
+        progress: 0,
+        tag: "Community",
+        status: "Not Started",
+        lessons: "0/5",
+        lastStudied: "Never",
+        lastStudiedAt: 0,
+        icon: "i-simple-icons-github",
+        isPinned: true,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 14 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 1,
+        itemsPerWeek: 2,
+        createdBy: {
+            id: "5",
+            name: "David Brown",
+            avatar: "https://i.pravatar.cc/100?u=5",
+            role: "Admin",
+            coursesCount: 12
+        },
+        viewersCount: 200,
+        completedCount: 10,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "0%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "git-version-control-mastery",
+        title: "Git Version Control Mastery",
+        workspaceId: "5",
+        description: "Advanced Git workflows, rebase vs merge, and managing complex branch structures.",
+        progress: 100,
+        tag: "Tools",
+        status: "Completed",
+        lessons: "12/12",
+        lastStudied: "2 months ago",
+        lastStudiedAt: Date.now() - 60 * 24 * 60 * 60 * 1000,
+        icon: "i-simple-icons-git",
+        isPinned: false,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 0 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 4,
+        createdBy: {
+            id: "5",
+            name: "David Brown",
+            avatar: "https://i.pravatar.cc/100?u=5",
+            role: "Admin",
+            coursesCount: 12
+        },
+        viewersCount: 150,
+        completedCount: 110,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "100%",
+                subtext: "from 80% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "writing-documentation-for-open-source",
+        title: "Writing Documentation for Open Source",
+        workspaceId: "5",
+        description: "How to write impactful READMEs, contribution guidelines, and maintain wikis.",
+        progress: 30,
+        tag: "Community",
+        status: "Ongoing",
+        lessons: "3/10",
+        lastStudied: "3 days ago",
+        lastStudiedAt: Date.now() - 3 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-file-text",
+        isPinned: true,
+        learningGoal: "Quick Overview",
+        targetFinishDate: Date.now() + 20 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 1,
+        itemsPerWeek: 3,
+        createdBy: {
+            id: "5",
+            name: "David Brown",
+            avatar: "https://i.pravatar.cc/100?u=5",
+            role: "Admin",
+            coursesCount: 12
+        },
+        viewersCount: 75,
+        completedCount: 15,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "30%",
+                subtext: "from 10% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    },
+    {
+        id: "open-source-licensing",
+        title: "Open Source Licensing",
+        workspaceId: "5",
+        description: "Navigating MIT, GPL, Apache, and other licenses to protect and share your work.",
+        progress: 50,
+        tag: "Legal",
+        status: "Ongoing",
+        lessons: "2/4",
+        lastStudied: "Just now",
+        lastStudiedAt: Date.now() - 0 * 24 * 60 * 60 * 1000,
+        icon: "i-lucide-scale",
+        isPinned: false,
+        learningGoal: "Practical Application",
+        targetFinishDate: Date.now() + 10 * 24 * 60 * 60 * 1000,
+        sessionsPerWeek: 2,
+        itemsPerWeek: 2,
+        createdBy: {
+            id: "5",
+            name: "David Brown",
+            avatar: "https://i.pravatar.cc/100?u=5",
+            role: "Admin",
+            coursesCount: 12
+        },
+        viewersCount: 40,
+        completedCount: 5,
+        stats: [
+            {
+                label: "Master (Overall)",
+                value: "50%",
+                subtext: "from 0% on Day 1",
+                icon: "i-lucide-award"
+            }
+        ]
+    }
 ]
 
 export const COURSE_CONTENT_MAP: Record<string, {
@@ -567,6 +1106,292 @@ export const COURSE_CONTENT_MAP: Record<string, {
                     passProbBefore: "15%",
                     passProbAfter: "32%",
                     aiFinalComment: "Small move, but real. Three more sessions on this course, and you'll reach Level 3 mastery — which historically corresponds to a 67% pass probability on the Frontend Engineering Certification."
+                }
+            }
+        ]
+    }
+    ,
+    'financial-literacy-101': {
+        lessons: [
+            {
+                title: "Introduction to Financial Literacy 101",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Financial Literacy 101.",
+                content: {
+                    description: "Learn the basics and fundamentals of Financial Literacy 101.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'nuxt-server-routes': {
+        lessons: [
+            {
+                title: "Introduction to Nuxt Server Routes",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Nuxt Server Routes.",
+                content: {
+                    description: "Learn the basics and fundamentals of Nuxt Server Routes.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'docker-containers': {
+        lessons: [
+            {
+                title: "Introduction to Docker & Containers",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Docker & Containers.",
+                content: {
+                    description: "Learn the basics and fundamentals of Docker & Containers.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'aws-essentials': {
+        lessons: [
+            {
+                title: "Introduction to AWS Essentials",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of AWS Essentials.",
+                content: {
+                    description: "Learn the basics and fundamentals of AWS Essentials.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'serverless-architecture-with-aws': {
+        lessons: [
+            {
+                title: "Introduction to Serverless Architecture with AWS",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Serverless Architecture with AWS.",
+                content: {
+                    description: "Learn the basics and fundamentals of Serverless Architecture with AWS.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'geometry-and-trigonometry': {
+        lessons: [
+            {
+                title: "Introduction to Geometry & Trigonometry",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Geometry & Trigonometry.",
+                content: {
+                    description: "Learn the basics and fundamentals of Geometry & Trigonometry.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'calculus-1-limits-and-derivatives': {
+        lessons: [
+            {
+                title: "Introduction to Calculus 1: Limits & Derivatives",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Calculus 1: Limits & Derivatives.",
+                content: {
+                    description: "Learn the basics and fundamentals of Calculus 1: Limits & Derivatives.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'statistics-and-probability': {
+        lessons: [
+            {
+                title: "Introduction to Statistics & Probability",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Statistics & Probability.",
+                content: {
+                    description: "Learn the basics and fundamentals of Statistics & Probability.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'ui-ux-fundamentals': {
+        lessons: [
+            {
+                title: "Introduction to UI/UX Fundamentals",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of UI/UX Fundamentals.",
+                content: {
+                    description: "Learn the basics and fundamentals of UI/UX Fundamentals.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'tailwind-css-mastery': {
+        lessons: [
+            {
+                title: "Introduction to Tailwind CSS Mastery",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Tailwind CSS Mastery.",
+                content: {
+                    description: "Learn the basics and fundamentals of Tailwind CSS Mastery.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'figma-prototyping': {
+        lessons: [
+            {
+                title: "Introduction to Figma Prototyping",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Figma Prototyping.",
+                content: {
+                    description: "Learn the basics and fundamentals of Figma Prototyping.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'contributing-to-open-source': {
+        lessons: [
+            {
+                title: "Introduction to Contributing to Open Source",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Contributing to Open Source.",
+                content: {
+                    description: "Learn the basics and fundamentals of Contributing to Open Source.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'git-version-control-mastery': {
+        lessons: [
+            {
+                title: "Introduction to Git Version Control Mastery",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Git Version Control Mastery.",
+                content: {
+                    description: "Learn the basics and fundamentals of Git Version Control Mastery.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'writing-documentation-for-open-source': {
+        lessons: [
+            {
+                title: "Introduction to Writing Documentation for Open Source",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Writing Documentation for Open Source.",
+                content: {
+                    description: "Learn the basics and fundamentals of Writing Documentation for Open Source.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
+                }
+            }
+        ]
+    },
+    'open-source-licensing': {
+        lessons: [
+            {
+                title: "Introduction to Open Source Licensing",
+                duration: "15 min",
+                type: "reading",
+                icon: "i-lucide-book-open",
+                color: "green",
+                summary: "An overview of Open Source Licensing.",
+                content: {
+                    description: "Learn the basics and fundamentals of Open Source Licensing.",
+                    lessonTypes: ['Reading'],
+                    sections: [
+                        { title: "Getting Started", content: "This is the first step in your journey.", aiInsight: null }
+                    ]
                 }
             }
         ]

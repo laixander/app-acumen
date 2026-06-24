@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-
 import { computed, onMounted } from 'vue'
 
 import { GOAL_COLORS } from '~/constants/courses'
@@ -10,6 +9,16 @@ const route = useRoute()
 const courseStore = useCourseStore()
 const lessonStore = useLessonStore()
 const toast = useToast()
+
+// Register unsaved-changes guard: dirty while a session is in-flight
+// (processing/ready/active). 'complete' and 'plan' are already committed.
+const { registerUnsavedCheck } = useUnsavedChanges()
+const unregister = registerUnsavedCheck(() =>
+    sessionState.value === 'processing' ||
+    sessionState.value === 'ready' ||
+    sessionState.value === 'active'
+)
+onUnmounted(unregister)
 
 const course = computed(() => {
     return courseStore.getCourseBySlugOrId(route.params.id as string)
