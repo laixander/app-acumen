@@ -9,6 +9,8 @@
 import { defineStore } from 'pinia'
 import type { Course } from '~/types/course'
 import { generateSlug } from '~/utils/slug'
+import { useWorkspaceStore } from './workspaceStore'
+import { useUserStore } from './userStore'
 
 export const useCourseStore = defineStore('courseStore', {
     state: () => ({
@@ -58,11 +60,33 @@ export const useCourseStore = defineStore('courseStore', {
     },
 
     getters: {
-        courseCount: (state) => state.courses.length,
-        hasCourses: (state) => state.courses.length > 0,
-        completedCourses: (state) => state.courses.filter(c => c.progress === 100),
-        inProgressCourses: (state) => state.courses.filter(c => c.progress < 100),
-        pinnedCourses: (state) => state.courses.filter(c => c.isPinned),
+        workspaceCourses(state): Course[] {
+            const workspaceStore = useWorkspaceStore()
+            const userStore = useUserStore()
+            
+            if (workspaceStore.currentWorkspaceId === '1') {
+                // Personal Workspace: authored by current user
+                return state.courses.filter(c => c.createdBy?.name === userStore.profile.fullName)
+            }
+            
+            // Other workspaces: match workspaceId
+            return state.courses.filter(c => c.workspaceId === workspaceStore.currentWorkspaceId)
+        },
+        courseCount(): number {
+            return this.workspaceCourses.length
+        },
+        hasCourses(): boolean {
+            return this.workspaceCourses.length > 0
+        },
+        completedCourses(): Course[] {
+            return this.workspaceCourses.filter(c => c.progress === 100)
+        },
+        inProgressCourses(): Course[] {
+            return this.workspaceCourses.filter(c => c.progress < 100)
+        },
+        pinnedCourses(): Course[] {
+            return this.workspaceCourses.filter(c => c.isPinned)
+        },
         getCourseBySlugOrId: (state) => (idOrSlug: string) => {
             return state.courses.find(c => c.id === idOrSlug || generateSlug(c.title) === idOrSlug)
         }

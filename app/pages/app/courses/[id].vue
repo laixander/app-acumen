@@ -15,11 +15,6 @@ const course = computed(() => {
     return courseStore.getCourseBySlugOrId(route.params.id as string)
 })
 
-const activeGoal = computed(() => {
-    const defaultGoal = GOAL_OPTIONS[0]!
-    if (!course.value?.learningGoal) return defaultGoal
-    return GOAL_OPTIONS.find(g => g.id === course.value!.learningGoal) || defaultGoal
-})
 
 // Dynamically count courses authored by the same user so newly created courses are counted
 const coursesCountForAuthor = computed(() => {
@@ -63,7 +58,7 @@ const recommendedLesson = computed(() => {
     if (lessonStore.lessons && lessonStore.lessons.length > 0) {
         const courseId = course.value?.id || (route.params.id as string)
         const courseLessons = lessonStore.getLessonsByCourse(courseId)
-        
+
         const assessmentLesson = courseLessons.find(l => l.type === 'Assessment')
         if (assessmentLesson) return assessmentLesson
 
@@ -145,51 +140,7 @@ const resetSession = () => {
 
 const isConfidentTestModalOpen = ref(false)
 
-// --- Timer ---
-const parseDurationToSeconds = (str: string): number => {
-    const matches = str.match(/(\d+)/)
-    const value = matches ? parseInt(matches[0]) : 10
-    if (str.toLowerCase().includes('hr')) return value * 3600
-    return value * 60
-}
-
-const timerSeconds = ref(0)
-const timerInterval = ref<ReturnType<typeof setInterval> | null>(null)
-
-const timerDisplay = computed(() => {
-    const m = Math.floor(timerSeconds.value / 60)
-    const s = timerSeconds.value % 60
-    return `${m}:${s.toString().padStart(2, '0')}`
-})
-
-const timerIsUrgent = computed(() => timerSeconds.value > 0 && timerSeconds.value <= 60)
-
-const startTimer = () => {
-    const duration = recommendedLesson.value?.duration || '~10 min'
-    timerSeconds.value = parseDurationToSeconds(duration)
-    if (timerInterval.value) clearInterval(timerInterval.value)
-    timerInterval.value = setInterval(() => {
-        if (timerSeconds.value > 0) {
-            timerSeconds.value--
-        } else {
-            clearInterval(timerInterval.value!)
-        }
-    }, 1000)
-}
-
-const stopTimer = () => {
-    if (timerInterval.value) {
-        clearInterval(timerInterval.value)
-        timerInterval.value = null
-    }
-}
-
-watch(sessionState, (state) => {
-    if (state === 'active') startTimer()
-    else stopTimer()
-})
-
-onUnmounted(() => stopTimer())
+// --- Timer logic extracted to AppSessionTimer component ---
 
 // Simulation Logic
 const simulateDownload = (filename: string) => {
@@ -224,10 +175,10 @@ const simulateDownload = (filename: string) => {
                 <div class="flex justify-between items-center">
                     <AppBreadcrumb />
                     <div class="flex gap-2">
-                        <UButton label="Exit" leading-icon="i-lucide-arrow-left" color="neutral" variant="soft"
-                            size="sm" to="/app/courses/collection" :ui="{ leadingIcon: 'size-3' }" />
                         <UButton label="Course Settings" icon="i-lucide-settings-2" variant="soft" size="sm"
                             :to="`/app/courses/${course.id}/settings`" />
+                        <UButton label="Close" leading-icon="i-lucide-x" color="neutral" variant="soft" size="sm"
+                            to="/app/courses/collection" :ui="{ leadingIcon: 'size-3' }" />
                     </div>
                 </div>
                 <!-- <nav class="flex items-center gap-2 text-sm text-neutral-500">
@@ -303,11 +254,13 @@ const simulateDownload = (filename: string) => {
                             <div class="relative pl-6 ml-2 mt-4 space-y-8">
                                 <!-- Vertical Line -->
                                 <div
-                                    class="absolute left-[-1px] top-0 bottom-0 w-0.5 h-full bg-neutral-200 dark:bg-neutral-800 rounded-full" />
+                                    class="flex flex-col absolute -left-[1px] top-0 bottom-0 w-0.5 h-full py-12 rounded-full">
+                                    <div class="bg-muted flex-1" />
+                                </div>
 
                                 <div v-for="(lesson, index) in lessons" :key="index" class="relative group">
                                     <!-- Timeline Dot / Icon -->
-                                    <div class="absolute -left-[38px] w-7 h-7 rounded-full flex items-center justify-center border-[3px] border-white dark:border-neutral-900 z-10 transition-colors duration-300"
+                                    <div class="absolute top-8 -left-[38px] w-7 h-7 rounded-full flex items-center justify-center border-[3px] border-white dark:border-neutral-900 z-10 transition-colors duration-300"
                                         :class="{
                                             'bg-green-500 text-white': lesson.status === 'completed',
                                             'shadow-[0_0_15px_rgba(var(--color-primary-500),0.5)]': lesson.status === 'current',
@@ -326,14 +279,14 @@ const simulateDownload = (filename: string) => {
 
                                     <!-- Content Card -->
                                     <UCard variant="subtle" class="transition-all duration-300 transform" :class="{
-                                        'opacity-70 grayscale-[0.3] hover:grayscale-0 hover:opacity-100 cursor-pointer'
+                                        'opacity-50 grayscale-[0.3] hover:grayscale-0 hover:opacity-100 cursor-pointer'
                                             : lesson.status === 'completed',
                                         'ring-2 shadow-md transform -translate-y-1 relative overflow-hidden cursor-pointer'
                                             : lesson.status === 'current',
                                         'ring-primary-500': lesson.status === 'current' && lesson.color === 'primary',
                                         'ring-orange-500': lesson.status === 'current' && lesson.color === 'orange',
                                         'ring-purple-500': lesson.status === 'current' && lesson.color === 'purple',
-                                        'opacity-50 pointer-events-none'
+                                        'opacity-100 grayscale-0 pointer-events-none'
                                             : lesson.status === 'locked',
                                         'hover:-translate-y-1 hover:shadow-md cursor-pointer'
                                             : lesson.status !== 'locked' && lesson.status !== 'current'
@@ -353,7 +306,8 @@ const simulateDownload = (filename: string) => {
                                                 'text-orange-500 dark:text-orange-400 bg-orange-100 dark:bg-orange-500/10': lesson.status === 'current' && lesson.color === 'orange',
                                                 'text-purple-500 dark:text-purple-400 bg-purple-100 dark:bg-purple-500/10': lesson.status === 'current' && lesson.color === 'purple'
                                             }">
-                                            <UIcon :name="lesson.icon" class="text-lg flex" />
+                                            <UIcon :name="lesson.status === 'locked' ? 'i-lucide-lock' : lesson.icon"
+                                                class="text-lg flex" />
                                         </div>
                                         <div class="flex-1 min-w-0">
                                             <div class="flex items-center justify-between gap-2">
@@ -372,7 +326,7 @@ const simulateDownload = (filename: string) => {
                                             </div>
                                             <p class="text-sm text-dimmed mt-1.5 leading-relaxed truncate">{{
                                                 lesson.summary
-                                                }}
+                                            }}
                                             </p>
                                         </div>
                                     </UCard>
@@ -384,101 +338,21 @@ const simulateDownload = (filename: string) => {
                         <div>
                             <div class="flex flex-col gap-6 sticky top-20">
                                 <!-- Progress Card -->
-                                <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                                    <div>
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                                Overall Progress
-                                            </span>
-                                            <span class="text-sm font-bold text-primary">{{ course.progress }}%</span>
-                                        </div>
-                                        <UProgress :model-value="course.progress" color="primary" size="sm" />
-                                    </div>
-                                    <p class="text-xs text-dimmed">
-                                        Keep up the momentum to reach your goal.
-                                    </p>
-                                </UCard>
+                                <AppCourseWidgetProgress :progress="course.progress" />
 
                                 <!-- Description Card -->
-                                <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                            Description
-                                        </span>
-                                    </div>
-                                    <div class="flex flex-wrap gap-2">
-                                        <p class="text-xs text-dimmed">{{ course.description ||
-                                            'No description provided.' }}</p>
-                                    </div>
-                                </UCard>
+                                <AppCourseWidgetDescription :description="course.description" />
 
-                                <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-3' }">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                            Learning Goal
-                                        </span>
-                                        <!-- <UButton icon="i-lucide-settings-2" variant="ghost" color="neutral" size="xs"
-                                            :to="`/app/courses/${course.id}/settings`" /> -->
-                                    </div>
-
-                                    <div class="flex items-start gap-3">
-                                        <!-- The dynamic icon based on the goal -->
-                                        <div
-                                            class="p-2 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400 shrink-0">
-                                            <UIcon :name="activeGoal.icon" class="text-xl flex" />
-                                        </div>
-                                        <div class="flex flex-col">
-                                            <span class="font-bold text-sm text-neutral-900 dark:text-neutral-100">{{
-                                                activeGoal.label
-                                                }}</span>
-                                            <span class="text-xs text-neutral-500 mt-0.5 leading-relaxed">{{
-                                                activeGoal.description
-                                                }}</span>
-                                        </div>
-                                    </div>
-                                </UCard>
+                                <!-- Learning Goal Card -->
+                                <AppCourseWidgetLearningGoal :goal="course.learningGoal" />
 
                                 <!-- Schedule and Targets Card -->
-                                <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm font-semibold uppercase tracking-wider text-muted">
-                                            Schedule & Targets
-                                        </span>
-                                    </div>
-                                    <div class="flex flex-col gap-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2 text-dimmed">
-                                                <UIcon name="i-lucide-calendar-clock" class="size-4 text-primary-500" />
-                                                <span class="text-xs font-medium">Target Date</span>
-                                            </div>
-                                            <span class="text-sm font-bold text-neutral-900 dark:text-neutral-100">{{
-                                                course.targetFinishDate ? new
-                                                    Date(course.targetFinishDate).toLocaleDateString(undefined, {
-                                                        month: 'short', day: 'numeric', year: 'numeric'
-                                                    }) : 'Not set' }}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2 text-dimmed">
-                                                <UIcon name="i-lucide-calendar-days" class="size-4 text-orange-500" />
-                                                <span class="text-xs font-medium">Sessions / Week</span>
-                                            </div>
-                                            <span class="text-sm font-bold text-neutral-900 dark:text-neutral-100">{{
-                                                course.sessionsPerWeek
-                                                || 'Not set' }}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2 text-dimmed">
-                                                <UIcon name="i-lucide-layers" class="size-4 text-purple-500" />
-                                                <span class="text-xs font-medium">Items / Week</span>
-                                            </div>
-                                            <span class="text-sm font-bold text-neutral-900 dark:text-neutral-100">{{
-                                                course.itemsPerWeek ||
-                                                'Not set' }}</span>
-                                        </div>
-                                    </div>
-                                </UCard>
+                                <AppCourseWidgetSchedule 
+                                    :target-finish-date="course.targetFinishDate" 
+                                    :sessions-per-week="course.sessionsPerWeek" 
+                                    :items-per-week="course.itemsPerWeek" />
 
-                                <!-- Tags Card -->
+                                <!-- Tags Card (commented out in original) -->
                                 <!-- <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
                                     <div class="flex items-center justify-between mb-2">
                                         <span class="text-sm font-semibold uppercase tracking-wider text-muted">
@@ -493,75 +367,12 @@ const simulateDownload = (filename: string) => {
                                 </UCard> -->
 
                                 <!-- Knowledge Sources Details -->
-                                <UCard :ui="{ body: 'p-5 flex flex-col gap-3' }"
-                                    class="bg-primary-100 ring-primary-200 dark:ring-primary-900 dark:bg-primary-900/20">
-                                    <div class="flex items-center gap-2 mb-1 text-primary">
-                                        <UIcon name="i-lucide-brain-circuit" />
-                                        <h3 class="text-sm font-semibold uppercase tracking-wider">AI Context</h3>
-                                    </div>
-                                    <p class="text-xs text-primary/50 mb-2">
-                                        This syllabus was dynamically generated from your uploaded materials.
-                                    </p>
-
-                                    <div class="flex flex-col gap-2">
-                                        <UCard :ui="{ body: 'flex items-center justify-between gap-2 p-2 sm:p-2' }"
-                                            class="rounded-md shadow-sm group/file hover:bg-white dark:hover:bg-primary-800 transition-colors cursor-pointer"
-                                            @click="simulateDownload(`${course.title} Chapter 1-3.pdf`)">
-                                            <div class="flex items-center gap-2 min-w-0">
-                                                <UIcon name="i-lucide-file-text" class="text-red-500 shrink-0" />
-                                                <span class="text-xs font-medium truncate">{{ course.title }} Chapter
-                                                    1-3.pdf</span>
-                                            </div>
-                                            <UButton icon="i-lucide-download" variant="ghost" size="xs"
-                                                class="opacity-0 group-hover/file:opacity-100 transition-opacity shrink-0" />
-                                        </UCard>
-                                        <UCard :ui="{ body: 'flex items-center justify-between gap-2 p-2 sm:p-2' }"
-                                            class="rounded-md shadow-sm group/file hover:bg-white dark:hover:bg-primary-800 transition-colors cursor-pointer"
-                                            @click="simulateDownload('Lecture_Deck_Final.pptx')">
-                                            <div class="flex items-center gap-2 min-w-0">
-                                                <UIcon name="i-lucide-presentation" class="text-orange-500 shrink-0" />
-                                                <span
-                                                    class="text-xs font-medium truncate">Lecture_Deck_Final.pptx</span>
-                                            </div>
-                                            <UButton icon="i-lucide-download" variant="ghost" size="xs"
-                                                class="opacity-0 group-hover/file:opacity-100 transition-opacity shrink-0" />
-                                        </UCard>
-                                    </div>
-                                </UCard>
+                                <AppCourseWidgetContext :title="course.title" @download="simulateDownload" />
 
                                 <!-- Author Widget -->
-                                <UCard v-if="course.createdBy" variant="soft" :ui="{ body: 'p-5 flex flex-col gap-4' }">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-muted">
-                                            Curated By
-                                        </span>
-                                    </div>
-                                    <div class="flex items-center justify-between gap-4">
-                                        <div class="flex items-center gap-3">
-                                            <UAvatar :src="course.createdBy.avatar" :alt="course.createdBy.name"
-                                                size="md" class="ring-2 ring-primary-500/20" />
-                                            <div class="flex flex-col">
-                                                <span
-                                                    class="text-sm font-bold text-neutral-900 dark:text-neutral-100 leading-tight">{{
-                                                        course.createdBy.name }}</span>
-                                                <span
-                                                    class="text-[10px] text-primary-500 font-semibold uppercase tracking-wider mt-0.5">{{
-                                                        course.createdBy.role }}</span>
-                                            </div>
-                                        </div>
-
-                                        <div
-                                            class="flex items-center gap-4 shrink-0 border-l border-neutral-200 dark:border-neutral-700 pl-4">
-                                            <div class="flex flex-col items-center">
-                                                <span
-                                                    class="text-[10px] font-bold text-neutral-900 dark:text-neutral-100">{{
-                                                        coursesCountForAuthor }}</span>
-                                                <span
-                                                    class="text-[8px] text-neutral-400 font-bold uppercase">Courses</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </UCard>
+                                <AppCourseWidgetAuthor v-if="course.createdBy" 
+                                    :author="course.createdBy" 
+                                    :course-count="coursesCountForAuthor" />
                             </div>
                         </div>
 
@@ -576,27 +387,7 @@ const simulateDownload = (filename: string) => {
                         <h1 class="text-4xl font-bold tracking-tight">{{ course.title }}</h1>
                     </div>
                     <!-- Timer Widget -->
-                    <UCard v-if="sessionState !== 'processing' && sessionState !== 'plan'" variant="soft"
-                        :ui="{ body: 'sm:px-4 sm:py-2.5' }">
-                        <div class="flex flex-col gap-1 items-end">
-                            <p class="text-[10px] font-semibold uppercase tracking-widest text-dimmed">Time Remaining
-                            </p>
-                            <div class="flex items-center gap-2"
-                                :class="timerIsUrgent ? 'text-red-500' : 'text-primary'">
-                                <UIcon :name="timerIsUrgent ? 'i-lucide-alarm-clock' : 'i-lucide-timer'"
-                                    class="size-4 shrink-0" :class="{ 'animate-pulse': timerIsUrgent }" />
-                                <span class="text-lg font-bold font-mono tabular-nums tracking-tight">
-                                    {{ sessionState === 'active' || sessionState === 'complete' ? timerDisplay :
-                                        (recommendedLesson?.duration ?? '—') }}
-                                </span>
-                                <UBadge v-if="sessionState === 'active'" label="In Progress" color="primary"
-                                    variant="subtle" icon="i-lucide-circle-dot" class="animate-pulse" />
-                                <UBadge v-else-if="sessionState === 'complete'" label="Complete" color="success"
-                                    variant="subtle" icon="i-lucide-check-circle" />
-                                <!-- <UBadge v-else label="Ready" color="neutral" variant="subtle" icon="i-lucide-hourglass" /> -->
-                            </div>
-                        </div>
-                    </UCard>
+                    <AppSessionTimer :session-state="sessionState" :duration="recommendedLesson?.duration ?? '—'" />
                 </div>
                 <UCard ref="assessmentCard"
                     class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"

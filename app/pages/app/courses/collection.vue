@@ -15,7 +15,7 @@ const sortOptions = COURSE_SORT_OPTIONS
 const courseStore = useCourseStore()
 
 const filteredCourses = computed(() => {
-    return courseStore.courses
+    return courseStore.workspaceCourses
         .filter(course => {
             const matchesSearch = course.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                 course.tag.toLowerCase().includes(searchQuery.value.toLowerCase())

@@ -6,7 +6,7 @@ const courseStore = useCourseStore()
 const dashboardStore = useDashboardStore()
 const stats = computed(() => dashboardStore.stats)
 const recommended = computed(() => dashboardStore.recommendedCourses)
-const recentCourses = computed(() => courseStore.courses.slice(0, 3))
+const recentCourses = computed(() => courseStore.workspaceCourses.slice(0, 3))
 const userStore = useUserStore()
 
 const firstName = computed(() => userStore.profile.fullName.split(' ')[0])
@@ -24,9 +24,9 @@ const recommendedMessage = computed(() => {
         </div>
 
         <!-- AI Prompt Section -->
-        <AppDashboardAIPrompt :is-hero="courseStore.courses.length === 0" />
+        <AppDashboardAIPrompt :is-hero="courseStore.workspaceCourses.length === 0" />
 
-        <template v-if="courseStore.courses.length > 0">
+        <template v-if="courseStore.workspaceCourses.length > 0">
 
             <!-- Sections Layout -->
             <div class="flex flex-col gap-10">

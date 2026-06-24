@@ -72,6 +72,13 @@ export interface LessonSection {
     aiInsight: string | null
 }
 
+export interface LessonNote {
+    id: string
+    content: string
+    createdAt: number
+    isPinned?: boolean
+}
+
 export interface LessonContent {
     id: string
     courseId: string

@@ -22,6 +22,19 @@ const isArchiveOpen = ref(false)
 const isDeleteOpen = ref(false)
 const newTitle = ref(props.course.title)
 
+const workspaceStore = useWorkspaceStore()
+const organizationStore = useOrganizationStore()
+
+const courseWorkspace = computed(() => {
+    const wsId = props.course.workspaceId || workspaceStore.currentWorkspaceId || '1'
+    return workspaceStore.workspaces.find(w => w.id === wsId) || workspaceStore.workspaces[0]
+})
+
+const courseOrganization = computed(() => {
+    if (!courseWorkspace.value?.organizationId) return null
+    return organizationStore.organizations.find(org => org.id === courseWorkspace.value?.organizationId)
+})
+
 const handleRename = () => {
     if (newTitle.value && newTitle.value !== props.course.title) {
         courseStore.updateCourse(props.course.id, { title: newTitle.value })
@@ -208,6 +221,21 @@ const lessonProgress = computed(() => {
                         class="text-[9px] text-neutral-400 font-bold uppercase tracking-wider leading-none mb-0.5">Author</span>
                     <span class="text-[10px] text-neutral-700 dark:text-neutral-300 font-medium leading-none">{{
                         course.createdBy.name }}</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-auto" v-if="courseWorkspace">
+                <div
+                    class="flex items-center justify-center w-7 h-7 rounded-md bg-primary-500/10 text-primary-500 transition-all duration-300">
+                    <UIcon :name="courseWorkspace.icon || 'i-lucide-box'" class="w-4 h-4" />
+                </div>
+                <div class="flex flex-col items-start leading-tight">
+                    <span v-if="courseOrganization"
+                        class="text-[9px] text-primary-500 font-bold uppercase tracking-tight">
+                        {{ courseOrganization.name }}
+                    </span>
+                    <span class="text-[10px] font-medium truncate max-w-[120px] text-neutral-700 dark:text-neutral-300">
+                        {{ courseWorkspace.name }}
+                    </span>
                 </div>
             </div>
         </div>

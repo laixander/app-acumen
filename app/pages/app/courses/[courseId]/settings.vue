@@ -217,7 +217,7 @@ const sections = computed<SettingsSection[]>(() => [
             <!-- Breadcrumbs -->
             <div class="flex justify-between items-center">
                 <AppBreadcrumb />
-                <UButton label="Exit" leading-icon="i-lucide-arrow-left" color="neutral" variant="soft" size="sm"
+                <UButton label="Close" leading-icon="i-lucide-x" color="neutral" variant="soft" size="sm"
                     :to="`/app/courses/${course.id}`" :ui="{ leadingIcon: 'size-3' }" />
             </div>
 
@@ -254,7 +254,7 @@ const sections = computed<SettingsSection[]>(() => [
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="font-bold text-neutral-700 dark:text-neutral-200">{{ item.label
-                                        }}</span>
+                                    }}</span>
                                 </div>
                             </div>
 

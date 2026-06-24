@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from 'vue-router'
 
 
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { Assessment } from '~/types/course'
 import type { SessionState, SessionProcessingLine } from '~/types/session'
 
@@ -58,6 +58,8 @@ const calculatedScore = computed(() => {
     return Math.round((score / questions.value.length) * 100)
 })
 
+const assessmentDurationStr = computed(() => `${questions.value.length * 2} min`)
+
 const resetSession = () => {
     const course = courseStore.getCourseBySlugOrId(assessmentData.value?.courseId || '')
     router.push(`/app/courses/${course ? generateSlug(course.title) : assessmentData.value?.courseId}`)
@@ -104,7 +106,10 @@ const description = computed(() => {
 <template>
     <UContainer class="py-6">
         <!-- title + description base on previous route context: if lessons, Checkpoint Quiz/Final Assessment -->
-        <ContentHeading :title="title" :description="description" class="mb-6" />
+        <div class="flex justify-between items-center mb-6">
+            <ContentHeading :title="title" :description="description" />
+            <AppSessionTimer :session-state="sessionState" :duration="assessmentDurationStr" />
+        </div>
         <Transition name="fade" mode="out-in">
             <UCard :key="sessionState"
                 class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
@@ -114,7 +119,7 @@ const description = computed(() => {
 
                 <AppSessionReady v-else-if="sessionState === 'ready'"
                     :course-name="assessmentData?.title || 'Checkpoint'" :module-title="description" difficulty="Medium"
-                    :duration="`${questions.length * 2} min`" @start="beginSessionAction" />
+                    :duration="assessmentDurationStr" @start="beginSessionAction" />
 
                 <AppSessionActive v-else-if="sessionState === 'active'" :questions="questions"
                     :module-title="assessmentData?.title || 'Assessment'" @close="resetSession"

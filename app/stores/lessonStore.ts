@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
-import type { LessonOverview, LessonContent, Assessment } from '~/types/course'
+import type { LessonOverview, LessonContent, Assessment, LessonNote } from '~/types/course'
 
 export const useLessonStore = defineStore('lessonStore', {
     state: () => ({
         lessons: [] as LessonOverview[],
         lessonContents: [] as LessonContent[],
-        assessments: [] as Assessment[]
+        assessments: [] as Assessment[],
+        notes: {} as Record<string, LessonNote[]>
     }),
 
     actions: {
@@ -65,6 +66,32 @@ export const useLessonStore = defineStore('lessonStore', {
             this.lessons = []
             this.lessonContents = []
             this.assessments = []
+        },
+        getNotesByLessonId(lessonId: string) {
+            return this.notes[lessonId] || []
+        },
+        addNote(lessonId: string, content: string) {
+            if (!this.notes[lessonId]) {
+                this.notes[lessonId] = []
+            }
+            this.notes[lessonId].push({
+                id: crypto.randomUUID(),
+                content,
+                createdAt: Date.now()
+            })
+        },
+        deleteNote(lessonId: string, noteId: string) {
+            if (this.notes[lessonId]) {
+                this.notes[lessonId] = this.notes[lessonId].filter(n => n.id !== noteId)
+            }
+        },
+        togglePinNote(lessonId: string, noteId: string) {
+            if (this.notes[lessonId]) {
+                const note = this.notes[lessonId].find(n => n.id === noteId)
+                if (note) {
+                    note.isPinned = !note.isPinned
+                }
+            }
         }
     },
 

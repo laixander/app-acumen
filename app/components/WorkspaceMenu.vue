@@ -24,9 +24,10 @@ const switchWorkspace = (id: string) => {
     }
 }
 
+const userStore = useUserStore()
 const getMyRole = (ws: any) => {
     if (!ws || !ws.members) return 'Member'
-    const me = ws.members.find((m: any) => m.id === '1')
+    const me = ws.members.find((m: any) => m.email === userStore.profile.email)
     return me ? me.role : 'Member'
 }
 
@@ -48,7 +49,7 @@ const items = computed<DropdownMenuItem[][]>(() => [
             icon: 'i-lucide-plus',
             to: '/app/workspaces/new'
         },
-        ...(getMyRole(workspaceStore.currentWorkspace) === 'Owner' || getMyRole(workspaceStore.currentWorkspace) === 'Admin' ? [{
+        ...(workspaceStore.isAdmin ? [{
             label: 'Workspace Settings',
             icon: 'i-lucide-settings-2',
             to: '/app/workspaces/settings'

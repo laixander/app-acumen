@@ -1,0 +1,6 @@
+- [x] Modify `server/api/courses.ts` to assign workspaces and authors
+- [x] Modify `app/stores/courseStore.ts` to add workspace-aware getters
+- [x] Update `app/pages/app/dashboard.vue` to use the filtered course getters
+- [x] Update `app/pages/app/courses/collection.vue` to use the filtered course getters
+- [x] Modify `app/components/WorkspaceMenu.vue` to hide Workspace Settings for members
+- [x] Verify the UI changes

@@ -15,7 +15,14 @@ export const mockCourses: Course[] = [
         isPinned: true,
         learningGoal: "Deep Mastery",
         viewersCount: 120,
-        completedCount: 45
+        completedCount: 45,
+        workspaceId: "1",
+        createdBy: {
+            id: "u-1",
+            name: "Alex Johnson",
+            avatar: "https://i.pravatar.cc/128?u=alex",
+            role: "Author"
+        }
     },
     {
         id: "c-2",
@@ -30,7 +37,14 @@ export const mockCourses: Course[] = [
         isPinned: false,
         learningGoal: "Practical Application",
         viewersCount: 300,
-        completedCount: 250
+        completedCount: 250,
+        workspaceId: "2",
+        createdBy: {
+            id: "u-2",
+            name: "Jane Smith",
+            avatar: "https://i.pravatar.cc/128?u=jane",
+            role: "Instructor"
+        }
     },
     {
         id: "c-3",
@@ -45,7 +59,14 @@ export const mockCourses: Course[] = [
         isPinned: true,
         learningGoal: "Quick Overview",
         viewersCount: 50,
-        completedCount: 5
+        completedCount: 5,
+        workspaceId: "2",
+        createdBy: {
+            id: "u-1",
+            name: "Alex Johnson",
+            avatar: "https://i.pravatar.cc/128?u=alex",
+            role: "Author"
+        }
     }
 ]
 
