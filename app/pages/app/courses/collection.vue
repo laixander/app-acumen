@@ -33,18 +33,18 @@ const filteredCourses = computed(() => {
 </script>
 
 <template>
-    <UContainer class="flex flex-col gap-8 py-12">
-        <header class="flex items-end gap-4">
+    <UContainer class="flex flex-col gap-8 py-6 sm:py-12">
+        <header class="flex flex-col items-end lg:flex-row gap-4">
             <ContentHeading title="Course Collection" description="Manage and organize your learning course." />
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0 w-full lg:w-fit">
                 <UInput v-model="searchQuery" icon="i-lucide-search" placeholder="Search course..." size="sm"
-                    class="w-64" />
-                <USelect v-model="sortBy" :items="sortOptions" size="sm" class="w-32">
+                    class="w-full sm:w-64" />
+                <USelect v-model="sortBy" :items="sortOptions" size="sm" class="w-full sm:w-32">
                     <template #leading>
                         <UIcon name="i-lucide-list-filter" class="size-4" />
                     </template>
                 </USelect>
-                <USeparator orientation="vertical" class="mx-2 h-6" />
+                <USeparator orientation="vertical" class="mx-2 h-6 hidden sm:block" />
                 <UButton label="New Course" icon="i-lucide-plus" color="primary" size="sm" to="/app/courses/new" />
             </div>
         </header>
@@ -63,9 +63,8 @@ const filteredCourses = computed(() => {
                 <!-- <AppViewModeToggle v-model="viewMode" class="ml-auto" /> -->
             </div>
 
-            <div v-if="filteredCourses.length > 0"
-                :class="[viewMode === 'grid' ? 'grid lg:grid-cols-3 gap-6' : 'flex flex-col gap-4']">
-                <AppCourseCard v-for="course in filteredCourses" :key="course.title" :course="course" :view-mode="viewMode" />
+            <div v-if="filteredCourses.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <AppCourseCard v-for="course in filteredCourses" :key="course.title" :course="course" />
             </div>
 
             <!-- Empty State -->
@@ -75,7 +74,8 @@ const filteredCourses = computed(() => {
                     <UIcon :name="courseStore.courses.length === 0 ? 'i-lucide-database' : 'i-lucide-inbox'"
                         class="flex text-4xl text-primary" />
                 </div>
-                <h3 class="text-lg font-bold">{{ courseStore.courses.length === 0 ? 'You have no courses yet' : 'No courses found' }}
+                <h3 class="text-lg font-bold">
+                    {{ courseStore.courses.length === 0 ? 'You have no courses yet' : 'No courses found' }}
                 </h3>
                 <p class="text-dimmed max-w-xs mt-1">
                     {{

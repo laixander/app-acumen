@@ -84,15 +84,18 @@ const recommendedMessage = computed(() => {
             <div class="flex flex-col gap-10">
 
                 <!-- Stat Cards -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <UCard v-for="stat in stats" :key="stat.label" variant="soft" :class="`bg-${stat.color}-500/10`"
-                        :ui="{ body: 'flex items-center gap-3 py-3 px-4' }">
-                        <div :class="['p-3 rounded-xl', `bg-${stat.color}-500/10`]">
+                        :ui="{ body: 'flex flex-col items-start sm:flex-row sm:items-center gap-3 py-3 px-4' }">
+                        <div :class="['p-3 rounded-xl ml-auto sm:ml-0', `bg-${stat.color}-500/10`]">
                             <UIcon :name="stat.icon" :class="['text-xl flex shrink-0', `text-${stat.color}-500`]" />
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
                                 <p class="text-lg font-bold leading-none">{{ stat.value }}</p>
+                                <UBadge v-if="stat.showTrend" :label="stat.trendValue"
+                                    :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
+                                    class="sm:hidden" />
                                 <UIcon v-if="stat.showTrend"
                                     :name="stat.trend === 'up' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
                                     :class="['text-base', stat.trend === 'up' ? 'text-green-500' : 'text-red-500']" />
@@ -101,7 +104,7 @@ const recommendedMessage = computed(() => {
                         </div>
                         <UBadge v-if="stat.showTrend" :label="stat.trendValue"
                             :color="stat.trend === 'up' ? 'success' : 'error'" variant="soft" size="sm"
-                            class="ml-auto" />
+                            class="hidden sm:inline-flex sm:ml-auto" />
                     </UCard>
                 </div>
 
@@ -120,7 +123,7 @@ const recommendedMessage = computed(() => {
                                         <UButton label="View all" icon="i-lucide-arrow-right" color="primary"
                                             variant="ghost" size="sm" class="uppercase" to="/app/courses/collection" />
                                     </div>
-                                    <div class="grid md:grid-cols-3 gap-6">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                         <AppCourseCard v-for="course in recentCourses" :key="course.title"
                                             :course="course" />
                                     </div>

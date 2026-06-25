@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<Props>(), {
 <template>
     <div class="flex gap-4 w-full relative group" :class="{
         'flex-col items-center text-center': centered,
-        'items-start': !centered
+        'items-center sm:items-start': !centered
     }">
 
         <!-- Icon Container -->
@@ -25,7 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
 
         <div class="flex flex-col gap-1.5" :class="{
             'items-center': centered,
-            'max-w-2xl': centered
+            'max-w-2xl': centered,
         }">
             <!-- Heading -->
             <h1 v-if="title || $slots.title" class="text-3xl font-bold tracking-tight transition-colors duration-300">
@@ -33,9 +33,13 @@ const props = withDefaults(defineProps<Props>(), {
             </h1>
 
             <!-- Description -->
-            <p v-if="description || $slots.description" class="text-muted leading-relaxed">
+            <p v-if="description || $slots.description" class="text-muted leading-relaxed hidden sm:block">
                 <slot name="description">{{ description }}</slot>
             </p>
         </div>
     </div>
+    <!-- Mobile Description -->
+    <p v-if="description || $slots.description" class="text-muted leading-relaxed sm:hidden">
+        <slot name="description">{{ description }}</slot>
+    </p>
 </template>

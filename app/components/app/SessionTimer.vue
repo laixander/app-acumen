@@ -53,15 +53,12 @@ onUnmounted(() => stopTimer())
 
 <template>
     <UCard v-if="sessionState !== 'processing' && sessionState !== 'plan'" variant="soft"
-        :ui="{ body: 'sm:px-4 sm:py-2.5' }">
+        :ui="{ root: 'shadow-2xl divide-primary/20', body: 'sm:px-4 sm:py-2.5', footer: 'sm:px-4 sm:py-2.5' }">
         <div class="flex flex-col gap-1 items-end">
-            <p class="text-[10px] font-semibold uppercase tracking-widest text-dimmed">Time Remaining
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-dimmed">
+                Time Remaining
             </p>
             <div class="flex items-center gap-2" :class="timerIsUrgent ? 'text-red-500' : 'text-primary'">
-                <UBadge v-if="sessionState === 'active'" label="In Progress" color="primary" variant="subtle"
-                    icon="i-lucide-circle-dot" class="animate-pulse" />
-                <UBadge v-else-if="sessionState === 'complete'" label="Complete" color="success" variant="subtle"
-                    icon="i-lucide-check-circle" />
                 <UIcon :name="timerIsUrgent ? 'i-lucide-alarm-clock' : 'i-lucide-timer'" class="size-4 shrink-0"
                     :class="{ 'animate-pulse': timerIsUrgent }" />
                 <span class="text-lg font-bold font-mono tabular-nums tracking-tight">
@@ -70,5 +67,11 @@ onUnmounted(() => stopTimer())
                 </span>
             </div>
         </div>
+        <template v-if="sessionState === 'active' || sessionState === 'complete'" #footer>
+            <UBadge v-if="sessionState === 'active'" label="In Progress" color="primary" variant="subtle"
+                icon="i-lucide-circle-dot" class="animate-pulse w-full justify-center" />
+            <UBadge v-else-if="sessionState === 'complete'" label="Complete" color="success" variant="subtle"
+                icon="i-lucide-check-circle" class="w-full justify-center" />
+        </template>
     </UCard>
 </template>

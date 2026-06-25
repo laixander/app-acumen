@@ -129,7 +129,7 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
 <template>
     <UContainer class="py-6">
         <!-- Breadcrumbs -->
-        <div v-if="course" class="flex justify-between items-center">
+        <div v-if="course" class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <AppBreadcrumb />
             <div class="flex gap-2">
                 <UButton label="Close" leading-icon="i-lucide-x" color="neutral" variant="soft" size="sm"
@@ -150,15 +150,15 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
 <span class="font-medium text-neutral-900 dark:text-neutral-100">{{ lessonData?.title }}</span>
 </nav> -->
 
-        <div class="flex items-center justify-between mt-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mt-6">
             <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" />
             <UButton label="Open Notes" icon="i-lucide-notebook-pen" color="neutral" variant="outline"
-                @click="isNotesOpen = true" />
+                @click="isNotesOpen = true" class="w-fit" />
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 mt-6">
             <!-- Left Side: Lesson Details -->
-            <div class="flex flex-col gap-6 col-span-2">
+            <div class="flex flex-col gap-6 col-span-1 lg:col-span-2">
 
                 <!-- Lesson Transcript / Reading -->
                 <UCard class="overflow-visible">
@@ -193,8 +193,8 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
 
     <!-- Notes Slideover -->
     <USlideover v-model:open="isNotesOpen" title="Lesson Notes" description="Add your personal notes for this lesson.">
-        <template #content>
-            <div class="flex flex-col gap-6 p-6 h-full overflow-hidden">
+        <template #body>
+            <div class="flex flex-col gap-6 h-full overflow-hidden">
                 <!-- Add Note Area -->
                 <div class="flex flex-col gap-3 shrink-0">
                     <UTextarea v-model="newNoteContent" placeholder="Jot down your thoughts..." :rows="4" autofocus />
@@ -220,7 +220,7 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
                     <div v-for="note in lessonNotes" :key="note.id"
                         class="group relative bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 p-4 rounded-xl shadow-sm flex flex-col gap-2 transition-all hover:border-primary-500/30"
                         :class="note.isPinned ? 'border-primary-200 dark:border-primary-800/50 bg-primary-50/30 dark:bg-primary-900/10' : ''">
-                        <div
+                        <!-- <div
                             class="absolute top-2 right-2 opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center gap-1">
                             <UTooltip :text="note.isPinned ? 'Unpin note' : 'Pin note'">
                                 <UButton :icon="note.isPinned ? 'i-lucide-pin-off' : 'i-lucide-pin'"
@@ -231,13 +231,28 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
                                 <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="xs"
                                     @click="handleDeleteNote(note.id)" />
                             </UTooltip>
-                        </div>
+                        </div> -->
                         <UIcon v-if="note.isPinned" name="i-lucide-pin"
                             class="absolute top-4 left-3 text-primary-500 w-3.5 h-3.5 opacity-60" />
-                        <div class="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap pr-16 leading-relaxed"
+                        <div class="text-sm text-neutral-700 dark:text-neutral-300 whitespace-pre-wrap leading-relaxed"
                             :class="note.isPinned ? 'pl-5' : ''">{{ note.content }}</div>
-                        <div class="text-[10px] text-neutral-400 font-mono uppercase tracking-widest mt-1"
-                            :class="note.isPinned ? 'pl-5' : ''">{{ new Date(note.createdAt).toLocaleString() }}</div>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="text-[10px] text-neutral-400 font-mono uppercase tracking-widest mt-1"
+                                :class="note.isPinned ? 'pl-5' : ''">{{ new Date(note.createdAt).toLocaleString() }}
+                            </div>
+                            <div
+                                class="opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                                <UTooltip :text="note.isPinned ? 'Unpin note' : 'Pin note'">
+                                    <UButton :icon="note.isPinned ? 'i-lucide-pin-off' : 'i-lucide-pin'"
+                                        :color="note.isPinned ? 'primary' : 'neutral'" variant="ghost" size="xs"
+                                        @click="handleTogglePinNote(note.id)" />
+                                </UTooltip>
+                                <UTooltip text="Delete note">
+                                    <UButton icon="i-lucide-trash-2" color="red" variant="ghost" size="xs"
+                                        @click="handleDeleteNote(note.id)" />
+                                </UTooltip>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -8,8 +8,8 @@ defineEmits(['start'])
 
 <template>
     <div
-        class="p-8 md:p-16 flex flex-col items-center justify-center gap-12 min-h-[400px] animate-fade-in bg-gradient-to-b from-white to-neutral-50/50 dark:from-neutral-900 dark:to-neutral-900/50">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-5xl">
+        class="p-6 md:p-16 flex flex-col items-center justify-center gap-6 md:gap-12 min-h-[400px] animate-fade-in bg-gradient-to-b from-white to-neutral-50/50 dark:from-neutral-900 dark:to-neutral-900/50">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full max-w-5xl">
             <AppSessionReadyCard label="Course" :value="courseName" icon="i-lucide-book" />
             <AppSessionReadyCard label="Module" :value="moduleTitle" icon="i-lucide-layout" />
             <AppSessionReadyCard label="Difficulty" :value="difficulty" icon="i-lucide-bar-chart" />

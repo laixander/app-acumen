@@ -148,6 +148,7 @@ const resetSession = () => {
 }
 
 const isConfidentTestModalOpen = ref(false)
+const isCancelModalOpen = ref(false)
 
 // --- Timer logic extracted to AppSessionTimer component ---
 
@@ -181,7 +182,7 @@ const simulateDownload = (filename: string) => {
         <Transition name="fade" mode="out-in">
             <div v-if="sessionState === 'idle'" class="flex flex-col gap-6">
                 <!-- Breadcrumbs -->
-                <div class="flex justify-between items-center">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <AppBreadcrumb />
                     <div class="flex gap-2">
                         <UButton label="Course Settings" icon="i-lucide-settings-2" variant="soft" size="sm"
@@ -201,27 +202,33 @@ const simulateDownload = (filename: string) => {
 
                 <div class="flex flex-col gap-8 pb-12">
                     <!-- Hero Section -->
-                    <UCard class="relative overflow-hidden" variant="outline" :ui="{ body: 'p-8 sm:p-10' }">
+                    <UCard class="relative overflow-hidden" variant="outline" :ui="{ body: 'p-6 sm:p-10' }">
                         <div
                             class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-transparent to-transparent pointer-events-none" />
 
                         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <ContentHeading :title="course.title" :icon="course.icon">
                                 <template #description>
-                                    <p class="text-dimmed max-w-lg flex items-center gap-2">
+                                    <div
+                                        class="text-dimmed max-w-lg flex flex-col sm:flex-row items-start sm:items-center gap-2">
                                         <!-- Percentage to mastery -->
-                                        <span class="text-primary font-bold">{{ masteryGap }}%</span> more to mastery!
-                                        <UIcon name="i-lucide-dot" class="size-6 flex text-dimmed" />
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-primary font-bold">{{ masteryGap }}%</span> more to
+                                            mastery!
+                                        </div>
+                                        <UIcon name="i-lucide-dot" class="size-6 flex text-dimmed hidden sm:block" />
                                         <!-- An AI-curated learning path tailored for you. -->
-                                        <span class="text-primary font-bold">{{ passingRate }}%</span> passing rate
-                                    </p>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-primary font-bold">{{ passingRate }}%</span> passing rate
+                                        </div>
+                                    </div>
                                 </template>
                             </ContentHeading>
 
                             <UButton @click="isConfidentTestModalOpen = true" label="Confident Test"
                                 trailing-icon="i-lucide-arrow-right" size="xl" color="primary"
                                 :ui="{ trailingIcon: 'size-4' }"
-                                class="rounded-full px-8 py-4 uppercase text-sm font-semibold tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 shrink-0 relative z-10" />
+                                class="rounded-full px-8 py-4 uppercase text-sm font-semibold tracking-widest hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 shrink-0 relative z-10 w-fit" />
 
                             <!-- <div class="flex flex-col items-end gap-1 text-right border-l-2 border-primary/20 pl-4">
                                 <span class="text-xs font-semibold tracking-wider text-muted uppercase whitespace-nowrap">
@@ -236,7 +243,8 @@ const simulateDownload = (filename: string) => {
                         <!-- Main Timeline Column -->
                         <div class="md:col-span-2 flex flex-col gap-6">
 
-                            <div class="flex items-center justify-between border-b border-default pb-4">
+                            <div
+                                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-default pb-4">
                                 <h2 class="text-lg font-bold flex items-center gap-2">
                                     <UIcon name="i-lucide-list-ordered" class="text-primary" />
                                     Lesson Timeline
@@ -356,10 +364,8 @@ const simulateDownload = (filename: string) => {
                                 <AppCourseWidgetLearningGoal :goal="course.learningGoal" />
 
                                 <!-- Schedule and Targets Card -->
-                                <AppCourseWidgetSchedule 
-                                    :target-finish-date="course.targetFinishDate" 
-                                    :sessions-per-week="course.sessionsPerWeek" 
-                                    :items-per-week="course.itemsPerWeek" />
+                                <AppCourseWidgetSchedule :target-finish-date="course.targetFinishDate"
+                                    :sessions-per-week="course.sessionsPerWeek" :items-per-week="course.itemsPerWeek" />
 
                                 <!-- Tags Card (commented out in original) -->
                                 <!-- <UCard variant="soft" :ui="{ body: 'p-5 flex flex-col' }">
@@ -379,8 +385,7 @@ const simulateDownload = (filename: string) => {
                                 <AppCourseWidgetContext :title="course.title" @download="simulateDownload" />
 
                                 <!-- Author Widget -->
-                                <AppCourseWidgetAuthor v-if="course.createdBy" 
-                                    :author="course.createdBy" 
+                                <AppCourseWidgetAuthor v-if="course.createdBy" :author="course.createdBy"
                                     :course-count="coursesCountForAuthor" />
                             </div>
                         </div>
@@ -389,14 +394,16 @@ const simulateDownload = (filename: string) => {
                 </div>
             </div>
             <!-- Session Container -->
-            <div v-else class="flex flex-col gap-6">
-                <div class="flex justify-between items-center">
-                    <div class="flex flex-col gap-1">
+            <div v-else class="relative flex flex-col gap-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex flex-col gap-1 w-full">
                         <p class="text-muted">Confident Test</p>
-                        <h1 class="text-4xl font-bold tracking-tight">{{ course.title }}</h1>
+                        <h1 class="text-3xl font-bold tracking-tight truncate">{{ course.title }}</h1>
                     </div>
-                    <!-- Timer Widget -->
-                    <AppSessionTimer :session-state="sessionState" :duration="recommendedLesson?.duration ?? '—'" />
+                    <!-- Cancel Assessment Button -->
+                    <UButton v-if="['processing', 'ready', 'active'].includes(sessionState)" label="Cancel Assessment"
+                        variant="soft" color="neutral" icon="i-lucide-x" @click="isCancelModalOpen = true"
+                        :ui="{ leadingIcon: 'size-3' }" size="sm" />
                 </div>
                 <UCard ref="assessmentCard"
                     class="w-full relative border-none ring-1 ring-primary/20 shadow-2xl shadow-primary/5 overflow-hidden transition-all duration-500"
@@ -439,11 +446,24 @@ const simulateDownload = (filename: string) => {
         <UButton label="Back to Dashboard" color="primary" variant="subtle" to="/app/dashboard" class="mt-6" />
     </div>
 
+    <!-- Timer Widget -->
+    <div class="fixed bottom-6 right-6 z-50 transition-all duration-500 ease-in-out">
+        <AppSessionTimer v-if="sessionState !== 'idle'" :session-state="sessionState"
+            :duration="recommendedLesson?.duration ?? '—'"
+            class="shadow-2xl ring-1 ring-primary/20 backdrop-blur-md bg-background/80" />
+    </div>
+
     <!-- Confirm Modal -->
     <AdminConfirmModal v-model:open="isConfidentTestModalOpen" title="Start Confident Test?"
         description="Taking this test will recalibrate your lesson timeline — Acumen AI will re-order and tailor the material based on your results, optimising your journey to mastery."
         confirm-label="Yes, Start Test" confirm-color="primary"
         @confirm="() => { isConfidentTestModalOpen = false; startSession() }" />
+
+    <!-- Cancel Assessment Modal -->
+    <AdminConfirmModal v-model:open="isCancelModalOpen" title="Cancel Assessment?"
+        description="Are you sure you want to cancel the current assessment? Your progress will be lost."
+        confirm-label="Yes, Cancel" confirm-color="error"
+        @confirm="() => { isCancelModalOpen = false; resetSession(); toast.add({ title: 'Assessment Cancelled', description: 'Your session has been successfully cancelled.', color: 'red' }) }" />
 </template>
 <style scoped>
 @keyframes fadeIn {

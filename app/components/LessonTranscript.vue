@@ -366,12 +366,12 @@ watch([playbackSpeed, volume, voiceOption], (newVals, oldVals) => {
                     <USlider v-model="playbackSpeed" :min="0.5" :max="2.0" :step="0.1" size="xs" class="w-24" />
                     <span class="text-muted min-w-[32px]">{{ playbackSpeed.toFixed(1) }}x</span>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="sm:flex items-center gap-2 hidden">
                     <span class="text-muted">Voice</span>
                     <USelectMenu v-model="voiceOption" :items="voiceOptions" variant="outline" size="sm"
                         class="w-48 truncate" />
                 </div>
-                <div class="relative flex items-center group/volume">
+                <div class="relative sm:flex items-center group/volume hidden">
                     <UButton :icon="volumeIcon" color="neutral" variant="outline" size="sm" @click="toggleMute" />
                     <div
                         class="absolute top-full left-1/2 -translate-x-1/2 mt-2 p-3 bg-default border border-default rounded-lg shadow-xl opacity-0 invisible group-hover/volume:opacity-100 group-hover/volume:visible transition-all flex items-center justify-center z-50 h-32 w-12">
@@ -380,7 +380,7 @@ watch([playbackSpeed, volume, voiceOption], (newVals, oldVals) => {
                 </div>
                 <UButton icon="i-lucide-notebook-pen" color="neutral" variant="outline" size="sm"
                     @click="$emit('open-notes')" />
-                <div class="flex items-center gap-2">
+                <div class="sm:flex items-center gap-2 hidden">
                     <UChip v-if="audioStatus !== 'Finished'" inset standalone
                         :color="audioStatus === 'Playing' || audioStatus === 'Paused' ? 'success' : 'warning'"
                         :class="audioStatus === 'Playing' ? 'animate-pulse' : ''" />

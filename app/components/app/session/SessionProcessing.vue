@@ -20,8 +20,10 @@ onMounted(async () => {
 
 
 <template>
-    <div class="p-8 md:p-16 flex flex-col gap-6 font-mono text-sm text-neutral-500 dark:text-neutral-400 min-h-[400px] justify-center items-start w-full max-w-4xl mx-auto animate-fade-in">
-        <div class="flex items-center gap-3 text-primary mb-4 border border-primary/30 px-4 py-2 rounded-full bg-primary/10">
+    <div
+        class="p-6 md:p-16 flex flex-col gap-4 md:gap-6 font-mono text-sm text-neutral-500 dark:text-neutral-400 min-h-[400px] justify-center items-start w-full max-w-4xl mx-auto animate-fade-in">
+        <div
+            class="flex items-center gap-3 text-primary mb-4 border border-primary/30 px-4 py-2 rounded-full bg-primary/10">
             <UIcon name="i-lucide-cpu" class="w-4 h-4 animate-pulse" />
             <span class="tracking-widest uppercase font-bold text-[10px]">Acumen AI Engine</span>
         </div>
@@ -46,6 +48,7 @@ onMounted(async () => {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -70,5 +73,3 @@ onMounted(async () => {
     transition: all 0.5s ease;
 }
 </style>
-
-
