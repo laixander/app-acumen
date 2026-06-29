@@ -364,7 +364,8 @@ const simulateDownload = (filename: string) => {
                                 <AppCourseWidgetLearningGoal :goal="course.learningGoal" />
 
                                 <!-- Schedule and Targets Card -->
-                                <AppCourseWidgetSchedule :target-finish-date="course.targetFinishDate"
+                                <AppCourseWidgetSchedule :course-id="course.id"
+                                    :target-finish-date="course.targetFinishDate"
                                     :sessions-per-week="course.sessionsPerWeek" :items-per-week="course.itemsPerWeek" />
 
                                 <!-- Tags Card (commented out in original) -->

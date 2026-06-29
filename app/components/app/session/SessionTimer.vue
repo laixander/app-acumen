@@ -54,7 +54,7 @@ onUnmounted(() => stopTimer())
 <template>
     <UCard v-if="sessionState !== 'processing' && sessionState !== 'plan'" variant="soft"
         :ui="{ root: 'shadow-2xl divide-primary/20', body: 'sm:px-4 sm:py-2.5', footer: 'sm:px-4 sm:py-2.5' }">
-        <div class="flex flex-col gap-1 items-end">
+        <div class="flex flex-col gap-1 items-center">
             <p class="text-[10px] font-semibold uppercase tracking-widest text-dimmed">
                 Time Remaining
             </p>

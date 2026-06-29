@@ -78,7 +78,6 @@ const handleContinue = () => {
         router.push(courseId ? `/app/courses/${courseId}` : '/app/dashboard')
     }
 }
-
 useHead({
     title: `${title.value} - LearnFast Lesson`
 })
@@ -87,10 +86,14 @@ const pendingQuote = ref<ChatQuote | null>(null)
 
 const handleAskAboutLine = (payload: ChatQuote) => {
     pendingQuote.value = payload
+    isChatOpen.value = true
 }
 
 // Notes Logic
 const isNotesOpen = ref(false)
+
+// Chat Panel Logic
+const isChatOpen = ref(false)
 const newNoteContent = ref('')
 
 const lessonNotes = computed(() => {
@@ -152,13 +155,17 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mt-6">
             <ContentHeading :title="lessonData?.title" :description="`${lessonData?.description}`" />
-            <UButton label="Open Notes" icon="i-lucide-notebook-pen" color="neutral" variant="outline"
-                @click="isNotesOpen = true" class="w-fit" />
+            <div class="flex gap-2">
+                <UButton label="Open Notes" icon="i-lucide-notebook-pen" color="neutral" variant="outline"
+                    @click="isNotesOpen = true" class="w-fit" />
+                <UButton :label="isChatOpen ? 'Close Chat' : 'Ask Acumen'" icon="i-lucide-sparkles" color="primary"
+                    :variant="isChatOpen ? 'outline' : 'solid'" class="w-fit" @click="isChatOpen = !isChatOpen" />
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 mt-6">
             <!-- Left Side: Lesson Details -->
-            <div class="flex flex-col gap-6 col-span-1 lg:col-span-2">
+            <div :class="['flex flex-col gap-6 col-span-1', isChatOpen ? 'lg:col-span-2' : 'lg:col-span-3']">
 
                 <!-- Lesson Transcript / Reading -->
                 <UCard class="overflow-visible">
@@ -187,7 +194,7 @@ const handleLineAddNote = (payload: { line: string, sectionIdx: number, lineIdx:
             </div>
 
             <!-- Right Side: AI Chat Panel -->
-            <AppAiChatPanel v-model:pendingQuote="pendingQuote" />
+            <AppAiChatPanel v-if="isChatOpen" v-model:pendingQuote="pendingQuote" />
         </div>
     </UContainer>
 
