@@ -111,6 +111,63 @@ const startExplore = () => {
     if (!selectedSubject.value) return
     router.push({ path: '/app/courses/new', query: { mode: 'explore', subject: selectedSubject.value } })
 }
+
+// Typewriter effect for placeholder
+const suggestions = [
+    "e.g., I want to learn advanced Quantum Computing with a focus on Cryptography...",
+    "e.g., Teach me the basics of Machine Learning using Python...",
+    "e.g., Explain the history of the Roman Empire for a 5th grader...",
+    "e.g., How to build a full-stack web application with Nuxt and Supabase..."
+]
+
+const currentPlaceholderBase = ref('')
+const showCursor = ref(true)
+const currentPlaceholder = computed(() => currentPlaceholderBase.value + (showCursor.value ? '|' : ''))
+let suggestionIndex = 0
+let charIndex = 0
+let isDeleting = false
+let typingTimeout: ReturnType<typeof setTimeout>
+let blinkInterval: ReturnType<typeof setInterval>
+
+const typeWriter = () => {
+    const currentSuggestion = suggestions[suggestionIndex]
+
+    if (!currentSuggestion) return
+
+    if (isDeleting) {
+        currentPlaceholderBase.value = currentSuggestion.substring(0, charIndex - 1)
+        charIndex--
+    } else {
+        currentPlaceholderBase.value = currentSuggestion.substring(0, charIndex + 1)
+        charIndex++
+    }
+    showCursor.value = true
+
+    let typeSpeed = isDeleting ? 30 : 50
+
+    if (!isDeleting && charIndex === currentSuggestion.length) {
+        typeSpeed = 2000 // Pause at end
+        isDeleting = true
+    } else if (isDeleting && charIndex === 0) {
+        isDeleting = false
+        suggestionIndex = (suggestionIndex + 1) % suggestions.length
+        typeSpeed = 500 // Pause before typing next
+    }
+
+    typingTimeout = setTimeout(typeWriter, typeSpeed)
+}
+
+onMounted(() => {
+    typingTimeout = setTimeout(typeWriter, 500)
+    blinkInterval = setInterval(() => {
+        showCursor.value = !showCursor.value
+    }, 530)
+})
+
+onUnmounted(() => {
+    clearTimeout(typingTimeout)
+    clearInterval(blinkInterval)
+})
 </script>
 
 <template>
@@ -118,7 +175,7 @@ const startExplore = () => {
         <div class="absolute -top-20 inset-x-0 h-64 bg-primary-500/10 blur-[120px] rounded-full pointer-events-none" />
 
         <div class="flex flex-col gap-8">
-    
+
             <!-- Input card -->
             <UCard
                 :ui="{ root: 'relative group border-0 rounded-2xl shadow-2xl hover:shadow-primary/50 hover:ring-4 hover:ring-primary-500/40 transition-all duration-300', body: 'p-0 sm:p-0 flex flex-col' }">
@@ -128,8 +185,7 @@ const startExplore = () => {
                     leave-from-class="opacity-100 translate-y-0" leave-to-class="opacity-0 -translate-y-2">
 
                     <!-- PROMPT -->
-                    <UTextarea v-if="inputMode === 'prompt'" v-model="prompt"
-                        placeholder="e.g., I want to learn advanced Quantum Computing with a focus on Cryptography..."
+                    <UTextarea v-if="inputMode === 'prompt'" v-model="prompt" :placeholder="currentPlaceholder"
                         :ui="{ root: 'w-full', base: 'ring-0 focus-visible:ring-0 rounded-t-2xl rounded-b-none p-6' }"
                         autoresize :rows="isHero ? 8 : 1" @keydown.meta.enter="generate"
                         @keydown.ctrl.enter="generate" />

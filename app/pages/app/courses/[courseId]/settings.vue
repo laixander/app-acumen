@@ -218,6 +218,36 @@ const sections = computed<SettingsSection[]>(() => [
         ]
     }
 ])
+
+const isSlideoverOpen = ref(false)
+
+const isPublishModalOpen = ref(false)
+
+const toast = useToast()
+
+const publishCourse = () => {
+    if (!course.value) return
+    const newStatus = !course.value.isPublished
+    courseStore.updateCourse(course.value.id, {
+        isPublished: newStatus,
+        shareableLink: newStatus ? `https://acumen.app/course/${course.value.id}/enroll` : '',
+        autoEnroll: newStatus ? true : false
+    })
+    isPublishModalOpen.value = false
+    toast.add({ title: newStatus ? 'Course Published' : 'Course Unpublished', color: 'success' })
+}
+
+const toggleAutoEnroll = () => {
+    if (!course.value) return
+    courseStore.updateCourse(course.value.id, { autoEnroll: !course.value.autoEnroll })
+}
+
+const copyShareableLink = () => {
+    if (!course.value?.shareableLink) return
+    navigator.clipboard.writeText(course.value.shareableLink)
+    toast.add({ title: 'Link copied to clipboard!', color: 'success' })
+}
+
 </script>
 
 <template>
@@ -263,7 +293,7 @@ const sections = computed<SettingsSection[]>(() => [
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="font-bold text-neutral-700 dark:text-neutral-200">{{ item.label
-                                    }}</span>
+                                        }}</span>
                                 </div>
                             </div>
 
@@ -281,20 +311,86 @@ const sections = computed<SettingsSection[]>(() => [
                 </UCard>
             </div>
 
+            <!-- add publish zone with sharable link and auto-enrolled switch -->
+            <div class="flex flex-col gap-4">
+                <h2 class="text-xs font-bold uppercase tracking-[0.2em] px-2"
+                    :class="course?.isPublished ? 'text-warning-500' : 'text-success-500'">
+                    {{ course?.isPublished ? 'Unpublish Course' : 'Publish Course' }}
+                </h2>
+
+                <UCard
+                    :ui="{ root: course?.isPublished ? 'ring-warning-200 dark:ring-warning-800 bg-warning-50 dark:bg-warning-900/10' : 'ring-success-200 dark:ring-success-800 bg-success-50 dark:bg-success-900/10' }">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between p-6 gap-6">
+                        <div class="flex flex-col gap-1">
+                            <p class="font-bold"
+                                :class="course?.isPublished ? 'text-warning-900 dark:text-warning-100' : 'text-success-900 dark:text-success-100'">
+                                {{ course?.isPublished ? 'Unpublish Course' : 'Publish Course' }}
+                            </p>
+                            <p class="text-sm"
+                                :class="course?.isPublished ? 'text-warning-600 dark:text-warning-400' : 'text-success-600 dark:text-success-400'">
+                                {{ course?.isPublished
+                                    ? 'Unpublishing this course will hide it from the catalog and prevent new enrollments.'
+                                    : 'Publishing this course will make it visible to all members.'
+                                }}
+                            </p>
+                        </div>
+                        <UButton :icon="course?.isPublished ? 'i-lucide-eye-off' : 'i-lucide-check'"
+                            :color="course?.isPublished ? 'warning' : 'success'" variant="soft"
+                            :label="course?.isPublished ? 'Unpublish' : 'Publish'" @click="isPublishModalOpen = true" />
+                    </div>
+
+                    <!-- Additional settings when published -->
+                    <div v-if="course?.isPublished"
+                        class="border-t border-warning-200/50 dark:border-warning-800/50 p-6 flex flex-col gap-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-sm font-semibold text-warning-900 dark:text-warning-100">Enrollment List
+                                </p>
+                                <p class="text-xs text-warning-600 dark:text-warning-400">View and manage members who
+                                    have requested to enroll in this course.</p>
+                            </div>
+                            <UButton label="Manage" leading-icon="i-lucide-users" color="warning" variant="soft"
+                                size="sm" :ui="{ leadingIcon: 'size-3' }" @click="isSlideoverOpen = true" />
+                        </div>
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex flex-col gap-1">
+                                <p class="text-sm font-semibold text-warning-900 dark:text-warning-100">Auto-Enrollment
+                                </p>
+                                <p class="text-xs text-warning-600 dark:text-warning-400">Automatically approve members
+                                    who enroll in this course.</p>
+                            </div>
+                            <USwitch :model-value="course.autoEnroll" color="warning"
+                                @update:model-value="toggleAutoEnroll" />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <p class="text-sm font-semibold text-warning-900 dark:text-warning-100">Shareable Link</p>
+                            <div class="flex gap-2">
+                                <UInput :model-value="course.shareableLink" readonly variant="subtle" class="flex-1"
+                                    :ui="{
+                                        base: 'text-warning-900 dark:text-warning-100 font-mono text-sm bg-white/50 dark:bg-black/20'
+                                    }" />
+                                <UButton icon="i-lucide-copy" color="warning" variant="soft"
+                                    @click="copyShareableLink" />
+                            </div>
+                        </div>
+                    </div>
+                </UCard>
+            </div>
+
             <!-- Archive Zone -->
             <div class="flex flex-col gap-4">
-                <h2 class="text-xs font-bold text-warning-400 uppercase tracking-[0.2em] px-2">
+                <h2 class="text-xs font-bold text-purple-400 uppercase tracking-[0.2em] px-2">
                     Archive Course
                 </h2>
-                <UCard :ui="{ root: 'ring-warning-200 dark:ring-warning-800 bg-warning-100 dark:bg-warning-800/10' }">
+                <UCard :ui="{ root: 'ring-purple-200 dark:ring-purple-800 bg-purple-100 dark:bg-purple-800/10' }">
                     <div class="flex items-center justify-between p-6">
                         <div class="flex flex-col gap-1">
-                            <p class="font-bold text-warning-900 dark:text-warning-100">Archive Course</p>
-                            <p class="text-sm text-warning-500">
+                            <p class="font-bold text-purple-900 dark:text-purple-100">Archive Course</p>
+                            <p class="text-sm text-purple-500">
                                 Archiving this course will hide it from your main collection but keep all your data.
                             </p>
                         </div>
-                        <UButton icon="i-lucide-archive" color="warning" variant="soft" label="Archive"
+                        <UButton icon="i-lucide-archive" color="purple" variant="soft" label="Archive"
                             @click="isArchiveModalOpen = true" />
                     </div>
                 </UCard>
@@ -423,12 +519,41 @@ const sections = computed<SettingsSection[]>(() => [
             </template>
         </UModal>
 
+        <!-- add publish modal here -->
+        <UModal v-model:open="isPublishModalOpen">
+            <template #content>
+                <div class="p-6 flex flex-col gap-6">
+                    <div class="flex items-center gap-4"
+                        :class="course?.isPublished ? 'text-warning-600' : 'text-success-600'">
+                        <div class="w-12 h-12 rounded-full flex items-center justify-center"
+                            :class="course?.isPublished ? 'bg-warning-50 dark:bg-warning-950/30' : 'bg-success-50 dark:bg-success-950/30'">
+                            <UIcon :name="course?.isPublished ? 'i-lucide-eye-off' : 'i-lucide-check'"
+                                class="text-2xl" />
+                        </div>
+                        <h3 class="text-xl font-bold">{{ course?.isPublished ? 'Unpublish Course?' : 'Publish Course?'
+                        }}</h3>
+                    </div>
+                    <p class="text-neutral-500">
+                        {{ course?.isPublished
+                            ? 'Are you sure you want to unpublish? This course will no longer be visible to new members.'
+                            : 'Publishing this course will make it visible to all members.'
+                        }}
+                    </p>
+                    <div class="flex items-center justify-end gap-3 mt-2">
+                        <UButton label="Cancel" variant="ghost" color="neutral" @click="isPublishModalOpen = false" />
+                        <UButton :label="course?.isPublished ? 'Unpublish' : 'Publish'"
+                            :color="course?.isPublished ? 'warning' : 'success'" @click="publishCourse" />
+                    </div>
+                </div>
+            </template>
+        </UModal>
+
         <UModal v-model:open="isArchiveModalOpen">
             <template #content>
                 <div class="p-6 flex flex-col gap-6">
-                    <div class="flex items-center gap-4 text-warning-600">
+                    <div class="flex items-center gap-4 text-violet-600">
                         <div
-                            class="w-12 h-12 rounded-full bg-warning-50 dark:bg-warning-950/30 flex items-center justify-center">
+                            class="w-12 h-12 rounded-full bg-violet-50 dark:bg-violet-950/30 flex items-center justify-center">
                             <UIcon name="i-lucide-archive" class="text-2xl" />
                         </div>
                         <h3 class="text-xl font-bold">Archive Course?</h3>
@@ -438,7 +563,7 @@ const sections = computed<SettingsSection[]>(() => [
                     </p>
                     <div class="flex items-center justify-end gap-3">
                         <UButton label="Cancel" variant="ghost" color="neutral" @click="isArchiveModalOpen = false" />
-                        <UButton label="Archive Course" color="warning" @click="handleArchiveCourse" />
+                        <UButton label="Archive Course" color="violet" @click="handleArchiveCourse" />
                     </div>
                 </div>
             </template>
@@ -467,5 +592,6 @@ const sections = computed<SettingsSection[]>(() => [
             </template>
         </UModal>
 
+        <AppCourseEnrollmentListSlideover v-model:open="isSlideoverOpen" />
     </UContainer>
 </template>

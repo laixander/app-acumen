@@ -15,7 +15,7 @@ defineProps<{
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                 <div class="md:col-span-1">
                     <div class="flex items-center gap-3 mb-4">
-                        <AppLogo name="LearnFast" icon="i-lucide-brain-circuit" color="white" theme="primary" />
+                        <AppLogo naked name="LearnFast" icon="i-lucide-brain-circuit" color="white" theme="primary" />
                     </div>
                     <p class="text-neutral-400 text-sm">
                         {{ appDescription }}

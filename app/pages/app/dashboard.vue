@@ -43,7 +43,7 @@ const recommendedMessage = computed(() => {
                     path in seconds.
                 </p>
             </div>
-            <div v-else class="flex flex-col items-center gap-2">
+            <div v-else class="flex flex-col items-center gap-4">
                 <div
                     class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 text-xs font-semibold uppercase tracking-wider">
                     <UIcon :name="currentWorkspace?.icon || 'i-lucide-layout-dashboard'" class="animate-pulse" />

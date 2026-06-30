@@ -20,11 +20,11 @@ const props = withDefaults(defineProps<AppLogoProps>(), {
                     `bg-${theme}-500`
                 ]
             ]">
-                <UIcon :name="icon" :class="[
+                <img src="/img/acumen-logo.svg" :class="[
                     'flex shrink-0 relative z-10',
                     naked ? (theme === 'white' ? 'text-white' : `text-${theme}-500`) : 'text-white',
-                    size === 'lg' ? 'size-10' : 'size-5'
-                ]" />
+                    size === 'lg' ? 'size-10' : 'size-8'
+                ]" alt="Logo" />
                 <!-- Light Reflection Blob -->
                 <div v-if="!naked && size === 'lg'"
                     class="absolute -top-[10%] -left-[10%] bg-white/20 blur-md rounded-full size-16" />

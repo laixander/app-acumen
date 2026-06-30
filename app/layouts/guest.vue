@@ -18,7 +18,7 @@ const isDevMode = computed(() => {
     return sessionStorage.getItem('devMode') === '1'
 })
 
-const observedIds = route.name === 'index' 
+const observedIds = route.name === 'index'
     ? defaultLandingMenu.filter(item => item.to.startsWith('#')).map(item => item.to.replace('#', ''))
     : []
 
@@ -39,7 +39,7 @@ const landingMenu = computed(() => {
     <UHeader>
         <template #left>
             <NuxtLink to="/" class="flex items-center gap-3">
-                <AppLogo name="Acumen" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
+                <AppLogo naked name="Acumen" icon="i-lucide-brain-circuit" color="primary" theme="primary" />
             </NuxtLink>
         </template>
 

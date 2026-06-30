@@ -51,6 +51,11 @@ export interface Course {
     sessionsPerWeek?: number
     itemsPerWeek?: number
     notificationsEnabled?: boolean
+    
+    // Publish Settings
+    isPublished?: boolean
+    shareableLink?: string
+    autoEnroll?: boolean
 }
 
 export interface LessonOverview {
