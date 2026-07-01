@@ -131,13 +131,22 @@ const formatDate = (ts?: number) => {
 }
 
 // Sections Configuration
+interface SettingsItemBadge {
+    label: string
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    color?: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    variant?: any
+}
+
 interface SettingsItem {
     label: string
-    value: string
+    value?: string
     icon: string
     color: string
     action?: () => void
     isToggle?: boolean
+    badge?: SettingsItemBadge
 }
 
 interface SettingsSection {
@@ -175,7 +184,19 @@ const sections = computed<SettingsSection[]>(() => [
                 icon: 'i-lucide-target',
                 color: 'emerald',
                 action: () => { isEditGoalModalOpen.value = true }
-            }
+            },
+            // Status
+            {
+                label: 'Status',
+                badge: {
+                    label: course.value?.isPublished ? 'Shared' : 'Private',
+                    color: (course.value?.isPublished ? 'success' : 'warning') as any,
+                    variant: 'subtle' as const
+                },
+                icon: 'i-lucide-radio',
+                color: course.value?.isPublished ? 'success' : 'warning',
+                action: () => { isPublishModalOpen.value = true }
+            },
         ]
     },
     {
@@ -219,7 +240,6 @@ const sections = computed<SettingsSection[]>(() => [
     }
 ])
 
-const isSlideoverOpen = ref(false)
 
 const isPublishModalOpen = ref(false)
 
@@ -228,13 +248,20 @@ const toast = useToast()
 const publishCourse = () => {
     if (!course.value) return
     const newStatus = !course.value.isPublished
-    courseStore.updateCourse(course.value.id, {
-        isPublished: newStatus,
-        shareableLink: newStatus ? `https://acumen.app/course/${course.value.id}/enroll` : '',
-        autoEnroll: newStatus ? true : false
-    })
+    
+    // Close modal first
     isPublishModalOpen.value = false
-    toast.add({ title: newStatus ? 'Course Published' : 'Course Unpublished', color: 'success' })
+    
+    // Wait for the modal transition to finish before updating the state
+    setTimeout(() => {
+        if (!course.value) return
+        courseStore.updateCourse(course.value.id, {
+            isPublished: newStatus,
+            shareableLink: newStatus ? `https://acumen.app/course/${course.value.id}/enroll` : '',
+            autoEnroll: newStatus ? true : false
+        })
+        toast.add({ title: newStatus ? 'Course Shared' : 'Course set to Private', color: 'success' })
+    }, 200)
 }
 
 const toggleAutoEnroll = () => {
@@ -242,10 +269,14 @@ const toggleAutoEnroll = () => {
     courseStore.updateCourse(course.value.id, { autoEnroll: !course.value.autoEnroll })
 }
 
+const copied = ref(false)
+
 const copyShareableLink = () => {
     if (!course.value?.shareableLink) return
     navigator.clipboard.writeText(course.value.shareableLink)
     toast.add({ title: 'Link copied to clipboard!', color: 'success' })
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 2000)
 }
 
 </script>
@@ -254,24 +285,32 @@ const copyShareableLink = () => {
     <UContainer class="max-w-4xl py-6">
         <div v-if="course" class="flex flex-col gap-10">
             <!-- Breadcrumbs -->
-            <div class="flex justify-between items-center">
+            <!-- <div class="flex justify-between items-center">
                 <AppBreadcrumb />
                 <UButton label="Close" leading-icon="i-lucide-x" color="neutral" variant="soft" size="sm"
                     :to="`/app/courses/${course.id}`" :ui="{ leadingIcon: 'size-3' }" />
-            </div>
+            </div> -->
 
             <!-- Header -->
             <header class="flex items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
-                    <div
-                        class="w-16 h-16 flex items-center justify-center rounded-2xl bg-primary-500/10 text-primary-500 border border-primary-500/20 shadow-inner">
-                        <UIcon :name="course.icon || 'i-lucide-book'" class="text-3xl" />
-                    </div>
-                    <div class="flex flex-col gap-1">
-                        <h1 class="text-3xl font-bold tracking-tight">Course Settings</h1>
-                        <p class="text-neutral-500 max-w-xl truncate">{{ course.title }}</p>
+                    <UButton icon="i-lucide-arrow-left" color="neutral" variant="ghost" size="sm"
+                        :to="`/app/courses/${courseId}`" />
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary-500/10 text-primary-500 border border-primary-500/20">
+                            <UIcon :name="course.icon || 'i-lucide-book'" class="text-xl" />
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold tracking-tight">Course Settings</h1>
+                            <p class="text-sm text-neutral-500 truncate max-w-sm">{{ course.title }}</p>
+                        </div>
                     </div>
                 </div>
+                <!-- <UBadge v-if="course.isPublished" color="success" variant="subtle" class="gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block"></span>
+                    Shared
+                </UBadge> -->
             </header>
 
             <!-- Dynamic Sections -->
@@ -284,38 +323,83 @@ const copyShareableLink = () => {
                     :ui="{ body: 'p-0 sm:p-0 overflow-hidden', root: 'shadow-sm border-neutral-200 dark:border-neutral-800' }">
                     <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
                         <div v-for="item in section.items" :key="item.label" @click="item.action ? item.action() : null"
-                            class="flex items-center justify-between p-5 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors group cursor-pointer">
-
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/50 dark:border-neutral-700/50">
-                                    <UIcon :name="item.icon" class="text-lg text-neutral-500" />
+                            class="p-5 hover:bg-neutral-50 dark:hover:bg-neutral-900/50 transition-colors group cursor-pointer">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-10 h-10 flex items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800 border border-neutral-200/50 dark:border-neutral-700/50">
+                                        <UIcon :name="item.icon" class="text-lg text-neutral-500" />
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-neutral-700 dark:text-neutral-200">{{ item.label
+                                            }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-neutral-700 dark:text-neutral-200">{{ item.label
-                                        }}</span>
+
+                                <div class="flex items-center gap-4">
+                                    <UBadge v-if="item.badge" :color="item.badge.color" :variant="item.badge.variant">
+                                        {{ item.badge.label }}
+                                    </UBadge>
+                                    <span v-else-if="!item.isToggle"
+                                        class="text-neutral-500 dark:text-neutral-400 font-medium truncate max-w-[200px] sm:max-w-md">{{
+                                            item.value }}</span>
+                                    <USwitch v-if="item.isToggle" v-model="notificationsEnabled" @click.stop
+                                        @update:model-value="toggleNotifications" />
+                                    <UButton v-else icon="i-lucide-chevron-right" variant="ghost" color="neutral"
+                                        size="xs" />
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-4">
-                                <span v-if="!item.isToggle"
-                                    class="text-neutral-500 dark:text-neutral-400 font-medium truncate max-w-[200px] sm:max-w-md">{{
-                                        item.value }}</span>
-                                <USwitch v-if="item.isToggle" v-model="notificationsEnabled" @click.stop
-                                    @update:model-value="toggleNotifications" />
-                                <UButton v-else icon="i-lucide-chevron-right" variant="ghost" color="neutral"
-                                    size="xs" />
-                            </div>
+                            <!-- Shared Settings -->
+                            <UCard v-if="item.label === 'Status' && course?.isPublished" variant="soft" class="mt-4"
+                                :ui="{ body: 'flex flex-col gap-6' }" @click.stop>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <p class="text-sm font-semibold">
+                                            Enrollment List
+                                        </p>
+                                        <p class="text-xs text-muted">View and manage
+                                            members who
+                                            have requested to enroll in this course.</p>
+                                    </div>
+                                    <UButton label="Manage" leading-icon="i-lucide-users" variant="soft"
+                                        :ui="{ leadingIcon: 'size-4' }" :to="`/app/courses/${courseId}/enrollments`" />
+                                </div>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <p class="text-sm font-semibold">
+                                            Auto-Enrollment
+                                        </p>
+                                        <p class="text-xs text-muted">Automatically
+                                            approve members
+                                            who enroll in this course.</p>
+                                    </div>
+                                    <USwitch :model-value="course.autoEnroll" @update:model-value="toggleAutoEnroll" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <p class="text-sm font-semibold">
+                                        Shareable Link</p>
+                                    <div class="flex gap-2">
+                                        <UInput :model-value="course.shareableLink" readonly variant="subtle"
+                                            class="flex-1" :ui="{
+                                                base: 'text-primary-900 dark:text-primary-100 font-mono text-sm bg-white/50 dark:bg-black/20'
+                                            }" />
+                                        <UButton variant="soft" :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+                                            :label="copied ? 'Copied' : 'Copy'" :ui="{ leadingIcon: 'size-4' }"
+                                            @click="copyShareableLink" />
+                                    </div>
+                                </div>
+                            </UCard>
                         </div>
                     </div>
                 </UCard>
             </div>
 
             <!-- add publish zone with sharable link and auto-enrolled switch -->
-            <div class="flex flex-col gap-4">
+            <!-- <div class="flex flex-col gap-4">
                 <h2 class="text-xs font-bold uppercase tracking-[0.2em] px-2"
                     :class="course?.isPublished ? 'text-warning-500' : 'text-success-500'">
-                    {{ course?.isPublished ? 'Unpublish Course' : 'Publish Course' }}
+                    {{ course?.isPublished ? 'Unshare Course' : 'Share Course' }}
                 </h2>
 
                 <UCard
@@ -324,7 +408,7 @@ const copyShareableLink = () => {
                         <div class="flex flex-col gap-1">
                             <p class="font-bold"
                                 :class="course?.isPublished ? 'text-warning-900 dark:text-warning-100' : 'text-success-900 dark:text-success-100'">
-                                {{ course?.isPublished ? 'Unpublish Course' : 'Publish Course' }}
+                                {{ course?.isPublished ? 'Unshare Course' : 'Share Course' }}
                             </p>
                             <p class="text-sm"
                                 :class="course?.isPublished ? 'text-warning-600 dark:text-warning-400' : 'text-success-600 dark:text-success-400'">
@@ -336,10 +420,8 @@ const copyShareableLink = () => {
                         </div>
                         <UButton :icon="course?.isPublished ? 'i-lucide-eye-off' : 'i-lucide-check'"
                             :color="course?.isPublished ? 'warning' : 'success'" variant="soft"
-                            :label="course?.isPublished ? 'Unpublish' : 'Publish'" @click="isPublishModalOpen = true" />
+                            :label="course?.isPublished ? 'Unshare' : 'Share'" @click="isPublishModalOpen = true" />
                     </div>
-
-                    <!-- Additional settings when published -->
                     <div v-if="course?.isPublished"
                         class="border-t border-warning-200/50 dark:border-warning-800/50 p-6 flex flex-col gap-6">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -350,7 +432,8 @@ const copyShareableLink = () => {
                                     have requested to enroll in this course.</p>
                             </div>
                             <UButton label="Manage" leading-icon="i-lucide-users" color="warning" variant="soft"
-                                size="sm" :ui="{ leadingIcon: 'size-3' }" @click="isSlideoverOpen = true" />
+                                size="sm" :ui="{ leadingIcon: 'size-3' }"
+                                :to="`/app/courses/${courseId}/enrollments`" />
                         </div>
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div class="flex flex-col gap-1">
@@ -375,7 +458,7 @@ const copyShareableLink = () => {
                         </div>
                     </div>
                 </UCard>
-            </div>
+            </div> -->
 
             <!-- Archive Zone -->
             <div class="flex flex-col gap-4">
@@ -530,18 +613,18 @@ const copyShareableLink = () => {
                             <UIcon :name="course?.isPublished ? 'i-lucide-eye-off' : 'i-lucide-check'"
                                 class="text-2xl" />
                         </div>
-                        <h3 class="text-xl font-bold">{{ course?.isPublished ? 'Unpublish Course?' : 'Publish Course?'
+                        <h3 class="text-xl font-bold">{{ course?.isPublished ? 'Unshare Course?' : 'Share Course?'
                         }}</h3>
                     </div>
                     <p class="text-neutral-500">
                         {{ course?.isPublished
-                            ? 'Are you sure you want to unpublish? This course will no longer be visible to new members.'
-                            : 'Publishing this course will make it visible to all members.'
+                            ? 'Are you sure you want to unshare? This course will no longer be visible to new members.'
+                            : 'Sharing this course will make it visible to all members.'
                         }}
                     </p>
                     <div class="flex items-center justify-end gap-3 mt-2">
                         <UButton label="Cancel" variant="ghost" color="neutral" @click="isPublishModalOpen = false" />
-                        <UButton :label="course?.isPublished ? 'Unpublish' : 'Publish'"
+                        <UButton :label="course?.isPublished ? 'Unshare' : 'Share'"
                             :color="course?.isPublished ? 'warning' : 'success'" @click="publishCourse" />
                     </div>
                 </div>
@@ -592,6 +675,6 @@ const copyShareableLink = () => {
             </template>
         </UModal>
 
-        <AppCourseEnrollmentListSlideover v-model:open="isSlideoverOpen" />
+
     </UContainer>
 </template>

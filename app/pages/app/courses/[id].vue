@@ -8,7 +8,20 @@ import type { SessionState, SessionProcessingLine } from '~/types/session'
 const route = useRoute()
 const courseStore = useCourseStore()
 const lessonStore = useLessonStore()
+const workspaceStore = useWorkspaceStore()
 const toast = useToast()
+
+const workspace = computed(() => workspaceStore.currentWorkspace)
+
+// Reusing same mock logic for members from enrollments.vue
+const mappedMembers = computed(() => {
+    return workspace.value?.members?.map((m: any, i: number) => ({
+        ...m,
+        isApproved: m.isApproved !== undefined ? m.isApproved : (i % 5 === 1 || i % 5 === 2 || i % 5 === 4)
+    })) || []
+})
+
+const approvedMembers = computed(() => mappedMembers.value.filter((r: any) => r.isApproved === true))
 
 // Register unsaved-changes guard: dirty while a session is in-flight
 // (processing/ready/active). 'complete' and 'plan' are already committed.
@@ -183,13 +196,13 @@ const simulateDownload = (filename: string) => {
             <div v-if="sessionState === 'idle'" class="flex flex-col gap-6">
                 <!-- Breadcrumbs -->
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <AppBreadcrumb />
-                    <div class="flex gap-2">
-                        <UButton label="Course Settings" icon="i-lucide-settings-2" variant="soft" size="sm"
-                            :to="`/app/courses/${course.id}/settings`" />
-                        <UButton label="Close" leading-icon="i-lucide-x" color="neutral" variant="soft" size="sm"
-                            to="/app/courses/collection" :ui="{ leadingIcon: 'size-3' }" />
+                    <div class="flex items-center gap-4">
+                        <UButton label="Back to Courses" leading-icon="i-lucide-arrow-left" color="neutral"
+                            variant="soft" size="sm" to="/app/courses/collection" :ui="{ leadingIcon: 'size-3' }" />
+                        <AppBreadcrumb />
                     </div>
+                    <UButton label="Course Settings" icon="i-lucide-settings-2" variant="soft" size="sm"
+                        :to="`/app/courses/${course.id}/settings`" />
                 </div>
                 <!-- <nav class="flex items-center gap-2 text-sm text-neutral-500">
                     <ULink to="/app/courses/collection" class="hover:text-primary transition-colors">Collection</ULink>
@@ -209,19 +222,33 @@ const simulateDownload = (filename: string) => {
                         <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                             <ContentHeading :title="course.title" :icon="course.icon">
                                 <template #description>
-                                    <div
+                                    <div v-if="course.isPublished" class="flex items-center gap-4">
+                                        <UBadge label="Shared" icon="i-lucide-share-2" color="success" variant="soft" />
+                                        <ULink :to="`/app/courses/${course.id}/progress`"
+                                            class="text-sm text-muted hover:text-primary transition-colors cursor-pointer flex items-center gap-1">
+                                            {{ approvedMembers.length }} enrolled students
+                                            <UIcon name="i-lucide-chevron-right" class="size-3" />
+                                        </ULink>
+                                    </div>
+                                    <div v-else class="flex items-center gap-4">
+                                        <UBadge label="Private" icon="i-lucide-lock" color="warning" variant="soft" />
+                                        <p class="text-sm text-muted">Want to share this course? Go to
+                                            <ULink :to="`/app/courses/${course.id}/settings`"
+                                                class="text-primary font-bold hover:text-primary/80 transition-colors">
+                                                Settings</ULink>
+                                        </p>
+                                    </div>
+                                    <!-- <div
                                         class="text-dimmed max-w-lg flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                                        <!-- Percentage to mastery -->
                                         <div class="flex items-center gap-2">
                                             <span class="text-primary font-bold">{{ masteryGap }}%</span> more to
                                             mastery!
                                         </div>
                                         <UIcon name="i-lucide-dot" class="size-6 flex text-dimmed hidden sm:block" />
-                                        <!-- An AI-curated learning path tailored for you. -->
                                         <div class="flex items-center gap-2">
                                             <span class="text-primary font-bold">{{ passingRate }}%</span> passing rate
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </template>
                             </ContentHeading>
 
@@ -343,7 +370,7 @@ const simulateDownload = (filename: string) => {
                                             </div>
                                             <p class="text-sm text-dimmed mt-1.5 leading-relaxed truncate">{{
                                                 lesson.summary
-                                            }}
+                                                }}
                                             </p>
                                         </div>
                                     </UCard>
@@ -355,7 +382,8 @@ const simulateDownload = (filename: string) => {
                         <div>
                             <div class="flex flex-col gap-6 sticky top-20">
                                 <!-- Progress Card -->
-                                <AppCourseWidgetProgress :progress="course.progress" />
+                                <AppCourseWidgetProgress :progress="course.progress" :mastery-gap="masteryGap"
+                                    :passing-rate="passingRate" />
 
                                 <!-- Description Card -->
                                 <AppCourseWidgetDescription :description="course.description" />
