@@ -86,9 +86,10 @@ onMounted(() => {
             class="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]">
         </div>
         <!-- Hero Section -->
-        <UPageHero class="reveal-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out"
+        <UPageHero
+            class="reveal-on-scroll opacity-0 translate-y-8 transition-all duration-700 ease-out h-[calc(100vh-var(--ui-header-height))] flex flex-col justify-center"
             description="Upload your study materials, let AI identify your knowledge gaps, and get a personalized lesson plan that adapts to your confidence level."
-            orientation="horizontal">
+            orientation="horizontal" :ui="{ container: 'py-0 lg:py-0' }">
             <template #links>
                 <div class="flex flex-wrap items-center gap-3 mt-2">
                     <!-- Primary CTA -->

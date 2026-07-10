@@ -171,22 +171,18 @@ function submitLogin() {
 
                 <!-- Testimonial Carousel -->
 
-                <UCard variant="outline" class="bg-transparent ring-primary-800/20 rounded-2xl divide-primary-800/20"
+                <!-- <UCard variant="outline" class="bg-transparent ring-primary-800/20 rounded-2xl divide-primary-800/20"
                     :ui="{ body: 'relative min-h-[148px]', footer: 'flex items-center justify-between' }">
-                    <!-- Slides -->
                     <TransitionGroup name="tslide">
                         <div v-for="(t, i) in testimonials" :key="i" v-show="activeSlide === i"
                             class="absolute inset-0 p-4 sm:p-6 space-y-3">
-                            <!-- Stars -->
                             <div class="flex gap-0.5">
                                 <UIcon v-for="s in t.stars" :key="s" name="i-ri-star-fill"
                                     class="size-3.5 text-amber-400" />
                             </div>
-                            <!-- Quote -->
                             <p class="text-sm leading-relaxed text-white/70 font-light">
                                 "{{ t.quote }}"
                             </p>
-                            <!-- Author -->
                             <div class="flex items-center gap-2.5 pt-1">
                                 <div class="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 bg-gradient-to-br"
                                     :class="t.gradient">
@@ -200,15 +196,12 @@ function submitLogin() {
                         </div>
                     </TransitionGroup>
 
-                    <!-- Controls -->
                     <template #footer>
-                        <!-- Dot indicators -->
                         <div class="flex items-center gap-1.5">
                             <button v-for="(_, i) in testimonials" :key="i" @click="goTo(i)" class="testimonial-dot"
                                 :class="activeSlide === i ? 'testimonial-dot--active' : ''"
                                 :aria-label="`Go to testimonial ${i + 1}`" />
                         </div>
-                        <!-- Prev / Next -->
                         <div class="flex items-center gap-1">
                             <button @click="prev" class="testimonial-arrow" aria-label="Previous testimonial">
                                 <UIcon name="i-lucide-chevron-left" class="size-3.5" />
@@ -218,7 +211,7 @@ function submitLogin() {
                             </button>
                         </div>
                     </template>
-                </UCard>
+</UCard> -->
             </div>
 
             <!-- Footer -->
