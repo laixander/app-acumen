@@ -46,18 +46,17 @@ const formData = reactive({
 
 // Mirror new.vue's steps/stepper
 const steps = computed(() => {
-    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Details', 'Pre-Assessment', 'Plan']
-    if (creationMode.value === 'prompt') return ['Mode', 'Details', 'Pre-Assessment', 'Plan']
-    return ['Mode', 'Materials', 'Details', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'explore') return ['Mode', 'Subject', 'Pre-Assessment', 'Plan']
+    if (creationMode.value === 'prompt') return ['Mode', 'Pre-Assessment', 'Plan']
+    return ['Mode', 'Materials', 'Pre-Assessment', 'Plan']
 })
 
 const currentStepIndex = computed(() => {
     if (flowState.value === 'entry') return 0
     if (flowState.value === 'setup' || flowState.value === 'indexing') return 1
-    if (flowState.value === 'processing' || flowState.value === 'details') return creationMode.value === 'prompt' ? 1 : 2
-    if (flowState.value === 'assessment') return creationMode.value === 'prompt' ? 2 : 3
-    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 3 : 4
-    if (flowState.value === 'pricing') return creationMode.value === 'prompt' ? 4 : 5
+    if (flowState.value === 'processing' || flowState.value === 'assessment') return creationMode.value === 'prompt' ? 1 : 2
+    if (flowState.value === 'review') return creationMode.value === 'prompt' ? 2 : 3
+    if (flowState.value === 'pricing') return creationMode.value === 'prompt' ? 3 : 4
     return 0
 })
 
@@ -80,7 +79,7 @@ const handlePromptSelect = (prompt: string) => {
     formData.description = `AI-generated curriculum for: ${prompt}`
     creationMode.value = 'prompt'
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'details' }, 3500)
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleUploadComplete = () => {
@@ -92,14 +91,14 @@ const handleUploadComplete = () => {
         const fileNames = formData.files.map((f: any) => f.name).join(', ')
         formData.description = `Curriculum built from: ${fileNames}`
     }
-    setTimeout(() => { flowState.value = 'details' }, 3500)
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleSubjectSelect = (subject: string) => {
     formData.title = subject
     formData.description = `Universal curriculum for ${subject}`
     flowState.value = 'processing'
-    setTimeout(() => { flowState.value = 'details' }, 3500)
+    setTimeout(() => { flowState.value = 'assessment' }, 3500)
 }
 
 const handleAssessmentComplete = () => {
@@ -108,22 +107,20 @@ const handleAssessmentComplete = () => {
 }
 
 const nextStep = () => {
-    if (flowState.value === 'details') flowState.value = 'assessment'
+    if (flowState.value === 'assessment') flowState.value = 'review'
 }
 
 const prevStep = () => {
     if (flowState.value === 'setup') {
         flowState.value = 'entry'
         creationMode.value = null
-    } else if (flowState.value === 'details') {
+    } else if (flowState.value === 'assessment') {
         if (creationMode.value === 'prompt') {
             flowState.value = 'entry'
             creationMode.value = null
         } else {
             flowState.value = 'setup'
         }
-    } else if (flowState.value === 'assessment') {
-        flowState.value = 'details'
     } else if (flowState.value === 'review') {
         flowState.value = 'assessment'
     } else if (flowState.value === 'pricing') {
@@ -459,11 +456,6 @@ const pricingPlans = computed(() => {
                                             <AppCourseSubjectPicker v-else-if="creationMode === 'explore'"
                                                 @select="handleSubjectSelect" />
                                         </template>
-
-                                        <!-- Details Step -->
-                                        <AppCourseFormBasic v-else-if="flowState === 'details'"
-                                            :model-value="formData" @update:model-value="val => Object.assign(formData, val)"
-                                            @next="nextStep" @back="prevStep" />
 
                                         <!-- Assessment Step -->
                                         <AppCourseFormPreAssessment v-else-if="flowState === 'assessment'"
